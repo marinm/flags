@@ -1,10 +1,9 @@
 // Serve static files
 
 const express = require('express')
+const path = require('path')
 const router = express.Router()
 
-require('dotenv').config()
-
-router.use('/', express.static(__dirname + '/../browser'))
+router.use('/', express.static(path.join(__dirname, '../browser')))
 
 module.exports = router
