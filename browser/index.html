@@ -6,10 +6,20 @@
       display: block;
       margin: 20px auto 0 auto;
     }
+    #online-count-container {
+      width: 200px;
+      margin: 20px auto 20px auto;
+      text-align: center;
+      font-family: arial;
+      font-weight: bold;
+    }
     </style>
   </head>
   <body>
-    <canvas id="board"></canvas>
+    <div id="container">
+      <div id="online-count-container"><span id="online-indicator">&#8226;  </span><span id="online-count"></span></div>
+      <canvas id="board"></canvas>
+    </div>
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="canvas-tiles.js"></script>
     <script type="text/javascript" src="minesweeper.js"></script>
