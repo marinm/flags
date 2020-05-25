@@ -233,3 +233,5 @@ function MinesweeperGame(N, M, R) {
 
   return { N, M, R, board, get, select };
 }
+
+module.exports = MinesweeperGame;

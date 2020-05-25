@@ -5,6 +5,8 @@
 //
 // WebSocket Messaging
 
+const MINE_MARK = '*';
+
 const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
 
 function wss_connect(address) {
@@ -43,12 +45,14 @@ function connection_opened() {
 
 function receive_message(event) {
   const msg = JSON.parse(event.data);
-  if (msg.online === 0)
-    $('#online-indicator').css('color', '#cccccc');
-  else
-    $('#online-indicator').css('color', '#00ff00');
+  console.log('receive... ', msg);
 
-  $('#online-count').text(' ' + msg.online + ' online');
+  // call the appropriate handler
+  switch (msg.type) {
+    case 'online': handlers.online(msg); break;
+    case 'reveal': handlers.reveal(msg); break;
+    default: ; // do something...
+  }
 }
 
 function connection_closed(event) {
@@ -59,16 +63,27 @@ function connection_closed(event) {
 
 // Callbacks
 
-function report_click(tiles, i, j) {
+const messages = {
+  select:
+  function(i, j) {
+    return JSON.stringify({ type: 'select', i, j });
+  },
+};
 
-  return new Promise(function(resolve, reject) {
-    const revealed = game.select(i, j);
+const handlers = {
+  online:
+  function(msg) {
+    $('#online-indicator').css('color', (msg.online === 0)? '#cccccc' : '#00ff00');
+    $('#online-count').text(' ' + msg.online + ' online');
+  },
+
+  reveal:
+  function(msg) {
+    const revealed = msg;
     if (!revealed) {
       // ... do something here
       // out-of-bounds or game already over
-      resolve(revealed);
     }
-
     revealed.show.forEach(function(item) {
       var value = item.value;
       if (value === MINE_MARK) {
@@ -76,7 +91,7 @@ function report_click(tiles, i, j) {
               ? 'PLAYER_FLAG_0'
               : 'PLAYER_FLAG_1';
       }
-      tiles.setvalue(item.i, item.j, value);
+      board.setvalue(item.i, item.j, value);
 
       $('#player-0-score').text(revealed.score[0]);
       $('#player-1-score').text(revealed.score[1]);
@@ -98,6 +113,9 @@ function report_click(tiles, i, j) {
         player_box.toggleClass('active-turn score-box-winner');
       }
     });
-    resolve(revealed);
-  });
+  },
+};
+
+function report_click(tiles, i, j) {
+  socket.send( messages.select(i, j) );
 };
