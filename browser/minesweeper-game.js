@@ -40,8 +40,15 @@ function generate_minesweeper_board(N, M, R) {
 
   // Mark R random tiles as 'M'
   for (var r = 0; r < R; r++) {
-    const i = getRandomInt(N);
-    const j = getRandomInt(M);
+    var i = 0;
+    var j = 0;
+
+    // If the i,j is already a mine, try again
+    do {
+      i = getRandomInt(N);
+      j = getRandomInt(M);
+    }
+    while (board[i*M + j] === MINE_MARK);
 
     board[i * M + j] = MINE_MARK;
   }
@@ -97,6 +104,9 @@ function generate_minesweeper_board(N, M, R) {
       increment(CC);
     }
   }
+
+  // Check the result...
+  console.log(board.filter(item => item === MINE_MARK).length, R);
 
   return board;
 }
