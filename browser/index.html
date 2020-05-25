@@ -43,7 +43,7 @@
     .score-box {
       display: inline-block;
       padding: 10px;
-      width: 4em;
+      width: 5em;
       font-family: arial;
       font-size: 12pt;
       font-weight: bold;
@@ -57,14 +57,20 @@
       display: inline;
     }
     #player-0-score, #player-1-score {
-      display: inline;
+      display: inline-block;
+      width: 1em;
+      text-align: right;
     }
     .score-box-winner {
       background-color: #aed581;
-      border-bottom-color: green;
+      border-bottom: 3px solid green;
+      color: green;
     }
     .remaining {
       color: #cccccc;
+    }
+    .score-box-winner > .remaining {
+      color: green;
     }
     </style>
   </head>
@@ -75,10 +81,10 @@
       <div id="board-container"></div>
       <div id="turn-score-container">
         <div class="score-box active-turn" id="player-0-score-box">
-          <img src="player_flag_0.svg"> <div id="player-0-score">0</div> <span class="remaining">0</span>
+          <img src="player_flag_0.svg"> <div id="player-0-score">&nbsp;0</div> <span class="remaining">0</span>
         </div>
         <div class="score-box" id="player-1-score-box">
-          <img src="player_flag_1.svg"> <div id="player-1-score">0</div> <span class="remaining">0</span>
+          <img src="player_flag_1.svg"> <div id="player-1-score">&nbsp;0</div> <span class="remaining">0</span>
         </div>
       </div>
     </div>

@@ -14,4 +14,4 @@ const board = new MinesweeperBoard(TMP_N, TMP_M, TMP_CELLSIZE, report_click);
 $('#board-container').append(board.canvas);
 
 const play_until = Math.ceil(game.R / 2);
-$('.remaining').text('/' + play_until);
+$('.remaining').text(' / ' + play_until);
