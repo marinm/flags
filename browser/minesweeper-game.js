@@ -104,10 +104,7 @@ function generate_minesweeper_board(N, M, R) {
       increment(CC);
     }
   }
-
-  // Check the result...
-  console.log(board.filter(item => item === MINE_MARK).length, R);
-
+  
   return board;
 }
 
