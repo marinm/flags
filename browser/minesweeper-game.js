@@ -1,4 +1,5 @@
 // Minesweeper game generator
+// [Model]-View-Controller
 //
 // Randomly generates a board
 // Maintains game state - what has been revealed so far

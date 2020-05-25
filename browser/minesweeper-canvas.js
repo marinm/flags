@@ -1,3 +1,9 @@
+// Canvas drawing
+// Model-[View]-Controller
+
+const CHECKER_DARK = '#f9f9f9';
+const CHECKER_LIGHT = '#ffffff';
+
 // Turn a <canvas> into a tiled N-by-M board.
 // In fancier terms, partitions the coordinate system.
 //
@@ -33,21 +39,15 @@
 
 // Assume arguments make sense.
 // No safety checks.
-function CanvasTiles(id, N, M, W, H, onclick) {
+function CanvasTiles(N, M, W, H, onclick) {
   // W,H are tile width,height
 
-  const board = document.getElementById(id);
+  const canvas = document.createElement('canvas');
 
-  board.setAttribute('width', M * W);
-  board.setAttribute('height', N * H);
+  canvas.setAttribute('width', M * W);
+  canvas.setAttribute('height', N * H);
 
-  const surface = board.getContext('2d');
-
-  board.addEventListener('click', function(event) {
-      const i = Math.floor(event.offsetY / H);
-      const j = Math.floor(event.offsetX / W);
-      onclick(i, j);
-  });
+  const surface = canvas.getContext('2d');
 
   function forEachTile(action) {
     for (var i = 0; i < N; i++) {
@@ -93,5 +93,55 @@ function CanvasTiles(id, N, M, W, H, onclick) {
     img.src = src;
   }
 
-  return { surface, N, M, W, H, forEachTile, fill, text, renderimage };
+  const interface = { canvas, surface, N, M, W, H, forEachTile, fill, text, renderimage };
+
+  canvas.addEventListener('click', function(event) {
+      const i = Math.floor(event.offsetY / H);
+      const j = Math.floor(event.offsetX / W);
+      onclick(interface, i, j);
+  });
+
+  return interface;
+}
+
+
+//
+// MinesweeperBoard
+// Interface for drawing numbers and flags on the tiled canvas
+function MinesweeperBoard(N, M, S, onclick) {
+
+  // The view
+  const board = new CanvasTiles(N, M, S, S, onclick);
+
+  // Checkerboard pattern
+  board.forEachTile(function(i,j) {
+    // odd row & odd col  or  even row & even col
+    const ee = (i % 2 === 0) && (j % 2 === 0); // even/even
+    const oo = (i % 2 === 1) && (j % 2 === 1); // odd/odd
+    const colour = (ee || oo)? CHECKER_DARK : CHECKER_LIGHT;
+    board.fill(i, j, colour);
+  });
+
+  board.setvalue = function(i, j, value) {
+    var colour = null;
+    switch (String(value)) {
+      case '*': colour = '#00ff00';  break;
+      case '0': colour = '#eeeeee';  break;
+      case '1': colour = '#0000ff';  break;
+      case '2': colour = '#107118';  break;
+      case '3': colour = '#ff00ff';  break;
+      default : colour = '#ff0000';  break;
+    }
+
+    if (value === '*') {
+      // Flag icon made by Freepik from www.flaticon.com
+      // https://www.flaticon.com/free-icon/flag_94182 
+      board.renderimage(i, j, 'flag.svg');
+    }
+    else {
+      board.text(i, j, value, colour);
+    }
+  }
+
+  return board;
 }

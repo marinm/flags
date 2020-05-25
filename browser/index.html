@@ -2,7 +2,11 @@
   <head>
     <title>Minesweeper</title>
     <style type="text/css">
-    #board {
+    #container {
+      width: fit-content;
+      margin: 20px auto 0 auto;
+    }
+    #board-container {
       display: block;
       margin: 20px auto 0 auto;
     }
@@ -13,16 +17,37 @@
       font-family: arial;
       font-weight: bold;
     }
+    #room-buttons {
+      width: fit-content;
+      margin: 20px auto 0 auto;
+      background-color: aliceblue;
+      padding: 0 10px 0 10px;
+    }
+    #room-buttons button {
+      padding: 10px;
+      margin: 3px;
+      border: none;
+      font-family: arial;
+      font-size: 12pt;
+      color: blue;
+      background-color: aliceblue;
+      outline: none;
+    }
+    #room-buttons button:hover {
+      text-decoration: underline;
+    }
     </style>
   </head>
   <body>
     <div id="container">
       <div id="online-count-container"><span id="online-indicator">&#8226;  </span><span id="online-count"></span></div>
-      <canvas id="board"></canvas>
+      <div id="room-buttons"></div>
+      <div id="board-container"></div>
     </div>
     <script type="text/javascript" src="jquery.js"></script>
-    <script type="text/javascript" src="canvas-tiles.js"></script>
-    <script type="text/javascript" src="minesweeper.js"></script>
-    <script type="text/javascript" charset="utf-8" src="minesweeper-display.js"></script>
+    <script type="text/javascript" src="minesweeper-game.js"></script>
+    <script type="text/javascript" src="minesweeper-canvas.js"></script>
+    <script type="text/javascript" src="minesweeper-events.js"></script>
+    <script type="text/javascript" src="page.js"></script>
   </body>
 </html>
