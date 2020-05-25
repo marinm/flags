@@ -69,7 +69,7 @@ function new_session(ws) {
   ws.on('close', close);
 
   // Will need again later...
-  // broadcast_online_count();
+  broadcast_online_count();
 }
 
 function broadcast_online_count() {
@@ -111,5 +111,5 @@ function close() {
   clearInterval(ping_interval);
   console.log('server stopped hearing from client');
   // Will need again later...
-  // broadcast_online_count();
+  broadcast_online_count();
 }

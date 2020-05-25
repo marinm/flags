@@ -3,6 +3,7 @@
 
 const CHECKER_DARK = '#f9f9f9';
 const CHECKER_LIGHT = '#ffffff';
+const DISABLED_HUE = 'rgba(200, 200, 200, 0.5)';
 
 // Flag icon made by Freepik from www.flaticon.com
 // https://www.flaticon.com/free-icon/flag_94182
@@ -54,6 +55,7 @@ function CanvasTiles(N, M, W, H, onclick) {
   canvas.setAttribute('height', N * H);
 
   const surface = canvas.getContext('2d');
+  var disabled = false;
 
   function forEachTile(action) {
     for (var i = 0; i < N; i++) {
@@ -99,12 +101,21 @@ function CanvasTiles(N, M, W, H, onclick) {
     img.src = src;
   }
 
-  const interface = { canvas, surface, N, M, W, H, forEachTile, fill, text, renderimage };
+  function disable() {
+    disabled = true;
+  }
+  function enable() {
+    disabled = false;
+  }
+
+  const interface = { canvas, surface, N, M, W, H, forEachTile, fill, text, disable, enable, renderimage };
 
   canvas.addEventListener('click', function(event) {
+    if (!disabled) {
       const i = Math.floor(event.offsetY / H);
       const j = Math.floor(event.offsetX / W);
       onclick(interface, i, j);
+    }
   });
 
   return interface;
@@ -119,14 +130,17 @@ function MinesweeperBoard(N, M, S, onclick) {
   // The view
   const board = new CanvasTiles(N, M, S, S, onclick);
 
-  // Checkerboard pattern
-  board.forEachTile(function(i,j) {
-    // odd row & odd col  or  even row & even col
-    const ee = (i % 2 === 0) && (j % 2 === 0); // even/even
-    const oo = (i % 2 === 1) && (j % 2 === 1); // odd/odd
-    const colour = (ee || oo)? CHECKER_DARK : CHECKER_LIGHT;
-    board.fill(i, j, colour);
-  });
+  board.restart = function() {
+    // Checkerboard pattern
+    board.forEachTile(function(i,j) {
+      // odd row & odd col  or  even row & even col
+      const ee = (i % 2 === 0) && (j % 2 === 0); // even/even
+      const oo = (i % 2 === 1) && (j % 2 === 1); // odd/odd
+      const colour = (ee || oo)? CHECKER_DARK : CHECKER_LIGHT;
+      board.fill(i, j, colour);
+    });
+    board.enable();
+  }
 
   board.setvalue = function(i, j, value) {
     var colour = null;
@@ -148,7 +162,19 @@ function MinesweeperBoard(N, M, S, onclick) {
       case 'B':  board.renderimage(i, j, PLAYER_FLAGS_IMG[1]); break;
       default:   board.text(i, j, value, colour);
     }
-  }
+  };
+
+  // Prevent click callback
+  board.showdisabled = function() {
+    board.disable();
+
+    // Draw hue layer
+    board.surface.fillStyle = DISABLED_HUE;
+    board.surface.fillRect(0, 0, board.M * board.W, board.N * board.H);
+  };
+
+  // Start with a fresh board
+  board.restart();
 
   return board;
 }

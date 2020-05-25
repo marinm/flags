@@ -5,6 +5,7 @@
     #container {
       width: fit-content;
       margin: 20px auto 0 auto;
+      font-family: arial;
     }
     #board-container {
       display: block;
@@ -72,6 +73,18 @@
     .score-box-winner > .remaining {
       color: green;
     }
+    .status-note {
+      display: none;
+      padding: 10px;
+      text-align: center;
+    }
+    #disconnected-status {
+      background-color: pink;
+      border: 1px solid tomato;
+    }
+    .bold {
+      font-weight: bold;
+    }
     </style>
   </head>
   <body>
@@ -83,6 +96,7 @@
         </div>
       -->
       <div id="room-buttons"></div>
+      <div class="status-note" id="disconnected-status"><span class="bold">Disconnected. Try refreshing the page.</span></div>
       <div id="board-container"></div>
       <div id="turn-score-container">
         <div class="score-box active-turn" id="player-0-score-box">

@@ -24,15 +24,18 @@ var heartbeat = null;
 
 if (socket === null) {
   console.log('Failed connection');
+  room.disconnected();
 }
 else {
   socket.addEventListener('open', connection_opened);
   socket.addEventListener('message', receive_message);
   socket.addEventListener('close', connection_closed);
+  socket.addEventListener('error', websocket_error);
 }
 
 function websocket_error(err) {
-  console.log(err);
+  console.log('Error: ' + JSON.stringify(err));
+  room.disconnected();
 }
 
 function connection_opened() {
@@ -59,7 +62,18 @@ function receive_message(event) {
 function connection_closed(event) {
   clearInterval(heartbeat);
   console.log('Connection closed');
+  room.disconnected();
 }
+
+
+// Change the view
+const room = {
+  disconnected:
+  function() {
+    $('#disconnected-status').show();
+    board.showdisabled();
+  },
+};
 
 
 // Callbacks
