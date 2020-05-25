@@ -68,7 +68,8 @@ function new_session(ws) {
   // Client connection closed
   ws.on('close', close);
 
-  broadcast_online_count();
+  // Will need again later...
+  // broadcast_online_count();
 }
 
 function broadcast_online_count() {
@@ -109,5 +110,6 @@ const handlers = {
 function close() {
   clearInterval(ping_interval);
   console.log('server stopped hearing from client');
-  broadcast_online_count();
+  // Will need again later...
+  // broadcast_online_count();
 }

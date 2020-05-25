@@ -74,8 +74,9 @@ const messages = {
 const handlers = {
   online:
   function(msg) {
-    $('#online-indicator').css('color', (msg.online === 0)? '#cccccc' : '#00ff00');
-    $('#online-count').text(' ' + msg.online + ' online');
+    // Will need again later...
+    // $('#online-indicator').css('color', (msg.online === 0)? '#cccccc' : '#00ff00');
+    // $('#online-count').text(' ' + msg.online + ' online');
   },
 
   reveal:
