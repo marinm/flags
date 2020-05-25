@@ -4,6 +4,10 @@
 const CHECKER_DARK = '#f9f9f9';
 const CHECKER_LIGHT = '#ffffff';
 
+// Flag icon made by Freepik from www.flaticon.com
+// https://www.flaticon.com/free-icon/flag_94182
+const PLAYER_FLAGS = ['player_flag_0.svg', 'player_flag_1.svg'];
+
 // Turn a <canvas> into a tiled N-by-M board.
 // In fancier terms, partitions the coordinate system.
 //
@@ -124,22 +128,23 @@ function MinesweeperBoard(N, M, S, onclick) {
 
   board.setvalue = function(i, j, value) {
     var colour = null;
-    switch (String(value)) {
-      case '*': colour = '#00ff00';  break;
-      case '0': colour = '#eeeeee';  break;
-      case '1': colour = '#0000ff';  break;
-      case '2': colour = '#107118';  break;
-      case '3': colour = '#ff00ff';  break;
-      default : colour = '#ff0000';  break;
+    switch (value) {
+      case 0: colour = '#eeeeee';  break;
+      case 1: colour = '#0000ff';  break;
+      case 2: colour = '#107118';  break;
+      case 3: colour = '#ff00ff';  break;
+      case 4: colour = '#ff0000';  break;
+      case 5: colour = '#ff0000';  break;
+      case 6: colour = '#ff0000';  break;
+      case 7: colour = '#ff0000';  break;
+      case 8: colour = '#ff0000';  break;
+      default: colour = '#ff0000';  break;
     }
 
-    if (value === '*') {
-      // Flag icon made by Freepik from www.flaticon.com
-      // https://www.flaticon.com/free-icon/flag_94182 
-      board.renderimage(i, j, 'flag.svg');
-    }
-    else {
-      board.text(i, j, value, colour);
+    switch (value) {
+      case 'PLAYER_FLAG_0':  board.renderimage(i, j, PLAYER_FLAGS[0]); break;
+      case 'PLAYER_FLAG_1':  board.renderimage(i, j, PLAYER_FLAGS[1]); break;
+      default:               board.text(i, j, value, colour);
     }
   }
 

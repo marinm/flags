@@ -40,8 +40,8 @@ function generate_minesweeper_board(N, M, R) {
 
   // Mark R random tiles as 'M'
   for (var r = 0; r < R; r++) {
-    var i = getRandomInt(N);
-    var j = getRandomInt(M);
+    const i = getRandomInt(N);
+    const j = getRandomInt(M);
 
     board[i * M + j] = MINE_MARK;
   }
@@ -105,6 +105,11 @@ function MinesweeperGame(N, M, R) {
   // A randomly generated board
   const board = generate_minesweeper_board(N, M, R);
 
+  var turn = 0;
+  var score = [0, 0];
+  var seq = 0;
+  var on = true;
+
   // What has been revealed so far (array of bools)
   const revealed = new Array(N * M);
   revealed.fill(false);
@@ -128,6 +133,7 @@ function MinesweeperGame(N, M, R) {
   }
 
   function zerowalk(i, j) {
+    // The first zero must still be not revealed
 
     // Stepped out of bounds
     // Nothing to do
@@ -143,9 +149,14 @@ function MinesweeperGame(N, M, R) {
 
     const value = board[k];
 
+    // Stepped to a mine
+    // Don't reveal it
+    if (value === MINE_MARK)
+      return [];
+
     // Stepped to a non-zero numeric tile
     // Reveal it and return the value
-    if (value != '0' && value != MINE_MARK)
+    if (value != '0')
       return [ reveal(i, j) ];
 
     // Found a zero...
@@ -169,23 +180,49 @@ function MinesweeperGame(N, M, R) {
   }
 
   function select(i, j) {
+    // Selected coordinates out of bounds
     if (!checkij(i,j))
+      return null;
+    
+    // The game is already over
+    if (!on)
       return null;
 
     const k = i * M + j;
+    const value = board[k];
+
+    // Which tiles to reveal, if any
+    var show = [];
 
     // If the tile is already revealed, do nothing
-    if (revealed[k])
-      return [];
+    if (!revealed[k]) {
+      seq++;
 
-    if (board[k] != '0') {
-      revealed[k] = true;
-      const value = board[k];
-      return [{i, j, value}];
+      if (value === 0) {
+        turn = (turn + 1) % 2;
+        // The first zero must still be not revealed
+        show = zerowalk(i, j);
+      }
+      else {
+        // Revealed a non-zero value...
+        revealed[k] = true;
+
+        if (value === MINE_MARK) {
+          // Still the same player's turn
+          score[turn]++;
+
+          // The game is over when a player finds R/2 mines
+          on = (score[turn] < Math.ceil(R/2));
+        }
+        else {
+          turn = (turn + 1) % 2;
+        }
+        show = [{i, j, value}];
+      }
     }
 
-    return zerowalk(i, j);
+    return { show, turn, score, on };
   }
 
-  return { board, get, select };
+  return { N, M, R, board, get, select };
 }

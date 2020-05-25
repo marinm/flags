@@ -36,6 +36,36 @@
     #room-buttons button:hover {
       text-decoration: underline;
     }
+    #turn-score-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .score-box {
+      display: inline-block;
+      padding: 10px;
+      width: 4em;
+      font-family: arial;
+      font-size: 12pt;
+      font-weight: bold;
+      text-align: center;
+    }
+    .active-turn {
+      background-color: #fefce7;
+      border-bottom: 3px solid blue;
+    }
+    img {
+      display: inline;
+    }
+    #player-0-score, #player-1-score {
+      display: inline;
+    }
+    .score-box-winner {
+      background-color: #aed581;
+      border-bottom-color: green;
+    }
+    .remaining {
+      color: #cccccc;
+    }
     </style>
   </head>
   <body>
@@ -43,6 +73,14 @@
       <div id="online-count-container"><span id="online-indicator">&#8226;  </span><span id="online-count"></span></div>
       <div id="room-buttons"></div>
       <div id="board-container"></div>
+      <div id="turn-score-container">
+        <div class="score-box active-turn" id="player-0-score-box">
+          <img src="player_flag_0.svg"> <div id="player-0-score">0</div> <span class="remaining">0</span>
+        </div>
+        <div class="score-box" id="player-1-score-box">
+          <img src="player_flag_1.svg"> <div id="player-1-score">0</div> <span class="remaining">0</span>
+        </div>
+      </div>
     </div>
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="minesweeper-game.js"></script>

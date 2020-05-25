@@ -60,10 +60,43 @@ function connection_closed(event) {
 // Callbacks
 
 function report_click(tiles, i, j) {
+
   return new Promise(function(resolve, reject) {
     const revealed = game.select(i, j);
-    revealed.forEach(function(item) {
-      tiles.setvalue(item.i, item.j, item.value);
+    if (!revealed) {
+      // ... do something here
+      // out-of-bounds or game already over
+      resolve(revealed);
+    }
+
+    revealed.show.forEach(function(item) {
+      var value = item.value;
+      if (value === MINE_MARK) {
+        value = (revealed.turn === 0)
+              ? 'PLAYER_FLAG_0'
+              : 'PLAYER_FLAG_1';
+      }
+      tiles.setvalue(item.i, item.j, value);
+
+      $('#player-0-score').text(revealed.score[0]);
+      $('#player-1-score').text(revealed.score[1]);
+
+      if (revealed.turn === 0) {
+        $('#player-0-score-box').addClass('active-turn');
+        $('#player-1-score-box').removeClass('active-turn');
+      }
+      else {
+        $('#player-0-score-box').removeClass('active-turn');
+        $('#player-1-score-box').addClass('active-turn');
+      }
+
+      // Game is over
+      if (!revealed.on) {
+        const player_box = (revealed.turn === 0)
+                         ? $('#player-0-score-box')
+                         : $('#player-1-score-box');
+        player_box.toggleClass('active-turn score-box-winner');
+      }
     });
     resolve(revealed);
   });
