@@ -5,7 +5,8 @@
 //
 // WebSocket Messaging
 
-const MINE_MARK = '*';
+const HIDDEN_MINE = '*';
+const PLAYER_FLAGS = ['A', 'B'];
 
 const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
 
@@ -86,11 +87,6 @@ const handlers = {
     }
     revealed.show.forEach(function(item) {
       var value = item.value;
-      if (value === MINE_MARK) {
-        value = (revealed.turn === 0)
-              ? 'PLAYER_FLAG_0'
-              : 'PLAYER_FLAG_1';
-      }
       board.setvalue(item.i, item.j, value);
 
       $('#player-0-score').text(revealed.score[0]);

@@ -23,7 +23,8 @@
 //        +-----+-----+-----+-----+-----+-----+
 //     i
 
-const MINE_MARK = '*';
+const HIDDEN_MINE = '*';
+const PLAYER_FLAGS = ['A', 'B'];
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -48,9 +49,9 @@ function generate_minesweeper_board(N, M, R) {
       i = getRandomInt(N);
       j = getRandomInt(M);
     }
-    while (board[i*M + j] === MINE_MARK);
+    while (board[i*M + j] === HIDDEN_MINE);
 
-    board[i * M + j] = MINE_MARK;
+    board[i * M + j] = HIDDEN_MINE;
   }
 
   // Walk through the board, by row and column.
@@ -62,7 +63,7 @@ function generate_minesweeper_board(N, M, R) {
     // For each column...
     for (var j = 0; j < M; j++) {
       // If tile (i,j) is not a Mine, skip it
-      if (board[i*M + j] != MINE_MARK)
+      if (board[i*M + j] != HIDDEN_MINE)
         continue;
 
       //  Top/Centre/Bottom - Left/Centre/Right
@@ -89,7 +90,7 @@ function generate_minesweeper_board(N, M, R) {
       const CC =                             (i - 0) * M + (j - 0)      ;
 
       function increment(k) {
-        if (k != -1 && board[k] != MINE_MARK)
+        if (k != -1 && board[k] != HIDDEN_MINE)
           board[k] = board[k] + 1;
       }
 
@@ -116,6 +117,9 @@ function MinesweeperGame(N, M, R) {
   var score = [0, 0];
   var seq = 0;
   var on = true;
+
+  // The game is over when a player finds R/2 mines
+  const winning_score = Math.ceil(R/2);
 
   // What has been revealed so far (array of bools)
   const revealed = new Array(N * M);
@@ -158,7 +162,7 @@ function MinesweeperGame(N, M, R) {
 
     // Stepped to a mine
     // Don't reveal it
-    if (value === MINE_MARK)
+    if (value === HIDDEN_MINE)
       return [];
 
     // Stepped to a non-zero numeric tile
@@ -196,7 +200,7 @@ function MinesweeperGame(N, M, R) {
       return null;
 
     const k = i * M + j;
-    const value = board[k];
+    var value = board[k];
 
     // Which tiles to reveal, if any
     var show = [];
@@ -214,12 +218,15 @@ function MinesweeperGame(N, M, R) {
         // Revealed a non-zero value...
         revealed[k] = true;
 
-        if (value === MINE_MARK) {
+        if (value === HIDDEN_MINE) {
+          // Change the tile value from HIDDEN_MINE to A/B
+          board[k] = PLAYER_FLAGS[turn];
+          value = board[k];
+
           // Still the same player's turn
           score[turn]++;
 
-          // The game is over when a player finds R/2 mines
-          on = (score[turn] < Math.ceil(R/2));
+          on = (score[turn] < winning_score);
         }
         else {
           turn = (turn + 1) % 2;

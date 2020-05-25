@@ -6,7 +6,9 @@ const CHECKER_LIGHT = '#ffffff';
 
 // Flag icon made by Freepik from www.flaticon.com
 // https://www.flaticon.com/free-icon/flag_94182
-const PLAYER_FLAGS = ['player_flag_0.svg', 'player_flag_1.svg'];
+const PLAYER_FLAGS_IMG = ['player_flag_0.svg', 'player_flag_1.svg'];
+
+
 
 // Turn a <canvas> into a tiled N-by-M board.
 // In fancier terms, partitions the coordinate system.
@@ -142,9 +144,9 @@ function MinesweeperBoard(N, M, S, onclick) {
     }
 
     switch (value) {
-      case 'PLAYER_FLAG_0':  board.renderimage(i, j, PLAYER_FLAGS[0]); break;
-      case 'PLAYER_FLAG_1':  board.renderimage(i, j, PLAYER_FLAGS[1]); break;
-      default:               board.text(i, j, value, colour);
+      case 'A':  board.renderimage(i, j, PLAYER_FLAGS_IMG[0]); break;
+      case 'B':  board.renderimage(i, j, PLAYER_FLAGS_IMG[1]); break;
+      default:   board.text(i, j, value, colour);
     }
   }
 
