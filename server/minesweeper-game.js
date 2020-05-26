@@ -238,7 +238,11 @@ function MinesweeperGame(N, M, R) {
     return { show, turn, score, on };
   }
 
-  return { N, M, R, board, get, select };
+  function getstate() {
+    return { turn, score, seq, on };
+  }
+
+  return { N, M, R, board, get, select, getstate };
 }
 
 module.exports = MinesweeperGame;

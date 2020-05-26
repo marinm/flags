@@ -73,17 +73,31 @@
     .score-box-winner > .remaining {
       color: green;
     }
-    .status-note {
-      display: none;
+    #note-box {
+      display: block;
       padding: 10px;
       text-align: center;
+      font-weight: bold;
     }
-    #disconnected-status {
+    .disconnected-status {
       background-color: pink;
       border: 1px solid tomato;
     }
-    .bold {
-      font-weight: bold;
+    .waiting-status {
+      background-color: aliceblue;
+      border: 1px solid cornflowerblue;
+    }
+    .ready-status {
+      background-color: yellowgreen;
+      border: 1px solid seagreen;
+    }
+    .busy-status {
+      background-color: lightgray;
+      border: 1px solid silver;
+    }
+    .opponent-disconnected-status {
+      background-color: cornsilk;
+      border: 1px solid chocolate;
     }
     </style>
   </head>
@@ -96,7 +110,7 @@
         </div>
       -->
       <div id="room-buttons"></div>
-      <div class="status-note" id="disconnected-status"><span class="bold">Disconnected. Try refreshing the page.</span></div>
+      <div id="note-box">Welcome to Minesweeper</div>
       <div id="board-container"></div>
       <div id="turn-score-container">
         <div class="score-box active-turn" id="player-0-score-box">

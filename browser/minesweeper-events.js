@@ -10,11 +10,16 @@ const PLAYER_FLAGS = ['A', 'B'];
 
 const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
 
+var gamestate = { player: null, turn: null };
+
 function wss_connect(address) {
   try {
+    // The connection may fail for several reasons other than SECURITY_ERR but
+    // will never throw any other error
     return new WebSocket(address);
   }
   catch (err) {
+    // SECURITY_ERR
     return null;
   }
 }
@@ -23,7 +28,6 @@ const socket = wss_connect(SERVER_ADDRESS);
 var heartbeat = null;
 
 if (socket === null) {
-  console.log('Failed connection');
   room.disconnected();
 }
 else {
@@ -34,13 +38,10 @@ else {
 }
 
 function websocket_error(err) {
-  console.log('Error: ' + JSON.stringify(err));
   room.disconnected();
 }
 
 function connection_opened() {
-  console.log('connection opened');
-  
   // Every 30 seconds, 
   heartbeat = setInterval(function() {
     socket.send(JSON.stringify({action: 'HEARTBEAT'}));
@@ -49,14 +50,13 @@ function connection_opened() {
 
 function receive_message(event) {
   const msg = JSON.parse(event.data);
-  console.log('receive... ', msg);
+
+  // If the event/message type is not recognized, discard/ignore it
+  if (!Object.keys(handlers).includes(msg.type))
+    return;
 
   // call the appropriate handler
-  switch (msg.type) {
-    case 'online': handlers.online(msg); break;
-    case 'reveal': handlers.reveal(msg); break;
-    default: ; // do something...
-  }
+  handlers[msg.type](msg);
 }
 
 function connection_closed(event) {
@@ -66,12 +66,68 @@ function connection_closed(event) {
 }
 
 
+const notes = {
+  'disconnected': {
+    class: 'disconnected-status',
+    text:  'Disconnected. Try refreshing the page.'
+  },
+  'waiting': {
+    class: 'waiting-status',
+    text:  'Waiting for another player to join...'
+  },
+  'start': {
+    class: 'ready-status',
+    text:  'The game is on!'
+  },
+  'busy': {
+    class: 'busy-status',
+    text:  'Someone else is playing right now...'
+  },
+  'opponent-disconnected': {
+    class: 'opponent-disconnected-status',
+    text:  'Your opponent disconnected.'
+  }
+}
+
+function show_note(n) {
+  $('#note-box').attr('class', notes[n].class);
+  $('#note-box').text( notes[n].text );
+}
+
 // Change the view
 const room = {
   disconnected:
   function() {
-    $('#disconnected-status').show();
+    show_note('disconnected');
     board.showdisabled();
+  },
+
+  waiting:
+  function() {
+    show_note('waiting');
+    board.showdisabled();
+    // also disable other components...
+  },
+
+  start:
+  function() {
+    show_note('start');
+    board.restart();
+    // also enable other components...
+  },
+
+  busy:
+  function() {
+    show_note('busy');
+    board.showdisabled();
+    // also disable other components...
+  },
+
+  opponent_disconnected:
+  function() {
+    show_note('opponent-disconnected');
+    board.showdisabled();
+    // also disable other components...
   },
 };
 
@@ -91,6 +147,31 @@ const handlers = {
     // Will need again later...
     // $('#online-indicator').css('color', (msg.online === 0)? '#cccccc' : '#00ff00');
     // $('#online-count').text(' ' + msg.online + ' online');
+
+    // onreceive:online
+    // console.log(msg.online);
+  },
+
+  join:
+  function(msg) {
+    if (msg.status === 'OPEN') {
+      gamestate.player = msg.playing_as;
+      gamestate.turn = 0;
+      room.waiting(); // wait for the game-start message
+    }
+    else {
+      room.busy(); // nobody to play with...
+    }
+  },
+
+  start:
+  function(msg) {
+    room.start();
+  },
+
+  'opponent-disconnected':
+  function(msg) {
+    room.opponent_disconnected();
   },
 
   reveal:
@@ -100,6 +181,10 @@ const handlers = {
       // ... do something here
       // out-of-bounds or game already over
     }
+
+    gamestate.turn = revealed.turn;
+    console.log('new turn: ', revealed.turn);
+
     revealed.show.forEach(function(item) {
       var value = item.value;
       board.setvalue(item.i, item.j, value);
@@ -128,5 +213,14 @@ const handlers = {
 };
 
 function report_click(tiles, i, j) {
-  socket.send( messages.select(i, j) );
+  console.log(gamestate.turn, gamestate.player);
+  // Player out of turn
+  // Do nothing
+  if (gamestate.turn != gamestate.player) {
+    // Do nothing ...
+    console.log('Doing nothing');
+  }
+  else {
+    socket.send( messages.select(i, j) );
+  }
 };

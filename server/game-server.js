@@ -14,7 +14,11 @@ const PING_INTERVAL = 30 * 1000
 const TMP_N = 24;
 const TMP_M = 24;
 const TMP_R = Math.floor((TMP_N + TMP_M) * 2);
-const game = MinesweeperGame(TMP_N, TMP_M, TMP_R);
+var game = MinesweeperGame(TMP_N, TMP_M, TMP_R);
+
+// WebSocket clients
+var PLAYER_A = null;
+var PLAYER_B = null;
 
 
 const server = https.createServer({
@@ -66,10 +70,62 @@ function new_session(ws) {
   });
 
   // Client connection closed
-  ws.on('close', close);
+  ws.on('close', function() {
+    close(ws);
+  });
 
+  if (PLAYER_A === null) {
+    PLAYER_A = ws;
+    ws.send(JSON.stringify({ type: 'join', status: 'OPEN', playing_as: 0 }));
+  }
+  else if (PLAYER_B === null) {
+    PLAYER_B = ws;
+    ws.send(JSON.stringify({ type: 'join', status: 'OPEN', playing_as: 1 }));
+
+    PLAYER_A.send(JSON.stringify({ type: 'start' }));
+    PLAYER_B.send(JSON.stringify({ type: 'start' }));
+  }
+  else {
+    ws.send(JSON.stringify({ type: 'join', status: 'BUSY' }));
+  }
+}
+
+function close(ws) {
+  // On disconnect, 
+  // [1] Client was PLAYING_AS 'A' and waiting for 'B', end game
+  // [1] Client was PLAYING_AS 'A', end game, TELL 'B'
+  // [2] Client was PLAYING_AS 'B', end game, TELL 'A'
+  // [3] Client was not playing, do nothing
+
+  if (ws === PLAYER_A) {
+    PLAYER_A = null;
+    if (PLAYER_B != null) {
+      PLAYER_B.send(JSON.stringify({ type: 'opponent-disconnected' }));
+      // Also kick out the other player
+      PLAYER_B = null;
+    }
+    // Start a new game
+    game = MinesweeperGame(TMP_N, TMP_M, TMP_R);
+  }
+  else if (ws === PLAYER_B) {
+    PLAYER_B = null;
+    if (PLAYER_A != null) {
+      PLAYER_A.send(JSON.stringify({ type: 'opponent-disconnected' }));
+      // Also kick out the other player
+      PLAYER_A = null;
+    }
+    // Start a new game
+    game = MinesweeperGame(TMP_N, TMP_M, TMP_R);
+  }
+  else {
+    // notify a waiting player
+    // or broadcast to all waiting players
+  }
+
+  clearInterval(ping_interval);
+  console.log('server stopped hearing from client');
   // Will need again later...
-  broadcast_online_count();
+  // broadcast_online_count();
 }
 
 function broadcast_online_count() {
@@ -89,6 +145,12 @@ function broadcast(msg) {
 }
 
 function receive(socket, msg) {
+  // Ignore requests from non-players
+  if (socket != PLAYER_A && socket != PLAYER_B) {
+    console.log('Request from non-player: ', JSON.stringify(msg));
+    return;
+  }
+
   console.log(JSON.stringify(msg));
   switch (msg.type) {
     case 'select': console.log('select'); handlers.select(socket, msg); break;
@@ -99,17 +161,23 @@ function receive(socket, msg) {
 const handlers = {
   'select':
   function(socket, msg) {
-    console.log('received a select request');
-    var response = game.select(msg.i, msg.j);
-    response.type = 'reveal';
-    //socket.send(JSON.stringify(response));
-    broadcast(response);
+    const gamestate = game.getstate();
+
+    const A_selects = (socket === PLAYER_A && gamestate.turn === 0);
+    const B_selects = (socket === PLAYER_B && gamestate.turn === 1);
+
+    if (A_selects || B_selects) {
+      var response = game.select(msg.i, msg.j);
+      response.type = 'reveal';
+      PLAYER_A.send( JSON.stringify(response) );
+      PLAYER_B.send( JSON.stringify(response) );
+    }
+    else {
+      // Player selects out of turn
+      // Do nothing
+      // Client should avoid this situation
+      console.log('Player selects out of turn');
+    }
   },
 };
 
-function close() {
-  clearInterval(ping_interval);
-  console.log('server stopped hearing from client');
-  // Will need again later...
-  broadcast_online_count();
-}
