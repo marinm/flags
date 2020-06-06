@@ -189,6 +189,13 @@ const handlers = {
       var value = item.value;
       board.setvalue(item.i, item.j, value);
 
+      if (PLAYER_FLAGS.includes(item.value)) {
+        playsound('ding');
+      }
+      else {
+        playsound('dop');
+      }
+      
       $('#player-0-score').text(revealed.score[0]);
       $('#player-1-score').text(revealed.score[1]);
 
@@ -213,14 +220,24 @@ const handlers = {
 };
 
 function report_click(tiles, i, j) {
-  console.log(gamestate.turn, gamestate.player);
-  // Player out of turn
-  // Do nothing
   if (gamestate.turn != gamestate.player) {
+    // Player out of turn
     // Do nothing ...
-    console.log('Doing nothing');
   }
   else {
     socket.send( messages.select(i, j) );
   }
 };
+
+const sounds = {
+  'dop' : $('#dop-sound').get()[0],
+  'ding' : $('#ding-sound').get()[0],
+}
+
+function playsound(name) {
+  const sound = sounds[name];
+  if (!sound) {
+    return;
+  }
+  sound.play();
+}
