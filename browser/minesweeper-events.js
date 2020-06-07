@@ -11,6 +11,7 @@ const PLAYER_FLAGS = ['A', 'B'];
 const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
 
 var gamestate = { player: null, turn: null };
+var play_sounds = false;
 
 function wss_connect(address) {
   try {
@@ -235,9 +236,18 @@ const sounds = {
 }
 
 function playsound(name) {
+  if (!play_sounds) {
+    return;
+  }
   const sound = sounds[name];
   if (!sound) {
     return;
   }
   sound.play();
 }
+
+$('#sounds-button').click(function() {
+  play_sounds = !play_sounds;
+  const src = (play_sounds)? 'volume-2.svg' : 'volume-x.svg';
+  $('#sounds-icon').attr('src', src);
+});
