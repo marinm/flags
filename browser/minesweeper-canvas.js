@@ -51,6 +51,8 @@ function CanvasTiles(N, M, W, H, onclick) {
 
   const canvas = document.createElement('canvas');
 
+  canvas.innerHTML = "Your browser does not support HTML5 canvas";
+
   canvas.setAttribute('width', M * W);
   canvas.setAttribute('height', N * H);
 
