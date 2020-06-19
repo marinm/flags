@@ -184,7 +184,6 @@ const handlers = {
     }
 
     gamestate.turn = revealed.turn;
-    console.log('new turn: ', revealed.turn);
 
     revealed.show.forEach(function(item) {
       var value = item.value;
