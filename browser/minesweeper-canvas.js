@@ -4,6 +4,7 @@
 const CHECKER_DARK = '#f9f9f9';
 const CHECKER_LIGHT = '#ffffff';
 const DISABLED_HUE = 'rgba(200, 200, 200, 0.5)';
+const OUTLINE_COLR = '#ffa500';
 
 // Flag icon made by Freepik from www.flaticon.com
 // https://www.flaticon.com/free-icon/flag_94182
@@ -73,44 +74,72 @@ function CanvasTiles(N, M, W, H, onclick) {
   }
 
   forEachTile(function(i, j) {
+    const x = j * W;
+    const y = i * H;
+
+    var layers = new Array();
+
+    function stackdraw(name, f) {
+      return function(args) {
+        layers.push({name, f, args});
+        f(args);
+      }
+    }
+
+    function redraw() {
+      layers.forEach(function(item) {
+        item.f(item.args);
+      });
+    }
+
+    function eraselayer(name) {
+      layers = layers.filter((item) => item.name != name);
+      redraw();
+    }
+
     tiles[i * M + j] = {
       fill:
-      function(colour) {
-        surface.fillStyle = colour;
-        const x = j * W;
-        const y = i * H;
+      stackdraw('fill', function(args) {
+        surface.fillStyle = args.colour;
         surface.fillRect(x, y, W, H);
-      },
+      }),
+
+      outline:
+      stackdraw('outline', function(args) {
+        surface.strokeStyle = args.colour;
+        surface.lineWidth = 2;
+        surface.strokeRect(x + 1, y + 1, W - 2, H - 2)
+      }),
 
       text:
-      function(str, colour) {
-        const tile_x = j * W;
-        const tile_y = i * H;
+      stackdraw('text', function(args) {
         const font_size = Math.floor(0.7 * W);
     
-        surface.fillStyle = colour;
+        surface.fillStyle = args.colour;
         surface.font = 'bold ' + font_size + 'px arial';
         surface.textBaseline = 'top';
-        const metrics = surface.measureText(str);
+        const metrics = surface.measureText(args.str);
         const ch_width = metrics.width;
         const ch_height = metrics.actualBoundingBoxDescent;
     
-        const text_x = tile_x + (0.5 * (W - ch_width));
-        const text_y = tile_y + (0.5 * (H - ch_height));
-        surface.fillText(str, text_x, text_y);
-      },
+        const text_x = x + (0.5 * (W - ch_width));
+        const text_y = y + (0.5 * (H - ch_height));
+        surface.fillText(args.str, text_x, text_y);
+      }),
 
-      renderimage(src) {
+      renderimage:
+      stackdraw('renderimage', function(args) {
         var img = new Image();
         img.onload = function() {
-          const tile_x = j * W;
-          const tile_y = i * H;
-          const img_x = tile_x + (0.5 * (W - img.width));
-          const img_y = tile_y + (0.5 * (H - img.height));
+          const img_x = x + (0.5 * (W - img.width));
+          const img_y = y + (0.5 * (H - img.height));
           surface.drawImage(img, img_x, img_y);
         }
-        img.src = src;
-      }
+        img.src = args.src;
+      }),
+
+      erase:
+      eraselayer,
     };
   });
 
@@ -150,10 +179,12 @@ function MinesweeperBoard(N, M, S, onclick) {
       const ee = (i % 2 === 0) && (j % 2 === 0); // even/even
       const oo = (i % 2 === 1) && (j % 2 === 1); // odd/odd
       const colour = (ee || oo)? CHECKER_DARK : CHECKER_LIGHT;
-      board.tile(i, j).fill(colour);
+      board.tile(i, j).fill({colour});
     });
     board.enable();
   }
+
+  var lastclick = {i: 0, j: 0};
 
   board.setvalue = function(i, j, value) {
     var colour = null;
@@ -170,11 +201,18 @@ function MinesweeperBoard(N, M, S, onclick) {
       default: colour = '#ff0000';  break;
     }
 
+    const str = value;
+
     switch (value) {
-      case 'A':  board.tile(i,j).renderimage(PLAYER_FLAGS_IMG[0]); break;
-      case 'B':  board.tile(i,j).renderimage(PLAYER_FLAGS_IMG[1]); break;
-      default:   board.tile(i,j).text(value, colour);
+      case 'A':  board.tile(i,j).renderimage({src: PLAYER_FLAGS_IMG[0]}); break;
+      case 'B':  board.tile(i,j).renderimage({src: PLAYER_FLAGS_IMG[1]}); break;
+      default:   board.tile(i,j).text({str, colour});
     }
+
+    board.tile(lastclick.i, lastclick.j).erase('outline');
+    board.tile(i, j).outline({colour: OUTLINE_COLR});
+    lastclick.i = i;
+    lastclick.j = j;
   };
 
   // Prevent click callback
