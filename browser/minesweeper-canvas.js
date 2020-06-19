@@ -4,6 +4,7 @@
 const CHECKER_DARK = '#f9f9f9';
 const CHECKER_LIGHT = '#ffffff';
 const DISABLED_HUE = 'rgba(200, 200, 200, 0.5)';
+const OUTLINE_COLR = '#ffa500';
 
 // Flag icon made by Freepik from www.flaticon.com
 // https://www.flaticon.com/free-icon/flag_94182
@@ -44,6 +45,7 @@ const PLAYER_FLAGS_IMG = ['player_flag_0.svg', 'player_flag_1.svg'];
 //         }
 //     </script>
 
+
 // Assume arguments make sense.
 // No safety checks.
 function CanvasTiles(N, M, W, H, onclick) {
@@ -59,6 +61,12 @@ function CanvasTiles(N, M, W, H, onclick) {
   const surface = canvas.getContext('2d');
   var disabled = false;
 
+  const tiles = new Array(N * M);
+
+  function tile(i, j) {
+    return tiles[i * M + j];
+  }
+
   function forEachTile(action) {
     for (var i = 0; i < N; i++) {
       for (var j = 0; j < M; j++) {
@@ -67,41 +75,75 @@ function CanvasTiles(N, M, W, H, onclick) {
     }
   }
 
-  function fill(i, j, colour) {
-    surface.fillStyle = colour;
+  forEachTile(function(i, j) {
     const x = j * W;
     const y = i * H;
-    surface.fillRect(x, y, W, H);
-  }
 
-  function text(i, j, str, colour) {
-    const tile_x = j * W;
-    const tile_y = i * H;
-    const font_size = Math.floor(0.7 * W);
+    var layers = new Array();
 
-    surface.fillStyle = colour;
-    surface.font = 'bold ' + font_size + 'px arial';
-    surface.textBaseline = 'top';
-    const metrics = surface.measureText(str);
-    const ch_width = metrics.width;
-    const ch_height = metrics.actualBoundingBoxDescent;
-
-    const text_x = tile_x + (0.5 * (W - ch_width));
-    const text_y = tile_y + (0.5 * (H - ch_height));
-    surface.fillText(str, text_x, text_y);
-  }
-
-  function renderimage(i, j, src) {
-    var img = new Image();
-    img.onload = function() {
-      const tile_x = j * W;
-      const tile_y = i * H;
-      const img_x = tile_x + (0.5 * (W - img.width));
-      const img_y = tile_y + (0.5 * (H - img.height));
-      surface.drawImage(img, img_x, img_y);
+    function stackdraw(name, f) {
+      return function(args) {
+        layers.push({name, f, args});
+        f(args);
+      }
     }
-    img.src = src;
-  }
+
+    function redraw() {
+      layers.forEach(function(item) {
+        item.f(item.args);
+      });
+    }
+
+    function eraselayer(name) {
+      layers = layers.filter((item) => item.name != name);
+      redraw();
+    }
+
+    tiles[i * M + j] = {
+      fill:
+      stackdraw('fill', function(args) {
+        surface.fillStyle = args.colour;
+        surface.fillRect(x, y, W, H);
+      }),
+
+      outline:
+      stackdraw('outline', function(args) {
+        surface.strokeStyle = args.colour;
+        surface.lineWidth = 2;
+        surface.strokeRect(x + 1, y + 1, W - 2, H - 2)
+      }),
+
+      text:
+      stackdraw('text', function(args) {
+        const font_size = Math.floor(0.7 * W);
+    
+        surface.fillStyle = args.colour;
+        surface.font = 'bold ' + font_size + 'px arial';
+        surface.textBaseline = 'top';
+        const metrics = surface.measureText(args.str);
+        const ch_width = metrics.width;
+        const ch_height = metrics.actualBoundingBoxDescent;
+    
+        const text_x = x + (0.5 * (W - ch_width));
+        const text_y = y + (0.5 * (H - ch_height));
+        surface.fillText(args.str, text_x, text_y);
+      }),
+
+      renderimage:
+      stackdraw('renderimage', function(args) {
+        var img = new Image();
+        img.onload = function() {
+          const img_x = x + (0.5 * (W - img.width));
+          const img_y = y + (0.5 * (H - img.height));
+          surface.drawImage(img, img_x, img_y);
+        }
+        img.src = args.src;
+      }),
+
+      erase:
+      eraselayer,
+    };
+  });
 
   function disable() {
     disabled = true;
@@ -110,7 +152,7 @@ function CanvasTiles(N, M, W, H, onclick) {
     disabled = false;
   }
 
-  const interface = { canvas, surface, N, M, W, H, forEachTile, fill, text, disable, enable, renderimage };
+  const interface = { canvas, surface, N, M, W, H, tile, forEachTile, disable, enable };
 
   canvas.addEventListener('click', function(event) {
     if (!disabled) {
@@ -139,10 +181,12 @@ function MinesweeperBoard(N, M, S, onclick) {
       const ee = (i % 2 === 0) && (j % 2 === 0); // even/even
       const oo = (i % 2 === 1) && (j % 2 === 1); // odd/odd
       const colour = (ee || oo)? CHECKER_DARK : CHECKER_LIGHT;
-      board.fill(i, j, colour);
+      board.tile(i, j).fill({colour});
     });
     board.enable();
   }
+
+  var lastclick = {i: 0, j: 0};
 
   board.setvalue = function(i, j, value) {
     var colour = null;
@@ -159,11 +203,18 @@ function MinesweeperBoard(N, M, S, onclick) {
       default: colour = '#ff0000';  break;
     }
 
+    const str = value;
+
     switch (value) {
-      case 'A':  board.renderimage(i, j, PLAYER_FLAGS_IMG[0]); break;
-      case 'B':  board.renderimage(i, j, PLAYER_FLAGS_IMG[1]); break;
-      default:   board.text(i, j, value, colour);
+      case 'A':  board.tile(i,j).renderimage({src: PLAYER_FLAGS_IMG[0]}); break;
+      case 'B':  board.tile(i,j).renderimage({src: PLAYER_FLAGS_IMG[1]}); break;
+      default:   board.tile(i,j).text({str, colour});
     }
+
+    board.tile(lastclick.i, lastclick.j).erase('outline');
+    board.tile(i, j).outline({colour: OUTLINE_COLR});
+    lastclick.i = i;
+    lastclick.j = j;
   };
 
   // Prevent click callback
