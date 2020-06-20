@@ -169,6 +169,7 @@ const handlers = {
     if (A_selects || B_selects) {
       var response = game.select(msg.i, msg.j);
       response.type = 'reveal';
+      response.for = {i: msg.i, j: msg.j};
       PLAYER_A.send( JSON.stringify(response) );
       PLAYER_B.send( JSON.stringify(response) );
     }

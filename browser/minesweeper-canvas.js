@@ -186,8 +186,6 @@ function MinesweeperBoard(N, M, S, onclick) {
     board.enable();
   }
 
-  var lastclick = {i: 0, j: 0};
-
   board.setvalue = function(i, j, value) {
     var colour = null;
     switch (value) {
@@ -210,11 +208,15 @@ function MinesweeperBoard(N, M, S, onclick) {
       case 'B':  board.tile(i,j).renderimage({src: PLAYER_FLAGS_IMG[1]}); break;
       default:   board.tile(i,j).text({str, colour});
     }
+  };
 
-    board.tile(lastclick.i, lastclick.j).erase('outline');
+  const lastselect = {i: 0, j: 0};
+
+  board.select = function(i, j) {
+    board.tile(lastselect.i, lastselect.j).erase('outline');
     board.tile(i, j).outline({colour: OUTLINE_COLR});
-    lastclick.i = i;
-    lastclick.j = j;
+    lastselect.i = i;
+    lastselect.j = j;
   };
 
   // Prevent click callback
