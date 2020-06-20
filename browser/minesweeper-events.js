@@ -186,6 +186,9 @@ const handlers = {
     gamestate.turn = revealed.turn;
     console.log('new turn: ', revealed.turn);
 
+    const selected = msg.for;
+    board.select(selected.i, selected.j);
+
     revealed.show.forEach(function(item) {
       var value = item.value;
       board.setvalue(item.i, item.j, value);
@@ -227,6 +230,8 @@ function report_click(tiles, i, j) {
   }
   else {
     socket.send( messages.select(i, j) );
+
+    // A clicked tile is not displayed as selected until the server confirms the selection
   }
 };
 
