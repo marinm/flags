@@ -11,7 +11,6 @@ const PLAYER_FLAGS = ['A', 'B'];
 const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
 
 var gamestate = { player: null, turn: null };
-var play_sounds = false;
 
 function wss_connect(address) {
   try {
@@ -196,13 +195,6 @@ const handlers = {
       var value = item.value;
       board.setvalue(item.i, item.j, value);
 
-      if (PLAYER_FLAGS.includes(item.value)) {
-        playsound('ding');
-      }
-      else {
-        playsound('dop');
-      }
-
       $('#player-0-score').text(revealed.score[0]);
       $('#player-1-score').text(revealed.score[1]);
 
@@ -243,25 +235,3 @@ function report_click(tiles, i, j) {
     // A clicked tile is not displayed as selected until the server confirms the selection
   }
 };
-
-const sounds = {
-  'dop' : $('#dop-sound').get()[0],
-  'ding' : $('#ding-sound').get()[0],
-}
-
-function playsound(name) {
-  if (!play_sounds) {
-    return;
-  }
-  const sound = sounds[name];
-  if (!sound) {
-    return;
-  }
-  sound.play();
-}
-
-$('#sounds-button').click(function() {
-  play_sounds = !play_sounds;
-  const src = (play_sounds)? 'volume-2.svg' : 'volume-x.svg';
-  $('#sounds-icon').attr('src', src);
-});

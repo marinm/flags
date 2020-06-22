@@ -2,9 +2,6 @@
   <head>
     <title>Minesweeper</title>
     <style type="text/css">
-    audio {
-      display: none;
-    }
     #container {
       width: max-content;
       margin: 20px auto 0 auto;
@@ -114,12 +111,6 @@
       background-color: yellowgreen;
       border: 1px solid seagreen;
     }
-    #sounds-button {
-      border: none;
-      outline: none;
-      float: right;
-      padding: 10px;
-    }
     </style>
   </head>
   <body>
@@ -142,14 +133,8 @@
         <div class="score-box" id="player-1-score-box">
           <img src="player_flag_1.svg"> <div id="player-1-score">&nbsp;0</div> <span class="remaining">0</span>
         </div>
-
-        <!-- https://www.flaticon.com/authors/freepik -->
-        <button id="sounds-button"><img src="volume-x.svg" id="sounds-icon"></button>
       </div>
     </div>
-
-    <audio preload="auto" controls="none" src="collect-coin.wav" id="ding-sound"></audio>
-    <audio preload="auto" controls="none" src="dop.wav" id="dop-sound"></audio>
 
     <script type="text/javascript" src="jquery.js"></script>
     <script type="text/javascript" src="minesweeper-canvas.js"></script>
