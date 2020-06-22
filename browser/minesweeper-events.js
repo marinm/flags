@@ -233,6 +233,10 @@ function report_click(tiles, i, j) {
     // Player out of turn
     // Do nothing ...
   }
+  else if (board.tile(i,j).hidden === false) {
+    // Clicked on already revealed tile
+    // Do nothing ...
+  }
   else {
     socket.send( messages.select(i, j) );
 
