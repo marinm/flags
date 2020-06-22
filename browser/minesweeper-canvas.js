@@ -100,6 +100,8 @@ function CanvasTiles(N, M, W, H, onclick) {
     }
 
     tiles[i * M + j] = {
+      hidden: true,
+      value: null,
       fill:
       stackdraw('fill', function(args) {
         surface.fillStyle = args.colour;
@@ -202,6 +204,9 @@ function MinesweeperBoard(N, M, S, onclick) {
     }
 
     const str = value;
+
+    board.tile(i,j).hidden = false;
+    board.tile(i,j).value = value;
 
     switch (value) {
       case 'A':  board.tile(i,j).renderimage({src: PLAYER_FLAGS_IMG[0]}); break;
