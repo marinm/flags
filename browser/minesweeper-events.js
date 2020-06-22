@@ -87,6 +87,10 @@ const notes = {
   'opponent-disconnected': {
     class: 'opponent-disconnected-status',
     text:  'Your opponent disconnected.'
+  },
+  'winner': {
+    class: 'winner-status',
+    text:  'Game over!'
   }
 }
 
@@ -198,7 +202,7 @@ const handlers = {
       else {
         playsound('dop');
       }
-      
+
       $('#player-0-score').text(revealed.score[0]);
       $('#player-1-score').text(revealed.score[1]);
 
@@ -217,6 +221,8 @@ const handlers = {
                          ? $('#player-0-score-box')
                          : $('#player-1-score-box');
         player_box.toggleClass('active-turn score-box-winner');
+        show_note('winner');
+        board.showdisabled();
       }
     });
   },
