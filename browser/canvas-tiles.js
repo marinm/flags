@@ -1,31 +1,3 @@
-// Canvas drawing
-// Model-[View]-Controller
-
-// Flag icon made by Freepik from www.flaticon.com
-// https://www.flaticon.com/free-icon/flag_94182
-
-const DISABLED_HUE = 'rgba(200, 200, 200, 0.5)';
-
-const TILESHEET = {
-  img: new Image(),
-  tiles: {
-    'CHECKER-DARK':   [2,1],
-    'CHECKER-LIGHT':  [2,0],
-    'OUTLINE':        [2,2],
-    'A':              [1,0],
-    'B':              [1,1],
-    '0':              [0,0],
-    '1':              [0,1],
-    '2':              [0,2],
-    '3':              [0,3],
-    '4':              [0,4],
-    '5':              [0,5],
-    '6':              [0,6],
-    '7':              [0,7],
-    '8':              [0,8],
-  }
-};
-
 // Turn a <canvas> into a tiled N-by-M board.
 // In fancier terms, partitions the coordinate system.
 //
@@ -62,7 +34,7 @@ const TILESHEET = {
 
 // Assume arguments make sense.
 // No safety checks.
-function CanvasTiles(N, M, W, H, sheet, onclick) {
+function CanvasTiles(N, M, W, H, onclick) {
   // W,H are tile width,height
 
   const canvas = document.createElement('canvas');
@@ -95,16 +67,13 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
 
     var layers = new Array();
 
-    function render(tilename) {
-      const tile = sheet.tiles[tilename];
-      const sx = tile[1] * W;
-      const sy = tile[0] * H;
-      surface.drawImage(sheet.img, sx, sy, W, H, x, y, W, H);
+    function render(img) {
+      surface.drawImage(img, x, y);
     }
 
     function redraw() {
       layers.forEach(function(item) {
-        render(item.tilename);
+        render(item.src);
       });
     }
 
@@ -113,9 +82,9 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
       value: null,
 
       draw:
-      function(name, tilename) {
-        layers.push({name, tilename});
-        render(tilename);
+      function(name, src) {
+        layers.push({name, src});
+        render(src);
       },
 
       erase:
@@ -144,62 +113,4 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
   });
 
   return interface;
-}
-
-
-//
-// MinesweeperBoard
-// Interface for drawing numbers and flags on the tiled canvas
-function MinesweeperBoard(N, M, S, sheet, onclick) {
-
-  // The view
-  const board = new CanvasTiles(N, M, S, S, sheet, onclick);
-
-  board.restart = function() {
-    // Checkerboard pattern
-    board.forEachTile(function(i,j) {
-      // odd row & odd col  or  even row & even col
-      const ee = (i % 2 === 0) && (j % 2 === 0); // even/even
-      const oo = (i % 2 === 1) && (j % 2 === 1); // odd/odd
-      const tilename = (ee || oo)? 'CHECKER-DARK' : 'CHECKER-LIGHT';
-      board.tile(i, j).draw('checker', tilename);
-    });
-    board.enable();
-  }
-
-  board.setvalue = function(i, j, value) {
-
-    board.tile(i,j).hidden = false;
-    board.tile(i,j).value = value;
-
-    // Assume valid value
-    board.tile(i,j).draw('value', String(value));
-  };
-
-  const lastselect = {i: 0, j: 0};
-
-  board.select = function(i, j) {
-    board.tile(lastselect.i, lastselect.j).erase('outline');
-    board.tile(i, j).draw('outline', 'OUTLINE');
-    lastselect.i = i;
-    lastselect.j = j;
-  };
-
-  // Prevent click callback
-  board.showdisabled = function() {
-    board.disable();
-
-    // Draw hue layer
-    board.surface.fillStyle = DISABLED_HUE;
-    board.surface.fillRect(0, 0, board.M * board.W, board.N * board.H);
-  };
-
-  // Load the tilesheet...
-  sheet.img.onload = function() {
-    // Start with a fresh board
-    board.restart();
-  }
-  sheet.img.src = 'tile-sheet.png'
-
-  return board;
 }
