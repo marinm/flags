@@ -131,6 +131,7 @@ const room = {
   function() {
     show_note('opponent-disconnected');
     board.showdisabled();
+    $('#turn-score-container').addClass('not-playing');
     // also disable other components...
   },
 };
