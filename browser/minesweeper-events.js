@@ -195,10 +195,17 @@ const handlers = {
     revealed.show.forEach(function(item) {
       var value = item.value;
       board.setvalue(item.i, item.j, value);
+    });
 
-      $('#player-0-score').text(revealed.score[0]);
-      $('#player-1-score').text(revealed.score[1]);
+    const selected = msg.for;
+    board.select(selected.i, selected.j);
 
+    $('#player-0-score').text(revealed.score[0]);
+    $('#player-1-score').text(revealed.score[1]);
+
+    // The game is still on
+    if (revealed.on) {
+      // Change turn
       if (revealed.turn === 0) {
         $('#player-0-score-box').addClass('active-turn');
         $('#player-1-score-box').removeClass('active-turn');
@@ -207,20 +214,16 @@ const handlers = {
         $('#player-0-score-box').removeClass('active-turn');
         $('#player-1-score-box').addClass('active-turn');
       }
-
-      // Game is over
-      if (!revealed.on) {
-        const player_box = (revealed.turn === 0)
-                         ? $('#player-0-score-box')
-                         : $('#player-1-score-box');
-        player_box.toggleClass('active-turn score-box-winner');
-        show_note('winner');
-        board.showdisabled();
-      }
-    });
-
-    const selected = msg.for;
-    board.select(selected.i, selected.j);
+    }
+    // Game is over
+    else {
+      const player_box = (revealed.turn === 0)
+                        ? $('#player-0-score-box')
+                        : $('#player-1-score-box');
+      player_box.toggleClass('active-turn score-box-winner');
+      show_note('winner');
+      board.showdisabled();
+    }
   },
 };
 
