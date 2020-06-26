@@ -200,32 +200,49 @@ const handlers = {
     const selected = msg.for;
     board.select(selected.i, selected.j);
 
-    $('#player-0-score').text(revealed.score[0]);
-    $('#player-1-score').text(revealed.score[1]);
+    showscores(revealed.score);
 
     // The game is still on
     if (revealed.on) {
-      // Change turn
-      if (revealed.turn === 0) {
-        $('#player-0-score-box').addClass('active-turn');
-        $('#player-1-score-box').removeClass('active-turn');
-      }
-      else {
-        $('#player-0-score-box').removeClass('active-turn');
-        $('#player-1-score-box').addClass('active-turn');
-      }
+      showturn(revealed.turn);
     }
     // Game is over
     else {
-      const player_box = (revealed.turn === 0)
-                        ? $('#player-0-score-box')
-                        : $('#player-1-score-box');
-      player_box.toggleClass('active-turn score-box-winner');
-      show_note('winner');
-      board.showdisabled();
+      showwinner(revealed.turn);
     }
   },
 };
+
+function showscores(scores) {
+  $('#player-0-score').text(scores[0]);
+  $('#player-1-score').text(scores[1]);
+}
+
+// Show whose turn it is in the score box
+function showturn(player) {
+  if (player === 0) {
+    $('#player-0-score-box').addClass('active-turn');
+    $('#player-1-score-box').removeClass('active-turn');
+  }
+  else {
+    $('#player-0-score-box').removeClass('active-turn');
+    $('#player-1-score-box').addClass('active-turn');
+  }
+}
+
+// Show that the game is over and highlight who won the game
+function showwinner(player) {
+  // Highlight winner in the score box
+  const player_box = (player === 0)
+      ? $('#player-0-score-box')
+      : $('#player-1-score-box');
+  player_box.toggleClass('active-turn score-box-winner');
+
+  showwinner(player);
+  show_note('winner');
+  board.showdisabled();
+}
+
 
 function report_click(tiles, i, j) {
   if (gamestate.turn != gamestate.player) {
