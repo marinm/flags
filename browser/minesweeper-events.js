@@ -192,9 +192,6 @@ const handlers = {
 
     gamestate.turn = revealed.turn;
 
-    const selected = msg.for;
-    board.select(selected.i, selected.j);
-
     revealed.show.forEach(function(item) {
       var value = item.value;
       board.setvalue(item.i, item.j, value);
@@ -221,6 +218,9 @@ const handlers = {
         board.showdisabled();
       }
     });
+
+    const selected = msg.for;
+    board.select(selected.i, selected.j);
   },
 };
 
