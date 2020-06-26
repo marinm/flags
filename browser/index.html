@@ -47,12 +47,22 @@
     }
     #turn-score-container {
       text-align: center;
-      margin-top: 20px;
+      margin: 20px auto 0 auto;
+      display: block;
+      width: max-content;
+      overflow: hidden;
+      border: 1px solid black;
+      border-radius: 0px;
+      /*box-shadow: 3px 3px 0 0 #666666;*/
+    }
+    .not-playing .score-box {
+      background-color: #dddddd;
+      color: #cccccc;
     }
     .score-box {
       display: inline-block;
-      padding: 10px;
-      width: 5em;
+      padding: 5px;
+      width: 4em;
       font-family: arial;
       font-size: 12pt;
       font-weight: bold;
@@ -60,10 +70,15 @@
     }
     .active-turn {
       background-color: #fefce7;
-      border-bottom: 3px solid blue;
     }
     img {
       display: inline;
+    }
+    #player-0-score-box {
+      border-bottom: 4px solid #2a7fff;
+    }
+    #player-1-score-box {
+      border-bottom: 4px solid #d40000;
     }
     #player-0-score, #player-1-score {
       display: inline-block;
@@ -126,12 +141,12 @@
       <div id="room-buttons"></div>
       <div id="note-box">Welcome to Minesweeper</div>
       <div id="board-container"></div>
-      <div id="turn-score-container">
-        <div class="score-box active-turn" id="player-0-score-box">
-          A <div id="player-0-score">&nbsp;0</div> <span class="remaining">0</span>
-        </div>
-        <div class="score-box" id="player-1-score-box">
-          B <div id="player-1-score">&nbsp;0</div> <span class="remaining">0</span>
+      <div id="turn-score-container" class="not-playing">
+        <div class="score-box" id="player-0-score-box">
+          <div id="player-0-score">0</div> <span class="remaining">0</span>
+        </div><!--
+      --><div class="score-box" id="player-1-score-box">
+          <div id="player-1-score">0</div> <span class="remaining">0</span>
         </div>
       </div>
     </div>
