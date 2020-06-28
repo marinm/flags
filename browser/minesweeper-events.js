@@ -291,22 +291,8 @@ function solver_flaghere() {
     if (board.tile(i,j).hidden || ![1,2,3,4,5,6,7,8].includes(board.tile(i,j).value))
       return;
 
-    //  Top/Centre/Bottom - Left/Centre/Right
-    //
-    //    T      TL TC TR
-    //  L C R    CL CC CR
-    //    B      BL BC BR
-
-    const TL = board.tile(i - 1, j - 1);
-    const TC = board.tile(i - 1, j - 0);
-    const TR = board.tile(i - 1, j + 1);
-    const CL = board.tile(i - 0, j - 1);
-    const CR = board.tile(i - 0, j + 1);
-    const BL = board.tile(i + 1, j - 1);
-    const BC = board.tile(i + 1, j - 0);
-    const BR = board.tile(i + 1, j + 1);
-
-    const adjacent = [TL, TC, TR, CL, CR, BL, BC, BR];
+    // Array of adjacent tiles
+    const adjacent = board.tile(i,j).adjacent();
 
     // Return 1 if this tile is a revealed flag, 0 otherwise
     function isflag(tile) {
@@ -335,14 +321,7 @@ function solver_flaghere() {
 
     // Same number of unrevealed + noflag tiles as remaining flags
     if (remainingflags > 0 && remainingflags === adjacenthidden) {
-      highlight(TL);
-      highlight(TC);
-      highlight(TR);
-      highlight(CL);
-      highlight(CR);
-      highlight(BL);
-      highlight(BC);
-      highlight(BR);
+      adjacent.forEach(highlight);
     }
   });
 
@@ -360,22 +339,8 @@ function solver_noflag() {
     if (board.tile(i,j).hidden || ![1,2,3,4,5,6,7,8].includes(board.tile(i,j).value))
       return;
 
-    //  Top/Centre/Bottom - Left/Centre/Right
-    //
-    //    T      TL TC TR
-    //  L C R    CL CC CR
-    //    B      BL BC BR
-
-    const TL = board.tile(i - 1, j - 1);
-    const TC = board.tile(i - 1, j - 0);
-    const TR = board.tile(i - 1, j + 1);
-    const CL = board.tile(i - 0, j - 1);
-    const CR = board.tile(i - 0, j + 1);
-    const BL = board.tile(i + 1, j - 1);
-    const BC = board.tile(i + 1, j - 0);
-    const BR = board.tile(i + 1, j + 1);
-
-    const adjacent = [TL, TC, TR, CL, CR, BL, BC, BR];
+    // Array of adjacent tiles
+    const adjacent = board.tile(i,j).adjacent();
 
     // Return 1 if this tile is a revealed flag, 0 otherwise
     function isflag(tile) {
@@ -404,14 +369,7 @@ function solver_noflag() {
 
     // Same number of unrevealed + noflag tiles as remaining flags
     if (remainingflags === 0) {
-      crossout(TL);
-      crossout(TC);
-      crossout(TR);
-      crossout(CL);
-      crossout(CR);
-      crossout(BL);
-      crossout(BC);
-      crossout(BR);
+      adjacent.forEach(crossout);
     }
   });
 
