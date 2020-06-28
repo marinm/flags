@@ -205,6 +205,7 @@ const handlers = {
     showscores(revealed.score);
 
     solver_flaghere();
+    solver_noflag();
 
     // The game is still on
     if (revealed.on) {
@@ -327,3 +328,65 @@ function solver_flaghere() {
   });
 }
 
+
+// Find where there cannot be a flag
+function solver_noflag() {
+  board.forEachTile(function(i,j) {
+    // Consider only revealed number tiles
+    if (board.tile(i,j).hidden || ![1,2,3,4,5,6,7,8].includes(board.tile(i,j).value))
+      return;
+
+    //  Top/Centre/Bottom - Left/Centre/Right
+    //
+    //    T      TL TC TR
+    //  L C R    CL CC CR
+    //    B      BL BC BR
+
+    const TL = board.tile(i - 1, j - 1);
+    const TC = board.tile(i - 1, j - 0);
+    const TR = board.tile(i - 1, j + 1);
+    const CL = board.tile(i - 0, j - 1);
+    const CR = board.tile(i - 0, j + 1);
+    const BL = board.tile(i + 1, j - 1);
+    const BC = board.tile(i + 1, j - 0);
+    const BR = board.tile(i + 1, j + 1);
+
+    const adjacent = [TL, TC, TR, CL, CR, BL, BC, BR];
+
+    // Return 1 if this tile is a revealed flag, 0 otherwise
+    function isflag(tile) {
+      return tile && (tile.flaghere || PLAYER_FLAGS.includes(tile.value));
+    }
+
+    // Return 1 if this tile is hidden, 0 otherwise
+    // A flag- or noflag-labelled tile is considered revealed
+    function ishidden(tile) {
+      return tile && tile.hidden && !tile.noflag && !tile.flaghere;
+    }
+
+    function crossout(tile) {
+      if (ishidden(tile)) {
+        tile.noflag = true;
+        tile.draw('noflag', 'NOFLAG');
+      }
+    }
+
+    // A noflag tile never becomes a flaghere tile, and vice versa
+
+    const adjacentflags = adjacent.filter(isflag).length;
+    const remainingflags = board.tile(i,j).value - adjacentflags;
+    const adjacenthidden = adjacent.filter(ishidden).length;
+
+    // Same number of unrevealed + noflag tiles as remaining flags
+    if (remainingflags === 0) {
+      crossout(TL);
+      crossout(TC);
+      crossout(TR);
+      crossout(CL);
+      crossout(CR);
+      crossout(BL);
+      crossout(BC);
+      crossout(BR);
+    }
+  });
+}
