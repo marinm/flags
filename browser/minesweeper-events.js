@@ -281,6 +281,22 @@ function solverscan() {
   }
 }
 
+function isnumbertile(tile) {
+  return tile && !tile.hidden && [1,2,3,4,5,6,7,8].includes(tile.value);
+}
+
+// Return 1 if this tile is a revealed flag, 0 otherwise
+function isflag(tile) {
+  return tile && (tile.flaghere || PLAYER_FLAGS.includes(tile.value));
+}
+
+// Return 1 if this tile is hidden, 0 otherwise
+// A flag- or noflag-labelled tile is considered revealed
+function ishidden(tile) {
+  return tile && tile.hidden && !tile.noflag && !tile.flaghere;
+}
+
+
 // Find where there must be a flag
 function solver_flaghere() {
   // Number of hidden flags found 
@@ -288,22 +304,11 @@ function solver_flaghere() {
 
   board.forEachTile(function(i,j) {
     // Consider only revealed number tiles
-    if (board.tile(i,j).hidden || ![1,2,3,4,5,6,7,8].includes(board.tile(i,j).value))
+    if (!isnumbertile(board.tile(i,j)))
       return;
 
     // Array of adjacent tiles
     const adjacent = board.tile(i,j).adjacent();
-
-    // Return 1 if this tile is a revealed flag, 0 otherwise
-    function isflag(tile) {
-      return tile && (tile.flaghere || PLAYER_FLAGS.includes(tile.value));
-    }
-
-    // Return 1 if this tile is hidden, 0 otherwise
-    // A flag- or noflag-labelled tile is considered revealed
-    function ishidden(tile) {
-      return tile && tile.hidden && !tile.noflag && !tile.flaghere;
-    }
 
     function highlight(tile) {
       if (ishidden(tile)) {
@@ -336,22 +341,11 @@ function solver_noflag() {
 
   board.forEachTile(function(i,j) {
     // Consider only revealed number tiles
-    if (board.tile(i,j).hidden || ![1,2,3,4,5,6,7,8].includes(board.tile(i,j).value))
+    if (!isnumbertile(board.tile(i,j)))
       return;
 
     // Array of adjacent tiles
     const adjacent = board.tile(i,j).adjacent();
-
-    // Return 1 if this tile is a revealed flag, 0 otherwise
-    function isflag(tile) {
-      return tile && (tile.flaghere || PLAYER_FLAGS.includes(tile.value));
-    }
-
-    // Return 1 if this tile is hidden, 0 otherwise
-    // A flag- or noflag-labelled tile is considered revealed
-    function ishidden(tile) {
-      return tile && tile.hidden && !tile.noflag && !tile.flaghere;
-    }
 
     function crossout(tile) {
       if (ishidden(tile)) {
