@@ -204,8 +204,13 @@ const handlers = {
 
     showscores(revealed.score);
 
-    solver_flaghere();
-    solver_noflag();
+    var nfound_flag = 1;
+    var nfound_noflag = 1;
+
+    while (nfound_flag > 0 || nfound_noflag > 0) {
+      nfound_flag = solver_flaghere();
+      nfound_noflag = solver_noflag();
+    }
 
     // The game is still on
     if (revealed.on) {
@@ -268,6 +273,9 @@ function report_click(tiles, i, j) {
 
 // Find where there must be a flag
 function solver_flaghere() {
+  // Number of hidden flags found 
+  var nfound = 0;
+
   board.forEachTile(function(i,j) {
     // Consider only revealed number tiles
     if (board.tile(i,j).hidden || ![1,2,3,4,5,6,7,8].includes(board.tile(i,j).value))
@@ -303,6 +311,7 @@ function solver_flaghere() {
 
     function highlight(tile) {
       if (ishidden(tile)) {
+        nfound++;
         tile.flaghere = true;
         tile.draw('flaghere', 'FLAGHERE');
       }
@@ -326,11 +335,16 @@ function solver_flaghere() {
       highlight(BR);
     }
   });
+
+  return nfound;
 }
 
 
 // Find where there cannot be a flag
 function solver_noflag() {
+  // Number of hidden no-flags found
+  var nfound = 0;
+
   board.forEachTile(function(i,j) {
     // Consider only revealed number tiles
     if (board.tile(i,j).hidden || ![1,2,3,4,5,6,7,8].includes(board.tile(i,j).value))
@@ -366,6 +380,7 @@ function solver_noflag() {
 
     function crossout(tile) {
       if (ishidden(tile)) {
+        nfound++;
         tile.noflag = true;
         tile.draw('noflag', 'NOFLAG');
       }
@@ -389,4 +404,6 @@ function solver_noflag() {
       crossout(BR);
     }
   });
+
+  return nfound;
 }
