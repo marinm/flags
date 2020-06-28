@@ -292,7 +292,7 @@ function isflag(tile) {
 
 // Return 1 if this tile is hidden, 0 otherwise
 // A flag- or noflag-labelled tile is considered revealed
-function ishidden(tile) {
+function isunknown(tile) {
   return tile && tile.hidden && !tile.noflag && !tile.flaghere;
 }
 
@@ -311,7 +311,7 @@ function solver_flaghere() {
     const adjacent = board.tile(i,j).adjacent();
 
     function highlight(tile) {
-      if (ishidden(tile)) {
+      if (isunknown(tile)) {
         nfound++;
         tile.flaghere = true;
         tile.draw('flaghere', 'FLAGHERE');
@@ -322,7 +322,7 @@ function solver_flaghere() {
 
     const adjacentflags = adjacent.filter(isflag).length;
     const remainingflags = board.tile(i,j).value - adjacentflags;
-    const adjacenthidden = adjacent.filter(ishidden).length;
+    const adjacenthidden = adjacent.filter(isunknown).length;
 
     // Same number of unrevealed + noflag tiles as remaining flags
     if (remainingflags > 0 && remainingflags === adjacenthidden) {
@@ -348,7 +348,7 @@ function solver_noflag() {
     const adjacent = board.tile(i,j).adjacent();
 
     function crossout(tile) {
-      if (ishidden(tile)) {
+      if (isunknown(tile)) {
         nfound++;
         tile.noflag = true;
         tile.draw('noflag', 'NOFLAG');
@@ -359,7 +359,7 @@ function solver_noflag() {
 
     const adjacentflags = adjacent.filter(isflag).length;
     const remainingflags = board.tile(i,j).value - adjacentflags;
-    const adjacenthidden = adjacent.filter(ishidden).length;
+    const adjacenthidden = adjacent.filter(isunknown).length;
 
     // Same number of unrevealed + noflag tiles as remaining flags
     if (remainingflags === 0) {
