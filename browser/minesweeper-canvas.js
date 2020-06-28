@@ -23,6 +23,8 @@ const TILESHEET = {
     '6':              [0,6],
     '7':              [0,7],
     '8':              [0,8],
+    'NOFLAG':         [2,3],
+    'FLAGHERE':       [2,4],
   }
 };
 
@@ -78,7 +80,9 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
   const tiles = new Array(N * M);
 
   function tile(i, j) {
-    return tiles[i * M + j];
+    return (i >=0 && j >= 0 && i < N && j < M)
+      ? tiles[i * M + j]
+      : null;
   }
 
   function forEachTile(action) {

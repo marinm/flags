@@ -192,37 +192,61 @@ const handlers = {
 
     gamestate.turn = revealed.turn;
 
-    const selected = msg.for;
-    board.select(selected.i, selected.j);
-
     revealed.show.forEach(function(item) {
       var value = item.value;
       board.setvalue(item.i, item.j, value);
-
-      $('#player-0-score').text(revealed.score[0]);
-      $('#player-1-score').text(revealed.score[1]);
-
-      if (revealed.turn === 0) {
-        $('#player-0-score-box').addClass('active-turn');
-        $('#player-1-score-box').removeClass('active-turn');
-      }
-      else {
-        $('#player-0-score-box').removeClass('active-turn');
-        $('#player-1-score-box').addClass('active-turn');
-      }
-
-      // Game is over
-      if (!revealed.on) {
-        const player_box = (revealed.turn === 0)
-                         ? $('#player-0-score-box')
-                         : $('#player-1-score-box');
-        player_box.toggleClass('active-turn score-box-winner');
-        show_note('winner');
-        board.showdisabled();
-      }
+      board.tile(item.i, item.j).erase('noflag');
+      board.tile(item.i, item.j).erase('flaghere');
     });
+
+    const selected = msg.for;
+    board.select(selected.i, selected.j);
+
+    showscores(revealed.score);
+
+    solver_noflag();
+
+    // The game is still on
+    if (revealed.on) {
+      showturn(revealed.turn);
+    }
+    // Game is over
+    else {
+      showwinner(revealed.turn);
+    }
   },
 };
+
+function showscores(scores) {
+  $('#player-0-score').text(scores[0]);
+  $('#player-1-score').text(scores[1]);
+}
+
+// Show whose turn it is in the score box
+function showturn(player) {
+  if (player === 0) {
+    $('#player-0-score-box').addClass('active-turn');
+    $('#player-1-score-box').removeClass('active-turn');
+  }
+  else {
+    $('#player-0-score-box').removeClass('active-turn');
+    $('#player-1-score-box').addClass('active-turn');
+  }
+}
+
+// Show that the game is over and highlight who won the game
+function showwinner(player) {
+  // Highlight winner in the score box
+  const player_box = (player === 0)
+      ? $('#player-0-score-box')
+      : $('#player-1-score-box');
+  player_box.toggleClass('active-turn score-box-winner');
+
+  showwinner(player);
+  show_note('winner');
+  board.showdisabled();
+}
+
 
 function report_click(tiles, i, j) {
   if (gamestate.turn != gamestate.player) {
@@ -239,3 +263,66 @@ function report_click(tiles, i, j) {
     // A clicked tile is not displayed as selected until the server confirms the selection
   }
 };
+
+
+// Find where there is no flag
+function solver_noflag() {
+  board.forEachTile(function(i,j) {
+    // Consider only revealed number tiles
+    if (board.tile(i,j).hidden || ![1,2,3,4,5,6,7,8].includes(board.tile(i,j).value))
+      return;
+
+    //  Top/Centre/Bottom - Left/Centre/Right
+    //
+    //    T      TL TC TR
+    //  L C R    CL CC CR
+    //    B      BL BC BR
+
+    const TL = board.tile(i - 1, j - 1);
+    const TC = board.tile(i - 1, j - 0);
+    const TR = board.tile(i - 1, j + 1);
+    const CL = board.tile(i - 0, j - 1);
+    const CR = board.tile(i - 0, j + 1);
+    const BL = board.tile(i + 1, j - 1);
+    const BC = board.tile(i + 1, j - 0);
+    const BR = board.tile(i + 1, j + 1);
+
+    const adjacent = [TL, TC, TR, CL, CR, BL, BC, BR];
+
+    // Return 1 if this tile is a revealed flag, 0 otherwise
+    function isflag(tile) {
+      return tile && (tile.flaghere || PLAYER_FLAGS.includes(tile.value));
+    }
+
+    // Return 1 if this tile is hidden, 0 otherwise
+    // A flag- or noflag-labelled tile is considered revealed
+    function ishidden(tile) {
+      return tile && tile.hidden && !tile.noflag && !tile.flaghere;
+    }
+
+    function highlight(tile) {
+      if (ishidden(tile)) {
+        tile.flaghere = true;
+        tile.draw('flaghere', 'FLAGHERE');
+      }
+    }
+
+    // A noflag tile never becomes a flaghere tile, and vice versa
+
+    const adjacentflags = adjacent.filter(isflag).length;
+    const remainingflags = board.tile(i,j).value - adjacentflags;
+    const adjacenthidden = adjacent.filter(ishidden).length;
+
+    // Same number of unrevealed + noflag tiles as remaining flags
+    if (remainingflags > 0 && remainingflags === adjacenthidden) {
+      highlight(TL);
+      highlight(TC);
+      highlight(TR);
+      highlight(CL);
+      highlight(CR);
+      highlight(BL);
+      highlight(BC);
+      highlight(BR);
+    }
+  });
+}
