@@ -7,10 +7,18 @@
 
 const HIDDEN_MINE = '*';
 const PLAYER_FLAGS = ['A', 'B'];
+const KEYCODES = {'g': 71};
 
 const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
 
 var gamestate = { player: null, turn: null };
+
+
+document.addEventListener("keyup", function(event) {
+  switch (event.keyCode) {
+    case KEYCODES['g']: solverscan(); break;
+  }
+});
 
 function wss_connect(address) {
   try {
@@ -204,14 +212,6 @@ const handlers = {
 
     showscores(revealed.score);
 
-    var nfound_flag = 1;
-    var nfound_noflag = 1;
-
-    while (nfound_flag > 0 || nfound_noflag > 0) {
-      nfound_flag = solver_flaghere();
-      nfound_noflag = solver_noflag();
-    }
-
     // The game is still on
     if (revealed.on) {
       showturn(revealed.turn);
@@ -270,6 +270,16 @@ function report_click(tiles, i, j) {
   }
 };
 
+// Scan through the board and reason about where flags must and must not be
+function solverscan() {
+  var nfound_flag = 1;
+  var nfound_noflag = 1;
+
+  while (nfound_flag > 0 || nfound_noflag > 0) {
+    nfound_flag = solver_flaghere();
+    nfound_noflag = solver_noflag();
+  }
+}
 
 // Find where there must be a flag
 function solver_flaghere() {
