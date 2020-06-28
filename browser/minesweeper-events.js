@@ -204,7 +204,7 @@ const handlers = {
 
     showscores(revealed.score);
 
-    solver_noflag();
+    solver_flaghere();
 
     // The game is still on
     if (revealed.on) {
@@ -265,8 +265,8 @@ function report_click(tiles, i, j) {
 };
 
 
-// Find where there is no flag
-function solver_noflag() {
+// Find where there must be a flag
+function solver_flaghere() {
   board.forEachTile(function(i,j) {
     // Consider only revealed number tiles
     if (board.tile(i,j).hidden || ![1,2,3,4,5,6,7,8].includes(board.tile(i,j).value))
@@ -326,3 +326,4 @@ function solver_noflag() {
     }
   });
 }
+
