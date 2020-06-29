@@ -23,6 +23,9 @@ const TILESHEET = {
     '6':              [0,6],
     '7':              [0,7],
     '8':              [0,8],
+    'NOFLAG':         [2,3],
+    'FLAGHERE':       [2,4],
+    'NEXTSELECT':     [2,2],
   }
 };
 
@@ -78,7 +81,9 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
   const tiles = new Array(N * M);
 
   function tile(i, j) {
-    return tiles[i * M + j];
+    return (i >=0 && j >= 0 && i < N && j < M)
+      ? tiles[i * M + j]
+      : null;
   }
 
   function forEachTile(action) {
@@ -122,7 +127,7 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
       function(name) {
         layers = layers.filter((item) => item.name != name);
         redraw();
-      }
+      },
     };
   });
 
@@ -193,6 +198,27 @@ function MinesweeperBoard(N, M, S, sheet, onclick) {
     board.surface.fillStyle = DISABLED_HUE;
     board.surface.fillRect(0, 0, board.M * board.W, board.N * board.H);
   };
+
+  board.forEachTile(function(i,j) {
+    //  Top/Centre/Bottom - Left/Centre/Right
+    //
+    //    T      TL TC TR
+    //  L C R    CL CC CR
+    //    B      BL BC BR
+
+    board.tile(i,j).adjacent = function() {
+      const TL = board.tile(i - 1, j - 1);
+      const TC = board.tile(i - 1, j - 0);
+      const TR = board.tile(i - 1, j + 1);
+      const CL = board.tile(i - 0, j - 1);
+      const CR = board.tile(i - 0, j + 1);
+      const BL = board.tile(i + 1, j - 1);
+      const BC = board.tile(i + 1, j - 0);
+      const BR = board.tile(i + 1, j + 1);
+
+      return [TL, TC, TR, CL, CR, BL, BC, BR];
+    };
+  });
 
   // Load the tilesheet...
   sheet.img.onload = function() {
