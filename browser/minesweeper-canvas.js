@@ -25,6 +25,7 @@ const TILESHEET = {
     '8':              [0,8],
     'NOFLAG':         [2,3],
     'FLAGHERE':       [2,4],
+    'NEXTSELECT':     [2,2],
   }
 };
 
@@ -217,7 +218,7 @@ function MinesweeperBoard(N, M, S, sheet, onclick) {
 
       return [TL, TC, TR, CL, CR, BL, BC, BR];
     };
-  })
+  });
 
   // Load the tilesheet...
   sheet.img.onload = function() {

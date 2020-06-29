@@ -7,18 +7,22 @@
 
 const HIDDEN_MINE = '*';
 const PLAYER_FLAGS = ['A', 'B'];
-const KEYCODES = {'g': 71};
+const KEYCODES = {'g': 71, 'n': 78};
 
 const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
 
 var gamestate = { player: null, turn: null };
-
+var autoselect = false;
 
 document.addEventListener("keyup", function(event) {
+  console.log(event.keyCode);
   switch (event.keyCode) {
-    case KEYCODES['g']: solverscan(); break;
+    case 65: toggle_autoselect();            break;   /* a */
+    case 71: solverscan();                   break;   /* g */
+    case 78: select_next_unrevealed_flag();  break;   /* n */
   }
 });
+
 
 function wss_connect(address) {
   try {
@@ -215,6 +219,15 @@ const handlers = {
     // The game is still on
     if (revealed.on) {
       showturn(revealed.turn);
+
+      if (autoselect) {
+        // React even if it's the opponent's turn
+        solverscan();
+        if (gamestate.turn === gamestate.player) {
+          // Select either a known,hidden flag or a random tile
+          select_next_unrevealed_flag();
+        }
+      }
     }
     // Game is over
     else {
@@ -253,6 +266,35 @@ function showwinner(player) {
   board.showdisabled();
 }
 
+// Selecting a tile is a network event, though it presents like a GUI event
+// A tile is selected after the server has ACK'ed and approved the select REQ
+function select_tile(i, j) {
+  if (gamestate.turn === gamestate.player) {
+    socket.send( messages.select(i, j) );
+  }
+}
+
+function randint(min, max) {
+  // Return a random integer from [min...max-1]
+  return Math.floor(Math.random() * (max - min) ) + min;
+}
+
+function select_random_tile() {
+  var i = 0;
+  var j = 0;
+  var tile = null;
+  do {
+    i = randint(0, board.N);
+    j = randint(0, board.M);
+    tile = board.tile(i,j);
+  }
+  while (!tile.hidden || (tile.hidden && tile.noflag));
+  // Repeat if tile is already revealed,
+  // or if it's hidden but it's known not to be a flag
+
+  select_tile(i,j);
+}
+
 
 function report_click(tiles, i, j) {
   if (gamestate.turn != gamestate.player) {
@@ -264,8 +306,7 @@ function report_click(tiles, i, j) {
     // Do nothing ...
   }
   else {
-    socket.send( messages.select(i, j) );
-
+    select_tile(i, j);
     // A clicked tile is not displayed as selected until the server confirms the selection
   }
 };
@@ -368,4 +409,28 @@ function solver_noflag() {
   });
 
   return nfound;
+}
+
+
+function select_next_unrevealed_flag() {
+  var selected = false;
+  // Good reason to replace .forEachTile() with .tiles() which returns array
+  board.forEachTile(function(i,j) {
+    const tile = board.tile(i,j);
+    if (!selected && tile.hidden && tile.flaghere) {
+      selected = true;
+      select_tile(i,j);
+    }
+  });
+
+  if (!selected) {
+    select_random_tile();
+  }
+}
+
+function toggle_autoselect() {
+  autoselect = !autoselect;
+  if (gamestate.turn === gamestate.player) {
+    select_next_unrevealed_flag();
+  }
 }
