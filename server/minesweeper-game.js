@@ -63,46 +63,29 @@ function generate_minesweeper_board(N, M, R) {
     // For each column...
     for (var j = 0; j < M; j++) {
       // If tile (i,j) is not a Mine, skip it
-      if (board[i*M + j] != HIDDEN_MINE)
+      if (board[i * M + j] != HIDDEN_MINE)
         continue;
 
       //  Top/Centre/Bottom - Left/Centre/Right
       //
       //    T      TL TC TR
-      //  L C R    CL CC CR
+      //  L   R    CL -- CR
       //    B      BL BC BR
 
-      // Transform the 2d [i,j] into a 1d [k], or k=-1 if not accessible
-
-      // This looks messy but it's simple.
-      // Check if T/B/L/R are accessible and transform [i,j] to flat [k].
-
-      //     k = (      accessible      ) ?  (     transform     )  : -1;
-      //         -------------------------------------------------------
-      const TL = ( i > 0    &&  j > 0   ) ?  (i - 1) * M + (j - 1)  : -1;
-      const TC = ( i > 0                ) ?  (i - 1) * M + (j - 0)  : -1;
-      const TR = ( i > 0    &&  j < M-1 ) ?  (i - 1) * M + (j + 1)  : -1;
-      const CL = (              j > 0   ) ?  (i - 0) * M + (j - 1)  : -1;
-      const CR = (              j < M-1 ) ?  (i - 0) * M + (j + 1)  : -1;
-      const BL = ( i < N-1  &&  j > 0   ) ?  (i + 1) * M + (j - 1)  : -1;
-      const BC = ( i < N-1              ) ?  (i + 1) * M + (j - 0)  : -1;
-      const BR = ( i < N-1  &&  j < M-1 ) ?  (i + 1) * M + (j + 1)  : -1;
-      const CC =                             (i - 0) * M + (j - 0)      ;
-
-      function increment(k) {
-        if (k != -1 && board[k] != HIDDEN_MINE)
-          board[k] = board[k] + 1;
+      function increment(i_,j_) {
+        if (i_ >= 0 && i_ < N && j_ >= 0 && j_ < M) {
+          board[i_ * M + j_]++;
+        }
       }
 
-      increment(TL);
-      increment(TC);
-      increment(TR);
-      increment(CL);
-      increment(CR);
-      increment(BL);
-      increment(BC);
-      increment(BR);
-      increment(CC);
+      increment(i - 1, j - 1); // TL
+      increment(i - 1, j - 0); // TC
+      increment(i - 1, j + 1); // TR
+      increment(i - 0, j - 1); // CL
+      increment(i - 0, j + 1); // CR
+      increment(i + 1, j - 1); // BL
+      increment(i + 1, j - 0); // BC
+      increment(i + 1, j + 1); // BR
     }
   }
   
