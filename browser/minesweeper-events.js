@@ -261,7 +261,6 @@ function showwinner(player) {
       : $('#player-1-score-box');
   player_box.toggleClass('active-turn score-box-winner');
 
-  showwinner(player);
   show_note('winner');
   board.showdisabled();
 }
