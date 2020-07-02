@@ -73,7 +73,7 @@ function generate_minesweeper_board(N, M, R) {
       //    B      BL BC BR
 
       function increment(i_,j_) {
-        if (i_ >= 0 && i_ < N && j_ >= 0 && j_ < M) {
+        if ( (i_ >= 0 && i_ < N) && (j_ >= 0 && j_ < M) && board[i_ * M + j_] != HIDDEN_MINE) {
           board[i_ * M + j_]++;
         }
       }
