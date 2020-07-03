@@ -175,6 +175,13 @@ const handlers = {
       gamestate.player = msg.playing_as;
       gamestate.turn = 0;
       room.waiting(); // wait for the game-start message
+
+      if (Number(gamestate.player) === 0) {
+        $('#player-0-score-box').addClass('playing-as');
+      }
+      else if (Number(gamestate.player) === 1) {
+        $('#player-1-score-box').addClass('playing-as');
+      }
     }
     else {
       room.busy(); // nobody to play with...
@@ -187,6 +194,8 @@ const handlers = {
 
     $('#player-0-score-box').addClass('active-turn');
     $('#turn-score-container').removeClass('not-playing');
+
+    showturn(gamestate.turn);
   },
 
   'opponent-disconnected':
@@ -242,8 +251,8 @@ function showscores(scores) {
 }
 
 // Show whose turn it is in the score box
-function showturn(player) {
-  if (player === 0) {
+function showturn(turn) {
+  if (turn === 0) {
     $('#player-0-score-box').addClass('active-turn');
     $('#player-1-score-box').removeClass('active-turn');
   }
@@ -251,6 +260,8 @@ function showturn(player) {
     $('#player-0-score-box').removeClass('active-turn');
     $('#player-1-score-box').addClass('active-turn');
   }
+
+  $('#whose-turn').text((gamestate.player === turn)? 'Your turn' : 'Opponent\'s turn');
 }
 
 // Show that the game is over and highlight who won the game
@@ -260,6 +271,8 @@ function showwinner(player) {
       ? $('#player-0-score-box')
       : $('#player-1-score-box');
   player_box.toggleClass('active-turn score-box-winner');
+
+  $('#whose-turn').text('Winner!');
 
   show_note('winner');
   board.showdisabled();

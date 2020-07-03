@@ -25,8 +25,6 @@
       display: block;
       width: max-content;
       overflow: hidden;
-      border: 1px solid black;
-      border-radius: 0px;
       /*box-shadow: 3px 3px 0 0 #666666;*/
     }
     .not-playing .score-box {
@@ -35,15 +33,15 @@
     }
     .score-box {
       display: inline-block;
-      padding: 5px;
       width: 4em;
+      padding: 5px;
       font-family: arial;
       font-size: 12pt;
       font-weight: bold;
       text-align: center;
     }
     .active-turn {
-      background-color: #fefce7;
+      background-color: yellow;
     }
     img {
       display: inline;
@@ -69,6 +67,14 @@
     }
     .score-box-winner > .remaining {
       color: green;
+    }
+    #whose-turn {
+      color: black;
+      font-size: 80%;
+      display: block;
+      margin-bottom: 5px;
+      background-color: silver;
+      padding: 5px;
     }
     #note-box {
       display: block;
@@ -116,6 +122,7 @@
       <div id="note-box">Welcome to Minesweeper</div>
       <div id="board-container"></div>
       <div id="turn-score-container" class="not-playing">
+        <div id="whose-turn">...</div>
         <div class="score-box" id="player-0-score-box">
           <div id="player-0-score">0</div> <span class="remaining">0</span>
         </div><!--
