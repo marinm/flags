@@ -126,6 +126,25 @@ function MinesweeperGame(N, M, R) {
     return {i, j, value};
   }
 
+  // Reveal all remaining hidden tiles
+  // Should only be called when game is over
+  function revealall() {
+    if (on) {
+      return null;
+    }
+
+    const remaining = [];
+    for (var i = 0; i < N; i++) {
+      for (var j = 0; j < M; j++) {
+        // A failed get() indicates an unrevealed tile
+        if (get(i,j) === null) {
+          remaining.push( reveal(i, j) );
+        }
+      }
+    }
+    return remaining;
+  }
+
   function zerowalk(i, j) {
     // The first zero must still be not revealed
 
@@ -215,6 +234,12 @@ function MinesweeperGame(N, M, R) {
           turn = (turn + 1) % 2;
         }
         show = [{i, j, value}];
+      }
+
+      // The game is over on this move
+      // Append all unrevealed values
+      if (!on) {
+        show = show.concat( revealall() );
       }
     }
 
