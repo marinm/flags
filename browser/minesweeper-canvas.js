@@ -26,6 +26,7 @@ const TILESHEET = {
     'NOFLAG':         [2,3],
     'FLAGHERE':       [2,4],
     'NEXTSELECT':     [2,2],
+    '*':              [1,2]
   }
 };
 
