@@ -8,7 +8,7 @@ const WebSocket = require('ws')
 const MinesweeperGame = require('./minesweeper-game.js')
 
 
-const SERVER_PORT = 9999
+const SERVER_PORT = process.env.WSS_PORT
 const PING_INTERVAL = 30 * 1000
 
 const TMP_N = 24;
