@@ -24,6 +24,14 @@
     #board-container {
       display: block;
       margin: 20px auto 0 auto;
+      border-radius: 7px;
+      overflow: hidden;
+      border: 3px solid #dddddd;
+      line-height: 0;
+    }
+    #board-container canvas {
+      display: inline-block;
+      margin: 0;
     }
     #turn-score-container {
       text-align: center;
@@ -39,48 +47,38 @@
     }
     .score-box {
       display: inline-block;
-      width: 4em;
+      width: 2em;
       padding: 5px;
       font-family: arial;
       font-size: 12pt;
       font-weight: bold;
       text-align: center;
+      border: 3px solid #ffffff;
+      margin: 2px;
+      color: #ffffff;
+      border-radius: 5px;
     }
     .active-turn {
-      background-color: yellow;
+      border-color: orange;
     }
     img {
       display: inline;
     }
     #player-0-score-box {
-      border-bottom: 4px solid #2a7fff;
+      background-color: #2a7fff;
     }
     #player-1-score-box {
-      border-bottom: 4px solid #d40000;
+      background-color: #d40000;
     }
     #player-0-score, #player-1-score {
-      display: inline-block;
-      width: 1em;
-      text-align: right;
+      /* */
     }
-    .score-box-winner {
-      background-color: #aed581;
-      border-bottom: 3px solid green;
-      color: green;
-    }
-    .remaining {
-      color: #cccccc;
+    .score-box.score-box-winner {
+      border-color: #aed581;
+      box-shadow: 0 0 3px 0 green;
     }
     .score-box-winner > .remaining {
       color: green;
-    }
-    #whose-turn {
-      color: black;
-      font-size: 80%;
-      display: block;
-      margin-bottom: 5px;
-      background-color: silver;
-      padding: 5px;
     }
     #autoplay-indicator {
       display: block;
@@ -92,33 +90,7 @@
     }
     #note-box {
       display: block;
-      padding: 10px;
       text-align: center;
-      font-weight: bold;
-    }
-    .disconnected-status {
-      background-color: pink;
-      border: 1px solid tomato;
-    }
-    .waiting-status {
-      background-color: aliceblue;
-      border: 1px solid cornflowerblue;
-    }
-    .ready-status {
-      background-color: yellowgreen;
-      border: 1px solid seagreen;
-    }
-    .busy-status {
-      background-color: lightgray;
-      border: 1px solid silver;
-    }
-    .opponent-disconnected-status {
-      background-color: cornsilk;
-      border: 1px solid chocolate;
-    }
-    .winner-status {
-      background-color: yellowgreen;
-      border: 1px solid seagreen;
     }
     </style>
   </head>
@@ -133,18 +105,17 @@
       <noscript><div id="noscript">This game uses JavaScript.</div></noscript>
       
       <div id="room-buttons"></div>
-      <div id="note-box">Welcome to Minesweeper</div>
       <div id="board-container"></div>
       <div id="turn-score-container" class="not-playing">
-        <div id="whose-turn">...</div>
         <div class="score-box" id="player-0-score-box">
-          <div id="player-0-score">0</div> <span class="remaining">0</span>
+          <div id="player-0-score">0</div>
         </div><!--
       --><div class="score-box" id="player-1-score-box">
-          <div id="player-1-score">0</div> <span class="remaining">0</span>
+          <div id="player-1-score">0</div>
         </div>
         <div id="autoplay-indicator">AUTOPLAY ON</div>
       </div>
+      <div id="note-box">Welcome to Minesweeper</div>
     </div>
 
     <script type="text/javascript" src="jquery.js"></script>

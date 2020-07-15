@@ -260,7 +260,7 @@ function showturn(turn) {
     $('#player-1-score-box').addClass('active-turn');
   }
 
-  $('#whose-turn').text((gamestate.player === turn)? 'Your turn' : 'Opponent\'s turn');
+  $('#note-box').text((gamestate.player === turn)? 'Your turn' : 'Opponent\'s turn');
 }
 
 // Show that the game is over and highlight who won the game
@@ -271,7 +271,7 @@ function showwinner(player) {
       : $('#player-1-score-box');
   player_box.toggleClass('active-turn score-box-winner');
 
-  $('#whose-turn').text('Winner!');
+  $('#note-box').text('Winner!');
 
   show_note('winner');
   board.showdisabled();
