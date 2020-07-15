@@ -216,8 +216,7 @@ const handlers = {
     revealed.show.forEach(function(item) {
       var value = item.value;
       board.setvalue(item.i, item.j, value);
-      board.tile(item.i, item.j).erase('noflag');
-      board.tile(item.i, item.j).erase('flaghere');
+      board.tile(item.i, item.j).erase('guide');
     });
 
     const selected = msg.for;
@@ -367,7 +366,7 @@ function solver_flaghere() {
       if (isunknown(tile)) {
         nfound++;
         tile.flaghere = true;
-        tile.draw('flaghere', 'FLAGHERE');
+        tile.draw('guide', 'FLAGHERE');
       }
     }
 
@@ -404,7 +403,7 @@ function solver_noflag() {
       if (isunknown(tile)) {
         nfound++;
         tile.noflag = true;
-        tile.draw('noflag', 'NOFLAG');
+        tile.draw('guide', 'NOFLAG');
       }
     }
 
