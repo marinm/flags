@@ -444,7 +444,7 @@ function toggle_autoselect() {
   autoselect = !autoselect;
   $('#autoplay-indicator').css('visibility', (autoselect)? 'visible' : 'hidden');
 
-  if (gamestate.turn === gamestate.player) {
+  if (autoselect && gamestate.turn === gamestate.player) {
     select_next_unrevealed_flag();
   }
 }
