@@ -446,4 +446,11 @@ function toggle_autoselect() {
   if (autoselect && gamestate.turn === gamestate.player) {
     select_next_unrevealed_flag();
   }
+
+  if (!autoselect) {
+    // Hide select guides
+    board.forEachTile(function(i,j) {
+      board.tile(i,j).erase('guide');
+    });
+  }
 }
