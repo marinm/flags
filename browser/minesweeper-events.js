@@ -312,7 +312,7 @@ function select_random_tile() {
 function report_click(tiles, i, j) {
   if (gamestate.turn != gamestate.player) {
     // Player out of turn
-    // Do nothing ...
+    $('#note-box').effect('shake', {distance: 5});
   }
   else if (board.tile(i,j).hidden === false) {
     // Clicked on already revealed tile
