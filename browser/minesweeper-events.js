@@ -440,6 +440,10 @@ function select_next_unrevealed_flag() {
 }
 
 function toggle_autoplay() {
+  // Do nothing if board is disabled
+  if (board.isdisabled())
+    return;
+
   autoplay = !autoplay;
   $('#autoplay-indicator').css('visibility', (autoplay)? 'visible' : 'hidden');
 
@@ -469,6 +473,10 @@ function erase_guides() {
 }
 
 function draw_guides() {
+  // Do nothing if board is disabled
+  if (board.isdisabled())
+    return;
+
   // Redraw all guide tiles
   erase_guides();
 
@@ -492,6 +500,10 @@ function draw_guides() {
 }
 
 function toggle_guides() {
+  // Do nothing if board is disabled
+  if (board.isdisabled())
+    return;
+
   guides = !guides;
 
   if (guides) {
