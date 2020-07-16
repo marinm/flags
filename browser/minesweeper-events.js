@@ -12,13 +12,13 @@ const KEYCODES = {'g': 71, 'n': 78};
 const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
 
 var gamestate = { player: null, turn: null };
-var autoselect = false;
+var autoplay = false;
 var guides = false;
 
 document.addEventListener("keyup", function(event) {
   console.log(event.keyCode);
   switch (event.keyCode) {
-    case 65: toggle_autoselect();            break;   /* a */
+    case 65: toggle_autoplay();            break;   /* a */
     case 71: toggle_guides();                break;   /* g */
     case 78: select_next_unrevealed_flag();  break;   /* n */
   }
@@ -229,7 +229,7 @@ const handlers = {
     if (revealed.on) {
       showturn(revealed.turn);
 
-      if (autoselect) {
+      if (autoplay) {
         // React even if it's the opponent's turn
         solverscan();
         draw_guides();
@@ -439,11 +439,11 @@ function select_next_unrevealed_flag() {
   }
 }
 
-function toggle_autoselect() {
-  autoselect = !autoselect;
-  $('#autoplay-indicator').css('visibility', (autoselect)? 'visible' : 'hidden');
+function toggle_autoplay() {
+  autoplay = !autoplay;
+  $('#autoplay-indicator').css('visibility', (autoplay)? 'visible' : 'hidden');
 
-  if (autoselect) {
+  if (autoplay) {
     // React even if it's the opponent's turn
     solverscan();
     draw_guides();
@@ -453,11 +453,11 @@ function toggle_autoselect() {
     }
   }
 
-  if (autoselect && gamestate.turn === gamestate.player) {
+  if (autoplay && gamestate.turn === gamestate.player) {
     select_next_unrevealed_flag();
   }
 
-  if (!autoselect) {
+  if (!autoplay) {
     erase_guides();
   }
 }
