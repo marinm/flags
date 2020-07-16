@@ -13,12 +13,13 @@ const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
 
 var gamestate = { player: null, turn: null };
 var autoselect = false;
+var guides = false;
 
 document.addEventListener("keyup", function(event) {
   console.log(event.keyCode);
   switch (event.keyCode) {
     case 65: toggle_autoselect();            break;   /* a */
-    case 71: solverscan();                   break;   /* g */
+    case 71: toggle_guides();                break;   /* g */
     case 78: select_next_unrevealed_flag();  break;   /* n */
   }
 });
@@ -231,6 +232,7 @@ const handlers = {
       if (autoselect) {
         // React even if it's the opponent's turn
         solverscan();
+        draw_guides();
         if (gamestate.turn === gamestate.player) {
           // Select either a known,hidden flag or a random tile
           select_next_unrevealed_flag();
@@ -366,7 +368,6 @@ function solver_flaghere() {
       if (isunknown(tile)) {
         nfound++;
         tile.flaghere = true;
-        tile.draw('guide', 'FLAGHERE');
       }
     }
 
@@ -403,7 +404,6 @@ function solver_noflag() {
       if (isunknown(tile)) {
         nfound++;
         tile.noflag = true;
-        tile.draw('guide', 'NOFLAG');
       }
     }
 
@@ -443,14 +443,62 @@ function toggle_autoselect() {
   autoselect = !autoselect;
   $('#autoplay-indicator').css('visibility', (autoselect)? 'visible' : 'hidden');
 
+  if (autoselect) {
+    // React even if it's the opponent's turn
+    solverscan();
+    draw_guides();
+    if (gamestate.turn === gamestate.player) {
+      // Select either a known,hidden flag or a random tile
+      select_next_unrevealed_flag();
+    }
+  }
+
   if (autoselect && gamestate.turn === gamestate.player) {
     select_next_unrevealed_flag();
   }
 
   if (!autoselect) {
-    // Hide select guides
-    board.forEachTile(function(i,j) {
-      board.tile(i,j).erase('guide');
-    });
+    erase_guides();
+  }
+}
+
+function erase_guides() {
+  board.forEachTile(function(i,j) {
+    board.tile(i,j).erase('guide');
+  });
+}
+
+function draw_guides() {
+  // Redraw all guide tiles
+  erase_guides();
+
+  board.forEachTile(function(i,j) {
+    const tile = board.tile(i,j);
+
+    // Guide labels (noflag,flaghere) linger from past scans
+    // Only draw on unrevealed tiles
+    if (!tile.hidden) {
+      return;
+    }
+
+    // Draw the guides
+    if (tile.noflag) {
+      tile.draw('guide', 'NOFLAG');
+    }
+    if (tile.flaghere) {
+      tile.draw('guide', 'FLAGHERE');
+    }
+  });
+}
+
+function toggle_guides() {
+  guides = !guides;
+
+  if (guides) {
+    solverscan();
+    draw_guides();
+  }
+  else {
+    erase_guides();
   }
 }
