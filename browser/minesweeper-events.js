@@ -500,8 +500,8 @@ function draw_guides() {
 }
 
 function toggle_guides() {
-  // Do nothing if board is disabled
-  if (board.isdisabled())
+  // Do nothing if board is disabled or autoplay is on
+  if (board.isdisabled() || autoplay)
     return;
 
   guides = !guides;
