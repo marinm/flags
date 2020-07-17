@@ -456,12 +456,7 @@ function toggle_autoplay() {
       select_next_unrevealed_flag();
     }
   }
-
-  if (autoplay && gamestate.turn === gamestate.player) {
-    select_next_unrevealed_flag();
-  }
-
-  if (!autoplay) {
+  else {
     erase_guides();
   }
 }
