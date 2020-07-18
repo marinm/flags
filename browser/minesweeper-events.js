@@ -229,11 +229,12 @@ const handlers = {
     if (revealed.on) {
       showturn(revealed.turn);
 
-      if (autoplay) {
+      if (guides) {
         // React even if it's the opponent's turn
+        // Guides are on if autoplay is on
         solverscan();
         draw_guides();
-        if (gamestate.turn === gamestate.player) {
+        if (autoplay && gamestate.turn === gamestate.player) {
           // Select either a known,hidden flag or a random tile
           select_next_unrevealed_flag();
         }
@@ -455,6 +456,9 @@ function toggle_autoplay() {
       // Select either a known,hidden flag or a random tile
       select_next_unrevealed_flag();
     }
+
+    // Also toggle guides
+    guides = !guides;
   }
   else {
     erase_guides();
