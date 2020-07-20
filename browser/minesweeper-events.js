@@ -165,7 +165,6 @@ const handlers = {
   function(msg) {
     room.start();
 
-    $('#player-0-score-box').addClass('active-turn');
     $('#turn-score-container').removeClass('not-playing');
 
     showturn(gamestate.turn);
