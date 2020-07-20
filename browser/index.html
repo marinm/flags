@@ -41,22 +41,18 @@
       overflow: hidden;
       /*box-shadow: 3px 3px 0 0 #666666;*/
     }
-    .not-playing .score-box {
-      background-color: #dddddd;
-      color: #cccccc;
-    }
     .score-box {
       display: inline-block;
-      width: 2em;
-      padding: 5px;
+      width: 4em;
+      padding: 5px 0 0 0;
       font-family: arial;
-      font-size: 12pt;
       font-weight: bold;
       text-align: center;
       border: 3px solid #ffffff;
       margin: 2px;
       color: #ffffff;
-      border-radius: 5px;
+      border-radius: 8px;
+      overflow: hidden;
     }
     .active-turn {
       border-color: orange;
@@ -71,11 +67,42 @@
       background-color: #d40000;
     }
     #player-0-score, #player-1-score {
-      /* */
+      font-size: 12pt;
     }
+    #player-0-as, #player-1-as {
+      font-size: 8pt;
+      display: block;
+      padding-bottom: 3px;
+    }
+    #player-0-turn, #player-1-turn {
+      background-color: black;
+      color: white;
+      font-size: 8pt;
+      display: block;
+      height: 1em;
+      padding: 2px;
+      margin-top: 3px;
+    }
+    #player-0-turn {
+      background-color: #1570f9;
+    }
+    #player-1-turn {
+      background-color: #b10300;
+    }
+
+    #turn-score-container.disconnected > .score-box {
+      background-color: #cccccc;
+      color: #aaaaaa;
+    }
+
+    #turn-score-container.disconnected > .score-box > .turn-label {
+      background-color: #cccccc;
+      color: #aaaaaa;
+    }
+    
     .score-box.score-box-winner {
       border-color: #aed581;
-      box-shadow: 0 0 3px 0 green;
+      /*box-shadow: 0 0 3px 0 green;*/
     }
     .score-box-winner > .remaining {
       color: green;
@@ -111,10 +138,14 @@
       <div id="board-container"></div>
       <div id="turn-score-container" class="not-playing">
         <div class="score-box" id="player-0-score-box">
+          <div id="player-0-as" class="playing-as">Opponent</div>
           <div id="player-0-score">0</div>
+          <div id="player-0-turn" class="turn-label"></div>
         </div><!--
-      --><div class="score-box" id="player-1-score-box">
+     --><div class="score-box" id="player-1-score-box">
+          <div id="player-1-as" class="playing-as">You</div>
           <div id="player-1-score">0</div>
+          <div id="player-1-turn" class="turn-label"></div>
         </div>
         <div id="autoplay-indicator">AUTOPLAY ON</div>
       </div>

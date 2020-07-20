@@ -18,7 +18,7 @@ var guides = false;
 document.addEventListener("keyup", function(event) {
   console.log(event.keyCode);
   switch (event.keyCode) {
-    case 65: toggle_autoplay();            break;   /* a */
+    case 65: toggle_autoplay();              break;   /* a */
     case 71: toggle_guides();                break;   /* g */
     case 78: select_next_unrevealed_flag();  break;   /* n */
   }
@@ -89,6 +89,7 @@ const room = {
   function() {
     show_note('note-box-disconnected');
     board.showdisabled();
+    $('#turn-score-container').addClass('disconnected');
   },
 
   waiting:
@@ -116,7 +117,7 @@ const room = {
   function() {
     show_note('note-box-opponent-disconnected');
     board.showdisabled();
-    $('#turn-score-container').addClass('not-playing');
+    $('#turn-score-container').addClass('disconnected');
     // also disable other components...
   },
 };
@@ -145,16 +146,15 @@ const handlers = {
   join:
   function(msg) {
     if (msg.status === 'OPEN') {
-      gamestate.player = msg.playing_as;
+      gamestate.player = Number(msg.playing_as);
       gamestate.turn = 0;
       room.waiting(); // wait for the game-start message
 
-      if (Number(gamestate.player) === 0) {
-        $('#player-0-score-box').addClass('playing-as');
-      }
-      else if (Number(gamestate.player) === 1) {
-        $('#player-1-score-box').addClass('playing-as');
-      }
+      const you_box = (gamestate.player === 0)? $('#player-0-score-box') : $('#player-1-score-box');
+      const opponent_box = (gamestate.player === 1)? $('#player-0-score-box') : $('#player-1-score-box');
+
+      you_box.children('.playing-as').text('You');
+      opponent_box.children('.playing-as').text('Opponent');
     }
     else {
       room.busy(); // nobody to play with...
@@ -225,30 +225,29 @@ function showscores(scores) {
 }
 
 // Show whose turn it is in the score box
-function showturn(turn) {
-  if (turn === 0) {
-    $('#player-0-score-box').addClass('active-turn');
-    $('#player-1-score-box').removeClass('active-turn');
-  }
-  else {
-    $('#player-0-score-box').removeClass('active-turn');
-    $('#player-1-score-box').addClass('active-turn');
-  }
+function showturn(player) {
 
-  $('#note-box').text((gamestate.player === turn)? 'Your turn' : 'Opponent\'s turn');
+  const current_player_box = (player === 0)? $('#player-0-score-box') : $('#player-1-score-box');
+  const waiting_player_box = (player === 1)? $('#player-0-score-box') : $('#player-1-score-box');
+
+  current_player_box.addClass('active-turn');
+  waiting_player_box.removeClass('active-turn');
+
+  current_player_box.children('.turn-label').text('TURN');
+  waiting_player_box.children('.turn-label').text('');
 }
 
 // Show that the game is over and highlight who won the game
 function showwinner(player) {
-  // Highlight winner in the score box
-  const player_box = (player === 0)
-      ? $('#player-0-score-box')
-      : $('#player-1-score-box');
-  player_box.toggleClass('active-turn score-box-winner');
 
-  $('#note-box').text('Winner!');
+  const current_player_box = (player === 0)? $('#player-0-score-box') : $('#player-1-score-box');
+  const waiting_player_box = (player === 1)? $('#player-0-score-box') : $('#player-1-score-box');
 
-  show_note('winner');
+  current_player_box.addClass('score-box-winner');
+  current_player_box.children('.turn-label').text('WINNER');
+
+  show_note('note-box-game-over');
+
   board.showdisabled();
 }
 
