@@ -15,6 +15,11 @@ var gamestate = { player: null, turn: null };
 var autoplay = false;
 var guides = false;
 
+const scoreboard = {
+  you: null,
+  opponent: null,
+};
+
 document.addEventListener("keyup", function(event) {
   console.log(event.keyCode);
   switch (event.keyCode) {
@@ -152,11 +157,11 @@ const handlers = {
       gamestate.turn = 0;
       room.waiting(); // wait for the game-start message
 
-      const you_box = (gamestate.player === 0)? $('#player-0-score-box') : $('#player-1-score-box');
-      const opponent_box = (gamestate.player === 1)? $('#player-0-score-box') : $('#player-1-score-box');
+      scoreboard.you = (gamestate.player === 0)? $('#player-0-score-box') : $('#player-1-score-box');
+      scoreboard.opponent = (gamestate.player === 1)? $('#player-0-score-box') : $('#player-1-score-box');
 
-      you_box.children('.playing-as').text('You');
-      opponent_box.children('.playing-as').text('Opponent');
+      scoreboard.you.children('.playing-as').text('You');
+      scoreboard.opponent.children('.playing-as').text('Opponent');
     }
     else {
       room.busy(); // nobody to play with...
@@ -285,7 +290,7 @@ function select_random_tile() {
 function report_click(tiles, i, j) {
   if (gamestate.turn != gamestate.player) {
     // Player out of turn
-    $('#note-box').effect('shake', {distance: 5});
+    scoreboard.opponent.effect('shake', {distance: 1});
   }
   else if (board.tile(i,j).hidden === false) {
     // Clicked on already revealed tile
