@@ -78,71 +78,43 @@ function connection_closed(event) {
   room.disconnected();
 }
 
-
-const notes = {
-  'disconnected': {
-    class: 'disconnected-status',
-    text:  'Disconnected. Try refreshing the page.'
-  },
-  'waiting': {
-    class: 'waiting-status',
-    text:  'Waiting for another player to join...'
-  },
-  'start': {
-    class: 'ready-status',
-    text:  'The game is on!'
-  },
-  'busy': {
-    class: 'busy-status',
-    text:  'Someone else is playing right now...'
-  },
-  'opponent-disconnected': {
-    class: 'opponent-disconnected-status',
-    text:  'Your opponent disconnected.'
-  },
-  'winner': {
-    class: 'winner-status',
-    text:  'Game over!'
-  }
-}
-
 function show_note(n) {
-  $('#note-box').attr('class', notes[n].class);
-  $('#note-box').text( notes[n].text );
+  $('#note-box').children().hide();
+  $('#' + n).show();
 }
 
 // Change the view
 const room = {
   disconnected:
   function() {
-    show_note('disconnected');
+    show_note('note-box-disconnected');
     board.showdisabled();
   },
 
   waiting:
   function() {
-    show_note('waiting');
+    show_note('note-box-waiting');
     board.showdisabled();
     // also disable other components...
   },
 
   start:
   function() {
-    show_note('start');
+    show_note('note-box-game-on');
     board.restart();
     // also enable other components...
   },
 
   busy:
   function() {
-    show_note('busy');
+    show_note('note-box-busy');
     board.showdisabled();
     // also disable other components...
   },
 
   opponent_disconnected:
   function() {
-    show_note('opponent-disconnected');
+    show_note('note-box-opponent-disconnected');
     board.showdisabled();
     $('#turn-score-container').addClass('not-playing');
     // also disable other components...

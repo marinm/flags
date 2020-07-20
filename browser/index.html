@@ -92,6 +92,9 @@
       display: block;
       text-align: center;
     }
+    #note-box div {
+      display: none;
+    }
     </style>
   </head>
   <body>
@@ -115,7 +118,15 @@
         </div>
         <div id="autoplay-indicator">AUTOPLAY ON</div>
       </div>
-      <div id="note-box">Welcome to Minesweeper</div>
+      <div id="note-box">
+        <div id="note-box-welcome">Welcome to Minesweeper</div>
+        <div id="note-box-waiting">Waiting for another player to join...</div>
+        <div id="note-box-game-on">Game on!</div>
+        <div id="note-box-busy">Someone else is playing...</div>
+        <div id="note-box-game-over">Game over!</div>
+        <div id="note-box-disconnected">Disconnected. Try refreshing the page.</div>
+        <div id="note-box-opponent-disconnected">Opponent disconnected. Try refreshing the page.</div>
+      </div>
     </div>
 
     <script type="text/javascript" src="jquery.js"></script>
