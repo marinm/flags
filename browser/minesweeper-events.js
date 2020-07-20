@@ -96,6 +96,7 @@ const room = {
   function() {
     show_note('note-box-waiting');
     board.showdisabled();
+    $('#turn-score-container').addClass('waiting');
     // also disable other components...
   },
 
@@ -103,6 +104,7 @@ const room = {
   function() {
     show_note('note-box-game-on');
     board.restart();
+    $('#turn-score-container').removeClass('waiting');
     // also enable other components...
   },
 

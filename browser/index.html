@@ -90,15 +90,19 @@
       background-color: #b10300;
     }
 
-    #turn-score-container.disconnected > .score-box {
+    #turn-score-container.disconnected > .score-box,
+    #turn-score-container.waiting > .score-box {
       background-color: #cccccc;
       color: #aaaaaa;
     }
 
-    #turn-score-container.disconnected > .score-box > .turn-label {
-      background-color: #cccccc;
+    #turn-score-container.disconnected > .score-box > .turn-label,
+    #turn-score-container.waiting > .score-box > .turn-label {
+      background-color: #bbbbbb;
       color: #aaaaaa;
     }
+
+
     
     .score-box.score-box-winner {
       border-color: #aed581;
