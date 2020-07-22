@@ -154,6 +154,7 @@ function receive(socket, msg) {
   console.log(JSON.stringify(msg));
   switch (msg.type) {
     case 'select': console.log('select'); handlers.select(socket, msg); break;
+    case 'say': handlers.say(socket, msg); break;
     default: ; // do something...
   }
 }
@@ -178,6 +179,21 @@ const handlers = {
       // Do nothing
       // Client should avoid this situation
       console.log('Player selects out of turn');
+    }
+  },
+
+  'say':
+  function(socket, msg) {
+    const type = 'says';
+    // Assume socket is either PLAYER_A or PLAYER_B
+    const who = (socket === PLAYER_A)? '0' : '1';
+    const text = String(msg.text);
+    const response = { type, who, text };
+
+    // Both players need to be online
+    if (PLAYER_A != null && PLAYER_B != null) {
+      PLAYER_A.send( JSON.stringify(response) );
+      PLAYER_B.send( JSON.stringify(response) );
     }
   },
 };

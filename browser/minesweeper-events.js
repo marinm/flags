@@ -9,7 +9,7 @@ const HIDDEN_MINE = '*';
 const PLAYER_FLAGS = ['A', 'B'];
 const KEYCODES = {'g': 71, 'n': 78};
 
-const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
+const SERVER_ADDRESS = 'wss://dev.marinm.net/wss/minesweeper';
 
 var gamestate = { player: null, turn: null };
 var autoplay = false;
@@ -20,7 +20,8 @@ const scoreboard = {
   opponent: null,
 };
 
-document.addEventListener("keyup", function(event) {
+$('#board-container').bind("keyup", function(event) {
+  console.log(event.keyCode);
   switch (event.keyCode) {
     case 65: toggle_autoplay();              break;   /* a */
     case 71: toggle_guides();                break;   /* g */
@@ -143,6 +144,11 @@ const messages = {
   function(i, j) {
     return JSON.stringify({ type: 'select', i, j });
   },
+
+  say:
+  function(text) {
+    return JSON.stringify({ type: 'say', text });
+  }
 };
 
 const handlers = {
@@ -154,6 +160,11 @@ const handlers = {
 
     // onreceive:online
     // console.log(msg.online);
+  },
+
+  says:
+  function(msg) {
+    show_chat_text(msg.who, msg.text);
   },
 
   join:
@@ -505,5 +516,11 @@ function send_chat(message) {
   if (message.length < 1)
     return;
 
-  console.log(message);
+  socket.send( messages.say(message) );
+}
+
+function show_chat_text(who, text) {
+  const from_class = (Number(who) === 0)? 'from-0' : 'from-1';
+  const chat_line = $('<div></div>').addClass('chat-line ' + from_class).text(text);
+  $('#chat-log').append(chat_line);
 }
