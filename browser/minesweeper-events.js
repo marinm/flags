@@ -21,7 +21,6 @@ const scoreboard = {
 };
 
 document.addEventListener("keyup", function(event) {
-  console.log(event.keyCode);
   switch (event.keyCode) {
     case 65: toggle_autoplay();              break;   /* a */
     case 71: toggle_guides();                break;   /* g */
@@ -31,7 +30,9 @@ document.addEventListener("keyup", function(event) {
 
 $('#chat-input').bind('keyup', function(event) {
   if (event.keyCode === 13) {
-    console.log('Enter');
+    const message = sanitize_chat( $('#chat-input').val() );
+    send_chat(message);
+    $('#chat-input').val('');
   }
 });
 
@@ -494,4 +495,15 @@ function toggle_guides() {
   else {
     erase_guides();
   }
+}
+
+function sanitize_chat(text) {
+  return text.replace(/[^a-z ]/gim, '');
+}
+
+function send_chat(message) {
+  if (message.length < 1)
+    return;
+
+  console.log(message);
 }
