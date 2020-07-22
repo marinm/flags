@@ -29,6 +29,11 @@ document.addEventListener("keyup", function(event) {
   }
 });
 
+$('#chat-input').bind('keyup', function(event) {
+  if (event.keyCode === 13) {
+    console.log('Enter');
+  }
+});
 
 function wss_connect(address) {
   try {
