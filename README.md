@@ -1,4 +1,4 @@
-# minesweeper
+# Minesweeper
 
 Demo at [marinm.net/minesweeper](https://marinm.net/minesweeper)
 
