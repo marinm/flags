@@ -1,5 +1,5 @@
-# Minesweeper
+# Flags
 
-Demo at [marinm.net/minesweeper](https://marinm.net/minesweeper)
+Demo at [marinm.net/flags](https://marinm.net/flags)
 
 ![alt text](gameplay.png "Gameplay demo")
