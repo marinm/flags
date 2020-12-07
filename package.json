@@ -1,5 +1,5 @@
 {
-  "name": "minesweeper-server",
+  "name": "flags",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marinm/minesweeper-server.git"
+    "url": "git+https://github.com/marinm/flags.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/marinm/minesweeper-server/issues"
+    "url": "https://github.com/marinm/flags/issues"
   },
-  "homepage": "https://github.com/marinm/minesweeper-server#readme",
+  "homepage": "https://github.com/marinm/flags",
   "dependencies": {
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
