@@ -9,7 +9,7 @@ const HIDDEN_MINE = '*';
 const PLAYER_FLAGS = ['A', 'B'];
 const KEYCODES = {'g': 71, 'n': 78};
 
-const SERVER_ADDRESS = 'wss://marinm.net/wss/minesweeper';
+const SERVER_ADDRESS = 'wss://marinm.net/wss/flags';
 
 var gamestate = { player: null, turn: null };
 var autoselect = false;
