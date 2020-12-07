@@ -5,7 +5,7 @@ require('dotenv').config()
 const fs = require('fs')
 const https = require('https')
 const WebSocket = require('ws')
-const MinesweeperGame = require('./minesweeper-game.js')
+const MinesweeperGame = require('./game.js')
 
 
 const SERVER_PORT = process.env.WSS_PORT
