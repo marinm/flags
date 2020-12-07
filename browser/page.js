@@ -7,7 +7,7 @@ const TMP_M = 24;
 const TMP_R = Math.floor((TMP_N + TMP_M) * 2);
 const TMP_CELLSIZE = 24;
 
-const board = new MinesweeperBoard(TMP_N, TMP_M, TMP_CELLSIZE, TILESHEET, report_click);
+const board = new FlagsBoard(TMP_N, TMP_M, TMP_CELLSIZE, TILESHEET, report_click);
 
 $('#board-container').append(board.canvas);
 

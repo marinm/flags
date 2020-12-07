@@ -1,4 +1,4 @@
-// Minesweeper game generator
+// Flags game generator
 // [Model]-View-Controller
 //
 // Randomly generates a board
@@ -30,7 +30,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-function generate_minesweeper_board(N, M, R) {
+function generate_flags_board(N, M, R) {
   if (N < 2 || M < 2)
     return [];
 
@@ -92,9 +92,9 @@ function generate_minesweeper_board(N, M, R) {
   return board;
 }
 
-function MinesweeperGame(N, M, R) {
+function FlagsGame(N, M, R) {
   // A randomly generated board
-  const board = generate_minesweeper_board(N, M, R);
+  const board = generate_flags_board(N, M, R);
 
   var turn = 0;
   var score = [0, 0];
@@ -253,4 +253,4 @@ function MinesweeperGame(N, M, R) {
   return { N, M, R, board, get, select, getstate };
 }
 
-module.exports = MinesweeperGame;
+module.exports = FlagsGame;

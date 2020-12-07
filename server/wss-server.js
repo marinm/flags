@@ -5,7 +5,7 @@ require('dotenv').config()
 const fs = require('fs')
 const https = require('https')
 const WebSocket = require('ws')
-const MinesweeperGame = require('./game.js')
+const FlagsGame = require('./game.js')
 
 
 const SERVER_PORT = process.env.WSS_PORT
@@ -14,7 +14,7 @@ const PING_INTERVAL = 30 * 1000
 const TMP_N = 24;
 const TMP_M = 24;
 const TMP_R = Math.floor((TMP_N + TMP_M) * 2);
-var game = MinesweeperGame(TMP_N, TMP_M, TMP_R);
+var game = FlagsGame(TMP_N, TMP_M, TMP_R);
 
 // WebSocket clients
 var PLAYER_A = null;
@@ -105,7 +105,7 @@ function close(ws) {
       PLAYER_B = null;
     }
     // Start a new game
-    game = MinesweeperGame(TMP_N, TMP_M, TMP_R);
+    game = FlagsGame(TMP_N, TMP_M, TMP_R);
   }
   else if (ws === PLAYER_B) {
     PLAYER_B = null;
@@ -115,7 +115,7 @@ function close(ws) {
       PLAYER_A = null;
     }
     // Start a new game
-    game = MinesweeperGame(TMP_N, TMP_M, TMP_R);
+    game = FlagsGame(TMP_N, TMP_M, TMP_R);
   }
   else {
     // notify a waiting player

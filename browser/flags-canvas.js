@@ -154,9 +154,9 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
 
 
 //
-// MinesweeperBoard
+// FlagsBoard
 // Interface for drawing numbers and flags on the tiled canvas
-function MinesweeperBoard(N, M, S, sheet, onclick) {
+function FlagsBoard(N, M, S, sheet, onclick) {
 
   // The view
   const board = new CanvasTiles(N, M, S, S, sheet, onclick);
