@@ -21,30 +21,79 @@
       background-color: pink;
       border: 1px solid tomato;
     }
+    #note-box {
+      display: block;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      width: 80%;
+      margin: auto;
+      border-radius: 8px;
+    }
+    .disconnected-status {
+      background-color: pink;
+      border: 2px solid tomato;
+    }
+    .waiting-status {
+      background-color: aliceblue;
+      border: 2px solid cornflowerblue;
+    }
+    .ready-status {
+      background-color: yellowgreen;
+      border: 2px solid seagreen;
+    }
+    .your-turn-status {
+      background-color: yellowgreen;
+      border: 2px solid seagreen;
+    }
+    .opponents-turn-status {
+      background-color: yellowgreen;
+      border: 2px solid seagreen;
+    }
+    .busy-status {
+      background-color: lightgray;
+      border: 2px solid silver;
+    }
+    .opponent-disconnected-status {
+      background-color: cornsilk;
+      border: 2px solid chocolate;
+    }
+    .winner-status {
+      background-color: yellowgreen;
+      border: 2px solid seagreen;
+    }
     #board-container {
       display: block;
-      margin: 20px auto 0 auto;
+      margin: 10px auto 0 auto;
+    }
+    canvas {
+      border: 3px solid #cccccc;
+      border-radius: 12px;
     }
     #turn-score-container {
       text-align: center;
-      margin: 20px auto 0 auto;
+      margin: 10px auto 0 auto;
       display: block;
-      width: max-content;
+      width: 30%;
       overflow: hidden;
+      border: 3px solid orange;
+      border-radius: 8px;
       /*box-shadow: 3px 3px 0 0 #666666;*/
     }
-    .not-playing .score-box {
+    .not-playing > .score-box {
       background-color: #dddddd;
       color: #cccccc;
     }
     .score-box {
       display: inline-block;
-      width: 4em;
-      padding: 5px;
+      width: 50%;
+      box-sizing: border-box;
+      padding: 8px 0 5px 0;
       font-family: arial;
       font-size: 12pt;
       font-weight: bold;
       text-align: center;
+      color: #ffffff;
     }
     .active-turn {
       background-color: yellow;
@@ -53,23 +102,51 @@
       display: inline;
     }
     #player-0-score-box {
-      border-bottom: 4px solid #2a7fff;
+      border-bottom: 5px solid #1570f9;
+      background-color: #2a7fff;
     }
     #player-1-score-box {
-      border-bottom: 4px solid #d40000;
+      border-bottom: 5px solid #b10300;
+      background-color: #d40000;
+    }
+    .not-playing > #player-0-score-box {
+      border-bottom: 5px solid #999999;
+      background-color: #bbbbbb;
+    }
+    .not-playing > #player-0-score-box > .remaining {
+      color: #999999;
+    }
+    .not-playing > #player-1-score-box > .remaining {
+      color: #999999;
+    }
+    .not-playing > #player-1-score-box {
+      border-bottom: 5px solid #999999;
+      background-color: #bbbbbb;
+    }
+    .not-playing > #player-0-score-box > #player-0-score {
+      color: #999999;
+    }
+    .not-playing > #player-1-score-box > #player-1-score {
+      color: #999999;
+    }
+    .not-playing > .remaining {
+      color: #999999;
     }
     #player-0-score, #player-1-score {
       display: inline-block;
-      width: 1em;
       text-align: right;
+      color: #ffffff;
     }
     .score-box-winner {
       background-color: #aed581;
       border-bottom: 3px solid green;
       color: green;
     }
-    .remaining {
-      color: #cccccc;
+    #player-0-score-box > .remaining {
+      color: #0047b1;/*#1570f9;*/
+    }
+    #player-1-score-box > .remaining {
+      color: #920604;/*#b10300;*/
     }
     .score-box-winner > .remaining {
       color: green;
@@ -78,9 +155,9 @@
       color: black;
       font-size: 80%;
       display: block;
-      margin-bottom: 5px;
-      background-color: silver;
+      background-color: #cccccc;
       padding: 5px;
+      display: none;
     }
     #autoplay-indicator {
       display: block;
@@ -90,36 +167,7 @@
       font-size: 50%;
       font-weight: bold;
     }
-    #note-box {
-      display: block;
-      padding: 10px;
-      text-align: center;
-      font-weight: bold;
-    }
-    .disconnected-status {
-      background-color: pink;
-      border: 1px solid tomato;
-    }
-    .waiting-status {
-      background-color: aliceblue;
-      border: 1px solid cornflowerblue;
-    }
-    .ready-status {
-      background-color: yellowgreen;
-      border: 1px solid seagreen;
-    }
-    .busy-status {
-      background-color: lightgray;
-      border: 1px solid silver;
-    }
-    .opponent-disconnected-status {
-      background-color: cornsilk;
-      border: 1px solid chocolate;
-    }
-    .winner-status {
-      background-color: yellowgreen;
-      border: 1px solid seagreen;
-    }
+    
     </style>
   </head>
   <body>
@@ -143,8 +191,8 @@
       --><div class="score-box" id="player-1-score-box">
           <div id="player-1-score">0</div> <span class="remaining">0</span>
         </div>
-        <div id="autoplay-indicator">AUTOPLAY ON</div>
       </div>
+      <div id="autoplay-indicator">AUTOPLAY ON</div>
     </div>
 
     <script type="text/javascript" src="jquery.js"></script>

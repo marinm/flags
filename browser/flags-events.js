@@ -9,7 +9,7 @@ const HIDDEN_MINE = '*';
 const PLAYER_FLAGS = ['A', 'B'];
 const KEYCODES = {'g': 71, 'n': 78};
 
-const SERVER_ADDRESS = 'wss://marinm.net/wss/flags';
+const SERVER_ADDRESS = 'wss://localhost:9011';
 
 var gamestate = { player: null, turn: null };
 var autoselect = false;
@@ -102,6 +102,14 @@ const notes = {
   'winner': {
     class: 'winner-status',
     text:  'Game over!'
+  },
+  'your-turn': {
+    class: 'your-turn-status',
+    text: 'Your turn'
+  },
+  'opponents-turn': {
+    class: 'opponents-turn-status',
+    text: "Opponent's turn"
   }
 }
 
@@ -260,7 +268,7 @@ function showturn(turn) {
     $('#player-1-score-box').addClass('active-turn');
   }
 
-  $('#whose-turn').text((gamestate.player === turn)? 'Your turn' : 'Opponent\'s turn');
+  show_note((gamestate.player === turn)? 'your-turn' : 'opponents-turn');
 }
 
 // Show that the game is over and highlight who won the game
