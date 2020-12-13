@@ -448,6 +448,10 @@ function select_next_unrevealed_flag() {
 }
 
 function toggle_autoselect() {
+  // If the board is not available, do nothing
+  if (! board.ready())
+    return;
+
   autoselect = !autoselect;
   $('#autoplay-indicator').css('visibility', (autoselect)? 'visible' : 'hidden');
 

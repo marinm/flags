@@ -138,8 +138,11 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
   function enable() {
     disabled = false;
   }
+  function ready() {
+    return !disabled;
+  }
 
-  const interface = { canvas, surface, N, M, W, H, tile, forEachTile, disable, enable };
+  const interface = { canvas, surface, N, M, W, H, tile, forEachTile, disable, enable, ready };
 
   canvas.addEventListener('click', function(event) {
     if (!disabled) {
