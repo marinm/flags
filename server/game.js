@@ -25,6 +25,7 @@
 
 const HIDDEN_MINE = '*';
 const PLAYER_FLAGS = ['A', 'B'];
+const TURN_TIME_LIMIT = 5 * 1000;
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -100,6 +101,7 @@ function FlagsGame(N, M, R) {
   var score = [0, 0];
   var seq = 0;
   var on = true;
+  var turn_timer = null;
 
   // The game is over when a player finds R/2 mines
   const winning_score = Math.ceil(R/2);
@@ -243,11 +245,22 @@ function FlagsGame(N, M, R) {
       }
     }
 
+    reset_turn_timer();
+
     return { show, turn, score, on };
   }
 
   function getstate() {
     return { turn, score, seq, on };
+  }
+
+  function reset_turn_timer() {
+    clearTimeout(turn_timer);
+    turn_timer = setTimeout(turn_timeout, TURN_TIME_LIMIT);
+  }
+  
+  function turn_timeout() {
+    console.log("Turn time limit reached");
   }
 
   return { N, M, R, board, get, select, getstate };
