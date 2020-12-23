@@ -14,11 +14,16 @@ const PING_INTERVAL = 30 * 1000
 const TMP_N = 24;
 const TMP_M = 24;
 const TMP_R = Math.floor((TMP_N + TMP_M) * 2);
-var game = FlagsGame(TMP_N, TMP_M, TMP_R);
+var game = null;
 
 // WebSocket clients
 var PLAYER_A = null;
 var PLAYER_B = null;
+
+function newgame() {
+  game = FlagsGame(TMP_N, TMP_M, TMP_R);
+  game.set_turn_timeout(turn_timeout);
+}
 
 
 const server = https.createServer({
@@ -31,6 +36,8 @@ wss.on('close', shutdown_server);
 server.listen(SERVER_PORT);
 
 console.log('Secure WebSocket Server started')
+// Start a new game
+newgame();
 
 function heartbeat() {
   this.isAlive = true;
@@ -82,13 +89,16 @@ function new_session(ws) {
     PLAYER_B = ws;
     ws.send(JSON.stringify({ type: 'join', status: 'OPEN', playing_as: 1 }));
 
+    // Game starts now
     PLAYER_A.send(JSON.stringify({ type: 'start' }));
     PLAYER_B.send(JSON.stringify({ type: 'start' }));
   }
   else {
+    // Keep the socket open but not as player
     ws.send(JSON.stringify({ type: 'join', status: 'BUSY' }));
   }
 }
+
 
 function close(ws) {
   // On disconnect, 
@@ -105,7 +115,7 @@ function close(ws) {
       PLAYER_B = null;
     }
     // Start a new game
-    game = FlagsGame(TMP_N, TMP_M, TMP_R);
+    newgame();
   }
   else if (ws === PLAYER_B) {
     PLAYER_B = null;
@@ -115,7 +125,7 @@ function close(ws) {
       PLAYER_A = null;
     }
     // Start a new game
-    game = FlagsGame(TMP_N, TMP_M, TMP_R);
+    newgame();
   }
   else {
     // notify a waiting player
@@ -182,3 +192,9 @@ const handlers = {
   },
 };
 
+// Callback
+function turn_timeout() {
+  const message = { type: 'turn-timeout', turn: game.getstate().turn };
+  PLAYER_A.send( JSON.stringify(message) );
+  PLAYER_B.send( JSON.stringify(message) );
+}

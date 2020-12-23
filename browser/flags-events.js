@@ -248,6 +248,12 @@ const handlers = {
       showwinner(revealed.turn);
     }
   },
+
+  "turn-timeout":
+  function(msg) {
+    gamestate.turn = msg.turn;
+    showturn(msg.turn);
+  }
 };
 
 function showscores(scores) {

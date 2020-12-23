@@ -102,6 +102,7 @@ function FlagsGame(N, M, R) {
   var seq = 0;
   var on = true;
   var turn_timer = null;
+  var turn_timeout = null;
 
   // The game is over when a player finds R/2 mines
   const winning_score = Math.ceil(R/2);
@@ -255,15 +256,21 @@ function FlagsGame(N, M, R) {
   }
 
   function reset_turn_timer() {
-    clearTimeout(turn_timer);
-    turn_timer = setTimeout(turn_timeout, TURN_TIME_LIMIT);
-  }
-  
-  function turn_timeout() {
-    console.log("Turn time limit reached");
+    clearInterval(turn_timer);
+    turn_timer = setInterval(function() {
+      // Change turns
+      turn = (turn + 1) % 2;
+
+      // Callback
+      turn_timeout();
+    }, TURN_TIME_LIMIT);
   }
 
-  return { N, M, R, board, get, select, getstate };
+  function set_turn_timeout(f) {
+    turn_timeout = f;
+  }
+
+  return { N, M, R, board, get, select, getstate, set_turn_timeout };
 }
 
 module.exports = FlagsGame;
