@@ -11,6 +11,7 @@ const KEYCODES = {'g': 71, 'n': 78};
 
 var gamestate = { player: null, turn: null };
 var autoselect = false;
+var music_playing = false;
 
 document.addEventListener("keyup", function(event) {
   console.log(event.keyCode);
@@ -18,6 +19,7 @@ document.addEventListener("keyup", function(event) {
     case 65: toggle_autoselect();            break;   /* a */
     case 71: solverscan();                   break;   /* g */
     case 78: select_next_unrevealed_flag();  break;   /* n */
+    case 77: toggle_music();                 break;   /* m */
   }
 });
 
@@ -248,7 +250,18 @@ const handlers = {
       showwinner(revealed.turn);
     }
   },
+
+  'music-play':
+  function(msg) {
+    music_play();
+  },
+
+  'music-pause':
+  function(msg) {
+    music_pause();
+  },
 };
+
 
 function showscores(scores) {
   $('#player-0-score').text(scores[0]);
@@ -463,4 +476,26 @@ function toggle_autoselect() {
       board.tile(i,j).erase('guide');
     });
   }
+}
+
+function music_play() {
+  document.getElementById('game-music').play();
+  music_playing = true;
+}
+
+function music_pause() {
+  document.getElementById('game-music').pause();
+  music_playing = false;
+}
+
+function say_music_pause() {
+  socket.send( JSON.stringify({ type: "say-music-pause"}) );
+}
+
+function say_music_play() {
+  socket.send( JSON.stringify({ type: "say-music-play"}) );
+}
+
+function toggle_music() {
+  if (music_playing) say_music_pause(); else say_music_play();
 }

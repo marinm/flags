@@ -153,7 +153,9 @@ function receive(socket, msg) {
 
   console.log(JSON.stringify(msg));
   switch (msg.type) {
-    case 'select': console.log('select'); handlers.select(socket, msg); break;
+    case 'select':           console.log('select');           handlers.select(socket, msg); break;
+    case 'say-music-play':   console.log('say-music-play');   handlers['say-music-play'](socket, msg); break;
+    case 'say-music-pause':  console.log('say-music-pause');  handlers['say-music-pause'](socket, msg); break;
     default: ; // do something...
   }
 }
@@ -178,6 +180,20 @@ const handlers = {
       // Do nothing
       // Client should avoid this situation
       console.log('Player selects out of turn');
+    }
+  },
+  'say-music-play':
+  function(socket, msg) {
+    if (PLAYER_A && PLAYER_B) {
+      PLAYER_A.send( JSON.stringify({ type: 'music-play' }) );
+      PLAYER_B.send( JSON.stringify({ type: 'music-play' }) );
+    }
+  },
+  'say-music-pause':
+  function(socket, msg) {
+    if (PLAYER_A && PLAYER_B) {
+      PLAYER_A.send( JSON.stringify({ type: 'music-pause' }) );
+      PLAYER_B.send( JSON.stringify({ type: 'music-pause' }) );
     }
   },
 };
