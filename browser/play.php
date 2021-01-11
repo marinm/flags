@@ -40,11 +40,22 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       background-color: pink;
       border: 1px solid tomato;
     }
+    #account-bar, #status-bar {
+      display: block;
+      /*
+      border: 3px solid #f6d084;
+      box-shadow: 0 0 0 3px #964d0c;
+      border-radius: 5px;
+      background-color: #ffffff;
+      padding: 0.5em;
+      */
+      text-align: right;
+    }
     #player-name {
-        background-color: #fed873;
+        background-color: #fffcf6;
+        border: 2px solid #f9b236;
         width: auto;
         display: inline-block;
-        margin: 0 auto 1em auto;
         border-radius: 5px;
         padding: 0.3em 0.5em 0.3em 0.5em;
         font-size: 10pt;
@@ -53,26 +64,40 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         color: #8c480e;
     }
     #logout-button {
-      background-color: #999999;
+      background-color: #d88f45;
+      border: 2px solid #734014;
+      color: #fbf0d8;
       width: auto;
       display: inline-block;
-      margin: 0 auto 1em auto;
       border-radius: 5px;
       padding: 0.3em 0.5em 0.3em 0.5em;
       font-size: 10pt;
       text-align: center;
       font-weight: bold;
-      color: #ffffff;
       text-decoration: none;
     }
-    #note-box {
+    #board-container {
       display: block;
+      margin: 1em auto 1em auto;
+      border: 3px solid #f6d084;
+      box-shadow: 0 0 0 3px #964d0c;
+      border-radius: 5px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+    #note-box {
+      display: inline-block;
+      float: left;
       padding: 10px;
       text-align: center;
       font-weight: bold;
-      width: 80%;
-      margin: auto;
+      width: 67%;
       border-radius: 8px;
+      box-sizing: border-box;
+      margin-right: 0%;
     }
     .disconnected-status {
       background-color: pink;
@@ -106,23 +131,15 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       background-color: yellowgreen;
       border: 2px solid seagreen;
     }
-    #board-container {
-      display: block;
-      margin: 10px auto 0 auto;
-    }
-    canvas {
-      border: 3px solid #f6d084;
-      box-shadow: 0 0 0 3px #964d0c;
-      border-radius: 12px;
-    }
     #turn-score-container {
       text-align: center;
-      margin: 10px auto 0 auto;
-      display: block;
+      display: inline-block;
+      float: right;
       width: 30%;
       overflow: hidden;
-      border: 3px solid orange;
+      border: 2px solid #964d0c;
       border-radius: 8px;
+      box-sizing: border-box;
       /*box-shadow: 3px 3px 0 0 #666666;*/
     }
     .not-playing > .score-box {
@@ -224,22 +241,26 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       -->
       <noscript><div id="noscript">This game uses JavaScript.</div></noscript>
       
-      <div id="room-buttons"></div>
-
-      <div id="player-name"><?php echo $_SESSION["p_name"]; ?></div>
-      <a href="logout.php" id="logout-button">Exit</a>
-      <div id="note-box">Welcome to Flags</div>
-      <div id="board-container"></div>
-      <div id="turn-score-container" class="not-playing">
-        <div id="whose-turn">...</div>
-        <div class="score-box" id="player-0-score-box">
-          <div id="player-0-score">0</div> <span class="remaining">0</span>
-        </div><!--
-      --><div class="score-box" id="player-1-score-box">
-          <div id="player-1-score">0</div> <span class="remaining">0</span>
-        </div>
+      <div id="account-bar">
+        <div id="player-name"><?php echo $_SESSION["p_name"]; ?></div>
+        <a href="logout.php" id="logout-button">Logout</a>
       </div>
-      <div id="autoplay-indicator">AUTOPLAY ON</div>
+      
+      <div id="board-container"></div>
+
+      <div id="status-bar">
+        <div id="note-box">Welcome to Flags</div><!--
+        --><div id="turn-score-container" class="not-playing">
+          <div id="whose-turn">...</div>
+          <div class="score-box" id="player-0-score-box">
+            <div id="player-0-score">0</div> <span class="remaining">0</span>
+          </div><!--
+        --><div class="score-box" id="player-1-score-box">
+            <div id="player-1-score">0</div> <span class="remaining">0</span>
+          </div>
+        </div>
+        <!--<div id="autoplay-indicator">AUTOPLAY ON</div>-->
+      </div>
     </div>
 
     <script type="text/javascript" src="jquery.js"></script>
