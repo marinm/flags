@@ -52,6 +52,19 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         font-weight: bold;
         color: #8c480e;
     }
+    #logout-button {
+      background-color: #999999;
+      width: auto;
+      display: inline-block;
+      margin: 0 auto 1em auto;
+      border-radius: 5px;
+      padding: 0.3em 0.5em 0.3em 0.5em;
+      font-size: 10pt;
+      text-align: center;
+      font-weight: bold;
+      color: #ffffff;
+      text-decoration: none;
+    }
     #note-box {
       display: block;
       padding: 10px;
@@ -214,6 +227,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <div id="room-buttons"></div>
 
       <div id="player-name"><?php echo $_SESSION["p_name"]; ?></div>
+      <a href="logout.php" id="logout-button">Exit</a>
       <div id="note-box">Welcome to Flags</div>
       <div id="board-container"></div>
       <div id="turn-score-container" class="not-playing">
