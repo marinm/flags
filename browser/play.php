@@ -1,3 +1,16 @@
+<?php
+
+// Initialize the session
+session_start();
+ 
+// Check if the user is logged in, if not then redirect him to login page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: login.php");
+    exit;
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -26,6 +39,18 @@
       font-weight: bold;
       background-color: pink;
       border: 1px solid tomato;
+    }
+    #player-name {
+        background-color: #fed873;
+        width: auto;
+        display: inline-block;
+        margin: 0 auto 1em auto;
+        border-radius: 5px;
+        padding: 0.3em 0.5em 0.3em 0.5em;
+        font-size: 10pt;
+        text-align: center;
+        font-weight: bold;
+        color: #8c480e;
     }
     #note-box {
       display: block;
@@ -174,7 +199,6 @@
       font-size: 50%;
       font-weight: bold;
     }
-    
     </style>
   </head>
   <body>
@@ -188,6 +212,8 @@
       <noscript><div id="noscript">This game uses JavaScript.</div></noscript>
       
       <div id="room-buttons"></div>
+
+      <div id="player-name"><?php echo $_SESSION["p_name"]; ?></div>
       <div id="note-box">Welcome to Flags</div>
       <div id="board-container"></div>
       <div id="turn-score-container" class="not-playing">
