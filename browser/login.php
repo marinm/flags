@@ -59,6 +59,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                         $_SESSION["loggedin"] = true;
                         $_SESSION["p_id"] = $p_id;
                         $_SESSION["p_name"] = $p_name;
+                        $_SESSION["p_key"] = $p_key;
                         
                         $note = "Logged in!";
 
@@ -157,7 +158,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         <div id="container">
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" autocomplete="off">
             <input type="text" id="account-key" name="p_key" placeholder="Account Key"></input><!--
-            --><input type="submit" id="login-button" value="Login">
+            --><input type="submit" id="login-button" value="Login"></input>
             </form>
         </div>
         <?php if (empty($p_key_err)) echo "<!--"; ?>

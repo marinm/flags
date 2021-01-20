@@ -5,23 +5,11 @@
 //
 // WebSocket Messaging
 
-const HIDDEN_MINE = '*';
 const PLAYER_FLAGS = ['A', 'B'];
-const KEYCODES = {'g': 71, 'n': 78};
 
 var gamestate = { player: null, turn: null };
 var autoselect = false;
 var music_playing = false;
-
-document.addEventListener("keyup", function(event) {
-  console.log(event.keyCode);
-  switch (event.keyCode) {
-    case 65: toggle_autoselect();            break;   /* a */
-    case 71: solverscan();                   break;   /* g */
-    case 78: select_next_unrevealed_flag();  break;   /* n */
-    case 77: toggle_music();                 break;   /* m */
-  }
-});
 
 
 function wss_connect(address) {
@@ -37,9 +25,9 @@ function wss_connect(address) {
 }
 
 const socket = wss_connect(SERVER_ADDRESS);
-var heartbeat = null;
 
 if (socket === null) {
+  console.log("Failed to open socket");
   room.disconnected();
 }
 else {
@@ -50,14 +38,22 @@ else {
 }
 
 function websocket_error(err) {
+  console.log("WebSocket error");
   room.disconnected();
 }
 
 function connection_opened() {
-  // Every 30 seconds, 
-  heartbeat = setInterval(function() {
-    socket.send(JSON.stringify({action: 'HEARTBEAT'}));
-  }, 30000);
+  // Every 20 seconds
+  // heartbeat = setInterval(function() {
+  //   // console.log("Sending HEARTBEAT");
+  //   // socket.send(JSON.stringify({type: 'HEARTBEAT'}));
+  // }, HEARTBEAT_INTERVAL);
+
+  login();
+}
+
+function login() {
+  socket.send( JSON.stringify({type: 'LOGIN', p_key: ACCOUNT_KEY }) );
 }
 
 function receive_message(event) {
@@ -72,7 +68,6 @@ function receive_message(event) {
 }
 
 function connection_closed(event) {
-  clearInterval(heartbeat);
   console.log('Connection closed');
   room.disconnected();
 }
@@ -167,7 +162,7 @@ const messages = {
 };
 
 const handlers = {
-  online:
+  'ONLINE':
   function(msg) {
     // Will need again later...
     // $('#online-indicator').css('color', (msg.online === 0)? '#cccccc' : '#00ff00');
@@ -177,7 +172,12 @@ const handlers = {
     // console.log(msg.online);
   },
 
-  join:
+  'LOGIN-OK':
+  function(msg) {
+    console.log("LOGIN OK");
+  },
+
+  'JOIN':
   function(msg) {
     if (msg.status === 'OPEN') {
       gamestate.player = msg.playing_as;
@@ -196,7 +196,7 @@ const handlers = {
     }
   },
 
-  start:
+  'START':
   function(msg) {
     room.start();
 
@@ -206,12 +206,12 @@ const handlers = {
     showturn(gamestate.turn);
   },
 
-  'opponent-disconnected':
+  'OPPONENT-DISCONNECTED':
   function(msg) {
     room.opponent_disconnected();
   },
 
-  reveal:
+  'REVEAL':
   function(msg) {
     const revealed = msg;
     if (!revealed) {
@@ -249,16 +249,6 @@ const handlers = {
     else {
       showwinner(revealed.turn);
     }
-  },
-
-  'music-play':
-  function(msg) {
-    music_play();
-  },
-
-  'music-pause':
-  function(msg) {
-    music_pause();
   },
 };
 
@@ -476,26 +466,4 @@ function toggle_autoselect() {
       board.tile(i,j).erase('guide');
     });
   }
-}
-
-function music_play() {
-  document.getElementById('game-music').play();
-  music_playing = true;
-}
-
-function music_pause() {
-  document.getElementById('game-music').pause();
-  music_playing = false;
-}
-
-function say_music_pause() {
-  socket.send( JSON.stringify({ type: "say-music-pause"}) );
-}
-
-function say_music_play() {
-  socket.send( JSON.stringify({ type: "say-music-play"}) );
-}
-
-function toggle_music() {
-  if (music_playing) say_music_pause(); else say_music_play();
 }
