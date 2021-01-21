@@ -203,6 +203,9 @@ const handlers = {
     $('#player-0-score-box').addClass('active-turn');
     $('#turn-score-container').removeClass('not-playing');
 
+    console.log(msg, msg.opponent);
+    $('#playing-against').text(msg.opponent);
+
     showturn(gamestate.turn);
   },
 

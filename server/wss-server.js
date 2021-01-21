@@ -319,9 +319,8 @@ function join(session) {
     room.game = FlagsGame(BOARD_N, BOARD_M, BOARD_R);
 
     // Tell both players that the game has started, and some info about their opponent
-    const players = [room.player_0.player.p_name, room.player_1.player.p_name];
-    msend(room.player_0.ws, { type: 'START', players: players });
-    msend(room.player_1.ws, { type: 'START', players: players });
+    msend(room.player_0.ws, { type: 'START', opponent: room.player_1.player.p_name });
+    msend(room.player_1.ws, { type: 'START', opponent: room.player_0.player.p_name });
 
     room.lock = true;
 

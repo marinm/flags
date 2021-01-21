@@ -52,6 +52,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
         </div>
         <!--<div id="autoplay-indicator">AUTOPLAY ON</div>-->
       </div>
+      <div id="playing-against"></div>
     </div>
 
     <script>

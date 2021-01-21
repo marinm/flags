@@ -204,3 +204,10 @@ img {
   font-size: 50%;
   font-weight: bold;
 }
+#playing-against {
+  display: block;
+  margin-top: 0.5em;
+  color: #964d0c;
+  font-size: 10pt;
+  text-align: center;
+}
