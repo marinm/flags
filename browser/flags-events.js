@@ -157,7 +157,7 @@ const room = {
 const messages = {
   select:
   function(i, j) {
-    return JSON.stringify({ type: 'select', i, j });
+    return JSON.stringify({ type: 'SELECT', i, j });
   },
 };
 

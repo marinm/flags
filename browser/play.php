@@ -2,7 +2,7 @@
 
 // Initialize the session
 session_start();
- 
+
 // Check if the user is logged in, if not then redirect him to login page
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     header("location: login.php");
@@ -33,6 +33,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <noscript><div id="noscript">This game uses JavaScript.</div></noscript>
       
       <div id="account-bar">
+        <div id="note-box">Welcome to Flags</div>
         <div id="player-name"><?php echo $_SESSION["p_name"]; ?></div>
         <a href="logout.php" id="logout-button">Logout</a>
       </div>
@@ -40,8 +41,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <div id="board-container"></div>
 
       <div id="status-bar">
-        <div id="note-box">Welcome to Flags</div><!--
-        --><div id="turn-score-container" class="not-playing">
+          <div id="turn-score-container" class="not-playing">
           <div id="whose-turn">...</div>
           <div class="score-box" id="player-0-score-box">
             <div id="player-0-score">0</div> <span class="remaining">0</span>

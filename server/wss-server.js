@@ -41,10 +41,20 @@ function msend(ws, message) {
   ws.send(JSON.stringify(message));
 }
 
+
 wss.on('connection', function(ws) {
   //
   // When a new connection starts
   //
+  // Note on closures and architecture:
+  //   session passed to setInterval/setTimeout may expire by the time those functions
+  //   are called.
+  //   How to keep track of dangling references?
+  //
+  //   Every time a function uses a session, check if it is still alive?
+  //   Keep a list of functions that session has been passed to and somehow cancel them
+  //   if the session ends.
+
 
   // Each WebSocket connection is binded to a player and maybe a game
   const session = {
@@ -58,12 +68,14 @@ wss.on('connection', function(ws) {
 
   // Start a login timeout, after which the server closes the connection
   session.login_timeout = setTimeout(function() {
+    console.log("Login timeout");
     end_session(session);
   }, LOGIN_TIMEOUT_MS);
 
   session.alive = true;
   session.heartbeat = setInterval(function() {
     if (!session.alive) {
+      console.log("WebSocket ping/pong timeout");
       end_session(session);
     }
     else {
@@ -95,6 +107,7 @@ wss.on('connection', function(ws) {
       // Reject bad request
       // A non-logged in user is making a non-login request
       // End the session
+      console.log("Bad request | or | non-logged in user made non-login request");
       end_session(session);
     }
   });
@@ -115,7 +128,10 @@ wss.on('close', function() {
 
 
 function parse(req) {
-  // Parse a JSON message and check that it is valid
+  // Parse a request string and check that it
+  //   (1) is a JSON object
+  //   (2) has a 'type' with a matching handler
+  // Return as object
   try {
     const parsed = JSON.parse(req);
     if (parsed.type != undefined && Object.keys(handlers).includes(parsed.type)) {
@@ -175,6 +191,7 @@ const handlers = {
       // This session already did a successful login
       // Reject multiple login attempt
       // Close the connection
+      console.log("Player tried to log in more than once in a session");
       end_session(session);
       return;
     }
@@ -199,6 +216,7 @@ const handlers = {
         else {
           // Player is now logged in
           session.player = player;
+          session.logged_in = true;
 
           console.log("Player logged in: " + JSON.stringify(player));
 
@@ -216,6 +234,7 @@ const handlers = {
         // Invalid key
         // Reject login attempt
         // Close the connection
+        console.log("Login attempt with bad key");
         end_session(session);
       }
     );
@@ -236,14 +255,15 @@ const handlers = {
       return;
     }
 
-    if (!session.playing_as) {
+    if (session.playing_as === null) {
       // This player is not yet playing a game
       // Close the connection
+      console.log("Player made a game move but not part of a game");
       end_session(session);
       return;
     }
 
-    const gamestate = game.getstate();
+    const gamestate = room.game.getstate();
 
     // Check if this is the player's turn
     const player_0_selects = (session.playing_as === 0 && gamestate.turn === 0);
@@ -251,16 +271,17 @@ const handlers = {
 
     if (player_0_selects || player_1_selects) {
       // Player selects on their turn
-      var response = game.select(req.i, req.j);
+      var response = room.game.select(req.i, req.j);
       response.type = 'REVEAL';
       response.for = {i: req.i, j: req.j};
       msend(room.player_0.ws, response);
-      msend(room.player_0.ws, response);
+      msend(room.player_1.ws, response);
     }
     else {
       // Player selects out of turn
       // Client should avoid this situation
       // Close the connection
+      console.log("Player selected out of their turn");
       end_session(session);
     }
   },
@@ -315,6 +336,10 @@ function session_ends(session) {
 
   // What to do when (after) a socket is closed, either by the client or server
 
+  // In case the server closes the socket on a failed login attempt
+  clearTimeout(session.login_timeout);
+
+
   clearInterval(session.heartbeat);
 
   if (session.player) {
@@ -327,14 +352,14 @@ function session_ends(session) {
       // End the game
 
       //
-      // game.revealall()?
+      // room.game.revealall()?
       //
 
       // Let the opponent know
       if (session.playing_as === 0 && room.player_1 != null)
-        msend(room.player_1.ws, { type: 'opponent-disconnected' });
+        msend(room.player_1.ws, { type: 'OPPONENT-DISCONNECTED' });
       if (session.playing_as === 1 && room.player_0 != null)
-        msend(room.player_0.ws, { type: 'opponent-disconnected' });
+        msend(room.player_0.ws, { type: 'OPPONENT-DISCONNECTED' });
 
       session.playing_as = null;
 

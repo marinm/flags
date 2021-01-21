@@ -17,28 +17,21 @@ audio {
   background-color: pink;
   border: 1px solid tomato;
 }
-#account-bar, #status-bar {
+#account-bar {
   display: block;
-  /*
-  border: 3px solid #f6d084;
-  box-shadow: 0 0 0 3px #964d0c;
-  border-radius: 5px;
-  background-color: #ffffff;
-  padding: 0.5em;
-  */
   text-align: right;
 }
 #player-name {
-    background-color: #fffcf6;
-    border: 2px solid #f9b236;
-    width: auto;
-    display: inline-block;
-    border-radius: 5px;
-    padding: 0.3em 0.5em 0.3em 0.5em;
-    font-size: 10pt;
-    text-align: center;
-    font-weight: bold;
-    color: #8c480e;
+  background-color: #fffcf6;
+  border: 2px solid #f9b236;
+  width: auto;
+  display: inline-block;
+  border-radius: 5px;
+  padding: 0.3em 0.5em 0.3em 0.5em;
+  font-size: 10pt;
+  text-align: center;
+  font-weight: bold;
+  color: #8c480e;
 }
 #logout-button {
   background-color: #d88f45;
@@ -62,27 +55,29 @@ audio {
   box-sizing: border-box;
   overflow: hidden;
 }
+#note-box {
+  width: auto;
+  float: left;
+  border-radius: 5px;
+  padding: 0.3em 0.5em 0.3em 0.5em;
+  font-size: 10pt;
+  text-align: center;
+  font-weight: normal;
+  text-decoration: none;
+  color: #000000;
+}
 canvas {
   display: block;
-}
-#note-box {
-  display: inline-block;
-  float: left;
-  padding: 10px;
-  text-align: center;
-  font-weight: bold;
-  width: 67%;
-  border-radius: 8px;
-  box-sizing: border-box;
-  margin-right: 0%;
 }
 .disconnected-status {
   background-color: pink;
   border: 2px solid tomato;
 }
 .waiting-status {
-  background-color: aliceblue;
-  border: 2px solid cornflowerblue;
+  /*background-color: aliceblue;*/
+  /*border: 2px solid cornflowerblue;*/
+  background-color: #91ddf6;
+  border: 2px solid  #91ddf6;
 }
 .ready-status {
   background-color: yellowgreen;
@@ -108,16 +103,19 @@ canvas {
   background-color: yellowgreen;
   border: 2px solid seagreen;
 }
+#status-bar {
+  display: block;
+  text-align: center;
+}
 #turn-score-container {
   text-align: center;
   display: inline-block;
-  float: right;
   width: 30%;
   overflow: hidden;
-  border: 2px solid #964d0c;
-  border-radius: 8px;
+  border-radius: 4px;
   box-sizing: border-box;
-  /*box-shadow: 3px 3px 0 0 #666666;*/
+  border: 2px solid #f6d084;
+  box-shadow: 0 0 0 2px #964d0c;
 }
 .not-playing > .score-box {
   background-color: #dddddd;
