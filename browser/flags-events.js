@@ -464,3 +464,33 @@ function toggle_autoselect() {
     });
   }
 }
+
+
+//
+// Extensions
+//
+
+$("#solver-button").click(function() {
+  const SOLVER_URL = "https://flags-solver.herokuapp.com/solver";
+
+  const body = JSON.stringify({height: TMP_N, width: TMP_M, board: board.values()});
+
+  fetch(SOLVER_URL, {
+    method: 'POST',
+    mode: 'cors',
+    headers: {'Content-Type': 'application/json'},
+    referrerPolicy: 'no-referrer',
+    body: body
+  })
+  .then(body => body.json())
+  .then(function(response) {
+    response.flags.forEach(function(coords) {
+      const tile = board.tile(coords.x, coords.y);
+      tile.draw('guide', 'FLAGHERE');
+    });
+    response.nonFlags.forEach(function(coords) {
+      const tile = board.tile(coords.x, coords.y);
+      tile.draw('guide', 'NOFLAG');
+    });
+  });
+});

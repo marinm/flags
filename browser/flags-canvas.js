@@ -142,7 +142,12 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
     return !disabled;
   }
 
-  const interface = { canvas, surface, N, M, W, H, tile, forEachTile, disable, enable, ready };
+  function values() {
+    // Get all tile values in an array
+    return tiles.map(t => t.value);
+  }
+
+  const interface = { canvas, surface, N, M, W, H, tile, forEachTile, values, disable, enable, ready };
 
   canvas.addEventListener('click', function(event) {
     if (!disabled) {
