@@ -43,3 +43,9 @@ Scenario:
 - game server signs the game log and gives it to each player to prove that the game happened
 
 is this unnecessarily complicated for the starting stage?
+
+there are 3 actors in a match:
+- the two players
+- the game server that decides the board, which is secret from the two players
+
+both players agree to trust the game server
