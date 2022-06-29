@@ -49,3 +49,7 @@ there are 3 actors in a match:
 - the game server that decides the board, which is secret from the two players
 
 both players agree to trust the game server
+
+Need to decide on a signing algorithm...
+Will probably use OpenSSL for this
+Reading: https://opensource.com/article/19/6/cryptography-basics-openssl-part-2
