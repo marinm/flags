@@ -57,3 +57,40 @@ https://opensource.com/article/19/6/cryptography-basics-openssl-part-2
 https://www.thesslstore.com/blog/how-secure-is-rsa-in-an-increasingly-connected-world
 
 So I shouldn't use RSA?
+
+
+Using RSA:
+
+Let’s walk through how a digital signature is created. As mentioned before, there is no digital signature without a public and private key pair. When using OpenSSL to create these keys, there are two separate commands: one to create a private key, and another to extract the matching public key from the private one. These key pairs are encoded in base64, and their sizes can be specified during this process.
+
+The private key consists of numeric values, two of which (a modulus and an exponent) make up the public key. Although the private key file contains the public key, the extracted public key does not reveal the value of the corresponding private key.
+
+The resulting file with the private key thus contains the full key pair. Extracting the public key into its own file is practical because the two keys have distinct uses, but this extraction also minimizes the danger that the private key might be publicized by accident.
+
+$ open ssl genpkey -algorithm rsa -out privkey.pem -algorithm rsa 4096
+
+This generates a private-public key pair in privkey.pem
+
+Next, extract the public key
+
+$ openssl rsa -in privkey.pem -outform PEM -pubout -out pubkey.pem
+
+Next, sign myclaim.txt using its SHA256 digest and privkey.pem
+
+$ openssl dgst -sha256 -sign privkey.pem -out claimsignature.sha256 myclaim.txt
+
+
+Now to verify the digital signature on the receiving end
+
+Decode the base64 file
+
+$ openssl enc -base64 -d -in sign.sha256.base64 -out claimsignature.sha256
+
+Verify the signature
+
+$ openssl dgst -sha256 -verify pubkey.pem -signature sign.sha256 myclaim.txt
+
+this will return OK.
+
+
+...Where to begin implementing this?
