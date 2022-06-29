@@ -17,6 +17,14 @@ https://marinm.net/flags?m=79ea107a540b1be8b042fa6531b98a03
 https://marinm.net/flags?m=79ea-107a-540b-1be8-b042-fa65-31b9-8a03
 
 
+2 concerns:
+- enough id's for all matches that will ever be played
+- needle in the haystack: make it hard for bad actors to access matches they shouldn't be looking at
+
+if matches are key-protected...
+requires user login
+
+
 Many-player flags
 
 This doesn't make much sense - the match should not be in the public URL namespace
@@ -25,3 +33,13 @@ This doesn't make much sense - the match should not be in the public URL namespa
 AWS DynamoDB to store game state
 
 Need bots! and tests!
+
+## Distributed / Decentralized
+
+Scenario:
+- many un-synchronized game servers
+- those servers sometimes share game state with each other
+- each player has a public-private key pair to id themselves and sign their game moves
+- game server signs the game log and gives it to each player to prove that the game happened
+
+is this unnecessarily complicated for the starting stage?
