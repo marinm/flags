@@ -52,4 +52,8 @@ both players agree to trust the game server
 
 Need to decide on a signing algorithm...
 Will probably use OpenSSL for this
-Reading: https://opensource.com/article/19/6/cryptography-basics-openssl-part-2
+Reading:
+https://opensource.com/article/19/6/cryptography-basics-openssl-part-2
+https://www.thesslstore.com/blog/how-secure-is-rsa-in-an-increasingly-connected-world
+
+So I shouldn't use RSA?
