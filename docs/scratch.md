@@ -55,6 +55,7 @@ Will probably use OpenSSL for this
 Reading:
 https://opensource.com/article/19/6/cryptography-basics-openssl-part-2
 https://www.thesslstore.com/blog/how-secure-is-rsa-in-an-increasingly-connected-world
+https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm
 
 So I shouldn't use RSA?
 
@@ -94,3 +95,9 @@ this will return OK.
 
 
 ...Where to begin implementing this?
+
+
+
+AWS KMS:
+Reference:
+- https://docs.aws.amazon.com/kms/latest/APIReference/API_GenerateDataKeyPair.html
