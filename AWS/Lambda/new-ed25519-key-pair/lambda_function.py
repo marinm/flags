@@ -1,33 +1,37 @@
 import json
 import boto3
 
-# Reference:
-# https://docs.aws.amazon.com/kms/latest/APIReference/API_GenerateDataKeyPair.html
+SYMMETRIC_KEY_ID  = '777baedc-96c4-45b6-84ce-0543263bbce5'
+KEY_PAIR_SPEC     = 'ECC_SECG_P256K1'
 
-SYMMETRIC_KEY_ID = ''
 
 def generate_data_key_pair():
-    return kms = boto3.client('kms')
+    kms = boto3.client('kms')
     
-    kms.generate_data_key_pair(
+    return kms.generate_data_key_pair(
         EncryptionContext = {},
-        KeyId = '',
-        KeyPairSpec = ''
+        KeyId = SYMMETRIC_KEY_ID,
+        KeyPairSpec = KEY_PAIR_SPEC,
+        GrantTokens = []
     )
 
 
 def lambda_handler(event, context):
     
     try:
-        key_pair_response = generate_data_key_pair()
+        kms_response = generate_data_key_pair()
         
         return {
             'statusCode': 200,
-            'body': json.dumps(key_pair_response)
+            'body': json.dumps({
+                'private': kms_response['PrivateKeyPlaintext'].hex(),
+                'public': kms_response['PublicKey'].hex()
+            })
         }
 
     except Exception as e:
+        print(e);
         return {
             'statusCode': 500,
-            'body': json.dumps(e)
+            'body': json.dumps('Error')
         }

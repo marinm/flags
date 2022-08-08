@@ -68,7 +68,7 @@ The private key consists of numeric values, two of which (a modulus and an expon
 
 The resulting file with the private key thus contains the full key pair. Extracting the public key into its own file is practical because the two keys have distinct uses, but this extraction also minimizes the danger that the private key might be publicized by accident.
 
-$ open ssl genpkey -algorithm rsa -out privkey.pem -algorithm rsa 4096
+$ openssl genpkey -algorithm rsa -out privkey.pem -algorithm rsa 4096
 
 This generates a private-public key pair in privkey.pem
 
@@ -101,3 +101,6 @@ this will return OK.
 AWS KMS:
 Reference:
 - https://docs.aws.amazon.com/kms/latest/APIReference/API_GenerateDataKeyPair.html
+- https://docs.aws.amazon.com/kms/latest/developerguide/asymmetric-key-specs.html#key-spec-ecc
+- https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/kms.html#KMS.Client.generate_data_key_pair
+- https://aws.amazon.com/blogs/security/how-to-verify-aws-kms-signatures-in-decoupled-architectures-at-scale
