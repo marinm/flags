@@ -20,7 +20,6 @@ var game = FlagsGame(TMP_N, TMP_M, TMP_R);
 var PLAYER_A = null;
 var PLAYER_B = null;
 
-
 const server = https.createServer({
   cert: fs.readFileSync(process.env.SSL_CERT),
   key: fs.readFileSync(process.env.SSL_KEY)
@@ -30,7 +29,8 @@ wss.on('connection', new_session);
 wss.on('close', shutdown_server);
 server.listen(SERVER_PORT);
 
-console.log('Secure WebSocket Server started')
+console.log('Secure WebSocket Server started');
+console.log(`Listening for clients on ${SERVER_PORT}...`);
 
 function heartbeat() {
   this.isAlive = true;
@@ -60,6 +60,8 @@ function parse_json(message) {
 
 // When a new client connects
 function new_session(ws) {
+
+    console.log('new connection');
 
   ws.isAlive = true;
   ws.on('pong', heartbeat);
