@@ -142,17 +142,17 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
     return !disabled;
   }
 
-  const interface = { canvas, surface, N, M, W, H, tile, forEachTile, disable, enable, ready };
+  const methods = { canvas, surface, N, M, W, H, tile, forEachTile, disable, enable, ready };
 
   canvas.addEventListener('click', function(event) {
     if (!disabled) {
       const i = Math.floor(event.offsetY / H);
       const j = Math.floor(event.offsetX / W);
-      onclick(interface, i, j);
+      onclick(methods, i, j);
     }
   });
 
-  return interface;
+  return methods;
 }
 
 
@@ -233,3 +233,5 @@ function FlagsBoard(N, M, S, sheet, onclick) {
 
   return board;
 }
+
+export {FlagsBoard, TILESHEET};

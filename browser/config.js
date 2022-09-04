@@ -1,1 +1,3 @@
-const SERVER_ADDRESS = 'wss://marinm.net/wss/flags';
+export default {
+    SERVER_ADDRESS : 'wss://localhost:9637'
+};
