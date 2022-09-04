@@ -1,3 +1,1 @@
-export default {
-    SERVER_ADDRESS : 'wss://marinm.net/wss/flags'
-};
+const SERVER_ADDRESS = 'wss://marinm.net/wss/flags';
