@@ -23,7 +23,7 @@
 //        +-----+-----+-----+-----+-----+-----+
 //     i
 
-const HIDDEN_MINE = '*';
+const HIDDEN_FLAG = '*';
 const PLAYER_FLAGS = ['A', 'B'];
 
 function getRandomInt(max) {
@@ -44,26 +44,26 @@ function generate_flags_board(N, M, R) {
     var i = 0;
     var j = 0;
 
-    // If the i,j is already a mine, try again
+    // If the i,j is already a flag, try again
     do {
       i = getRandomInt(N);
       j = getRandomInt(M);
     }
-    while (board[i*M + j] === HIDDEN_MINE);
+    while (board[i*M + j] === HIDDEN_FLAG);
 
-    board[i * M + j] = HIDDEN_MINE;
+    board[i * M + j] = HIDDEN_FLAG;
   }
 
   // Walk through the board, by row and column.
-  // If the tile is marked as a mine, increment the numeric value of all
-  // non-mine tiles it touches.
+  // If the tile is marked as a flag, increment the numeric value of all
+  // non-flag tiles it touches.
   //
   // For each row...
   for (var i = 0; i < N; i++) {
     // For each column...
     for (var j = 0; j < M; j++) {
-      // If tile (i,j) is not a Mine, skip it
-      if (board[i * M + j] != HIDDEN_MINE)
+      // If tile (i,j) is not a flag, skip it
+      if (board[i * M + j] != HIDDEN_FLAG)
         continue;
 
       //  Top/Centre/Bottom - Left/Centre/Right
@@ -73,7 +73,7 @@ function generate_flags_board(N, M, R) {
       //    B      BL BC BR
 
       function increment(i_,j_) {
-        if ( (i_ >= 0 && i_ < N) && (j_ >= 0 && j_ < M) && board[i_ * M + j_] != HIDDEN_MINE) {
+        if ( (i_ >= 0 && i_ < N) && (j_ >= 0 && j_ < M) && board[i_ * M + j_] != HIDDEN_FLAG) {
           board[i_ * M + j_]++;
         }
       }
@@ -101,7 +101,7 @@ function FlagsGame(N, M, R) {
   var seq = 0;
   var on = true;
 
-  // The game is over when a player finds R/2 mines
+  // The game is over when a player finds R/2 flags
   const winning_score = Math.ceil(R/2);
 
   // What has been revealed so far (array of bools)
@@ -162,9 +162,9 @@ function FlagsGame(N, M, R) {
 
     const value = board[k];
 
-    // Stepped to a mine
+    // Stepped to a flag
     // Don't reveal it
-    if (value === HIDDEN_MINE)
+    if (value === HIDDEN_FLAG)
       return [];
 
     // Stepped to a non-zero numeric tile
@@ -220,8 +220,8 @@ function FlagsGame(N, M, R) {
         // Revealed a non-zero value...
         revealed[k] = true;
 
-        if (value === HIDDEN_MINE) {
-          // Change the tile value from HIDDEN_MINE to A/B
+        if (value === HIDDEN_FLAG) {
+          // Change the tile value from HIDDEN_FLAG to A/B
           board[k] = PLAYER_FLAGS[turn];
           value = board[k];
 

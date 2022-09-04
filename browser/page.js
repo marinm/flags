@@ -8,7 +8,7 @@ import $ from './fake-jquery.js';
 //
 // WebSocket Messaging
 
-const HIDDEN_MINE = '*';
+const HIDDEN_FLAG = '*';
 const PLAYER_FLAGS = ['A', 'B'];
 const KEYCODES = {'g': 71, 'n': 78};
 
