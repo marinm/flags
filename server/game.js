@@ -24,7 +24,9 @@
 //     i
 
 const labels = require('./labels.js');
+const Matrix = require('./matrix.js');
 const randomBoard = require('./random-board.js');
+const {reveal, revealAll} = require('./reveal.js');
 
 function FlagsGame(N, M, R) {
     // A randomly generated board
@@ -39,39 +41,17 @@ function FlagsGame(N, M, R) {
     const winning_score = Math.ceil(R/2);
 
     // What has been revealed so far (array of bools)
-    const revealed = new Array(N * M);
-    revealed.fill(false);
+    const revealed = new Matrix(N, M);
+
+    // At the start of the game, nothing has been revealed yet
+    revealed.fill( (i,j) => false );
+
 
     function get(i, j) {
         const k = i * M + j;
-        if (!board.contains(i,j) || !revealed[k])
+        if (!board.contains(i,j) || !revealed.at(i,j))
             return null;
         return board.at(i,j);
-    }
-
-    function reveal(i, j) {
-        const k = i * M + j;
-        revealed[k] = true;
-        return {i, j, value: board.at(i,j)};
-    }
-
-    // Reveal all remaining hidden tiles
-    // Should only be called when game is over
-    function revealall() {
-        if (on) {
-            return null;
-        }
-
-        const remaining = [];
-        for (var i = 0; i < N; i++) {
-            for (var j = 0; j < M; j++) {
-                // A failed get() indicates an unrevealed tile
-                if (get(i,j) === null) {
-                    remaining.push( reveal(i, j) );
-                }
-            }
-        }
-        return remaining;
     }
 
     function zerowalk(i, j) {
@@ -86,7 +66,7 @@ function FlagsGame(N, M, R) {
 
         // Stepped to a value that's already been revealed
         // Nothing to do
-        if (revealed[k])
+        if (revealed.at(i,j))
             return [];
 
         const value = board.at(i,j);
@@ -98,12 +78,12 @@ function FlagsGame(N, M, R) {
 
         // Stepped to a non-zero numeric tile
         // Reveal it and return the value
-        if (value != '0')
-            return [ reveal(i, j) ];
+        if (value != 0)
+            return [ reveal(i, j, revealed, board) ];
 
         // Found a zero...
         // First item on the newly revealed array is this tile
-        var newrev = [ reveal(i, j) ];
+        var newrev = [ reveal(i, j, revealed, board) ];
 
         function stepto(next_i, next_j) {
             newrev = newrev.concat( zerowalk(next_i, next_j) );
@@ -137,7 +117,7 @@ function FlagsGame(N, M, R) {
         var show = [];
 
         // If the tile is already revealed, do nothing
-        if (!revealed[k]) {
+        if (!revealed.at(i,j)) {
             seq++;
 
             if (value === 0) {
@@ -147,7 +127,7 @@ function FlagsGame(N, M, R) {
             }
             else {
                 // Revealed a non-zero value...
-                revealed[k] = true;
+                revealed.set(i, j, true);
 
                 if (value === labels.HIDDEN_FLAG) {
                     // Change the tile value from HIDDEN_FLAG to PLAYER_FLAG
@@ -168,7 +148,7 @@ function FlagsGame(N, M, R) {
             // The game is over on this move
             // Append all unrevealed values
             if (!on) {
-                show = show.concat( revealall() );
+                show = show.concat( revealAll(revealed, board) );
             }
         }
 

@@ -31,7 +31,7 @@ function randomBoard(N, M, F) {
     const board = new Matrix(N, M);
 
     // By default, every tile is a zero
-    board.fill( (i,j) => Number(0) );
+    board.fill( (i,j) => 0 );
 
     // Select some tiles randomly
     const flags = board.random(F);
