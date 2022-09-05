@@ -23,78 +23,12 @@
 //        +-----+-----+-----+-----+-----+-----+
 //     i
 
-const HIDDEN_FLAG = '*';
-const PLAYER_FLAGS = ['A', 'B'];
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
-
-function generate_flags_board(N, M, R) {
-  if (N < 2 || M < 2)
-    return [];
-
-  var board = new Array(N * M);
-
-  // By default, all values zero
-  board.fill(0);
-
-  // Mark R random tiles as 'M'
-  for (var r = 0; r < R; r++) {
-    var i = 0;
-    var j = 0;
-
-    // If the i,j is already a flag, try again
-    do {
-      i = getRandomInt(N);
-      j = getRandomInt(M);
-    }
-    while (board[i*M + j] === HIDDEN_FLAG);
-
-    board[i * M + j] = HIDDEN_FLAG;
-  }
-
-  // Walk through the board, by row and column.
-  // If the tile is marked as a flag, increment the numeric value of all
-  // non-flag tiles it touches.
-  //
-  // For each row...
-  for (var i = 0; i < N; i++) {
-    // For each column...
-    for (var j = 0; j < M; j++) {
-      // If tile (i,j) is not a flag, skip it
-      if (board[i * M + j] != HIDDEN_FLAG)
-        continue;
-
-      //  Top/Centre/Bottom - Left/Centre/Right
-      //
-      //    T      TL TC TR
-      //  L   R    CL -- CR
-      //    B      BL BC BR
-
-      function increment(i_,j_) {
-        if ( (i_ >= 0 && i_ < N) && (j_ >= 0 && j_ < M) && board[i_ * M + j_] != HIDDEN_FLAG) {
-          board[i_ * M + j_]++;
-        }
-      }
-
-      increment(i - 1, j - 1); // TL
-      increment(i - 1, j - 0); // TC
-      increment(i - 1, j + 1); // TR
-      increment(i - 0, j - 1); // CL
-      increment(i - 0, j + 1); // CR
-      increment(i + 1, j - 1); // BL
-      increment(i + 1, j - 0); // BC
-      increment(i + 1, j + 1); // BR
-    }
-  }
-  
-  return board;
-}
+const labels = require('./labels.js');
+const randomBoard = require('./random-board.js');
 
 function FlagsGame(N, M, R) {
   // A randomly generated board
-  const board = generate_flags_board(N, M, R);
+  const board = new randomBoard(N, M, R);
 
   var turn = 0;
   var score = [0, 0];
@@ -108,22 +42,17 @@ function FlagsGame(N, M, R) {
   const revealed = new Array(N * M);
   revealed.fill(false);
 
-  function checkij(i, j) {
-    return (i >= 0 && j >= 0 && i < N && j < M);
-  }
-
   function get(i, j) {
     const k = i * M + j;
-    if (!checkij(i,j) || !revealed[k])
+    if (!board.contains(i,j) || !revealed[k])
       return null;
-    return board[k];
+    return board.at(i,j);
   }
 
   function reveal(i, j) {
     const k = i * M + j;
     revealed[k] = true;
-    const value = board[k];
-    return {i, j, value};
+    return {i, j, value: board.at(i,j)};
   }
 
   // Reveal all remaining hidden tiles
@@ -150,7 +79,7 @@ function FlagsGame(N, M, R) {
 
     // Stepped out of bounds
     // Nothing to do
-    if (!checkij(i,j))
+    if (!board.contains(i,j))
       return [];
 
     const k = i * M + j;
@@ -160,11 +89,11 @@ function FlagsGame(N, M, R) {
     if (revealed[k])
       return [];
 
-    const value = board[k];
+    const value = board.at(i,j);
 
     // Stepped to a flag
     // Don't reveal it
-    if (value === HIDDEN_FLAG)
+    if (value === labels.HIDDEN_FLAG)
       return [];
 
     // Stepped to a non-zero numeric tile
@@ -194,7 +123,7 @@ function FlagsGame(N, M, R) {
 
   function select(i, j) {
     // Selected coordinates out of bounds
-    if (!checkij(i,j))
+    if (!board.contains(i,j))
       return null;
     
     // The game is already over
@@ -202,7 +131,7 @@ function FlagsGame(N, M, R) {
       return null;
 
     const k = i * M + j;
-    var value = board[k];
+    var value = board.at(i,j);
 
     // Which tiles to reveal, if any
     var show = [];
@@ -220,10 +149,10 @@ function FlagsGame(N, M, R) {
         // Revealed a non-zero value...
         revealed[k] = true;
 
-        if (value === HIDDEN_FLAG) {
-          // Change the tile value from HIDDEN_FLAG to A/B
-          board[k] = PLAYER_FLAGS[turn];
-          value = board[k];
+        if (value === labels.HIDDEN_FLAG) {
+          // Change the tile value from HIDDEN_FLAG to PLAYER_FLAG
+          board.set(i, j, labels.PLAYER_FLAGS[turn]);
+          value = board.at(i,j);
 
           // Still the same player's turn
           score[turn]++;
