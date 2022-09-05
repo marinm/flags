@@ -27,6 +27,7 @@ const labels = require('./labels.js');
 const Matrix = require('./matrix.js');
 const randomBoard = require('./random-board.js');
 const {reveal, revealAll} = require('./reveal.js');
+const zerowalk = require('./zerowalk.js');
 
 function FlagsGame(N, M, R) {
     // A randomly generated board
@@ -54,53 +55,6 @@ function FlagsGame(N, M, R) {
         return board.at(i,j);
     }
 
-    function zerowalk(i, j) {
-        // The first zero must still be not revealed
-
-        // Stepped out of bounds
-        // Nothing to do
-        if (!board.contains(i,j))
-            return [];
-
-        const k = i * M + j;
-
-        // Stepped to a value that's already been revealed
-        // Nothing to do
-        if (revealed.at(i,j))
-            return [];
-
-        const value = board.at(i,j);
-
-        // Stepped to a flag
-        // Don't reveal it
-        if (value === labels.HIDDEN_FLAG)
-            return [];
-
-        // Stepped to a non-zero numeric tile
-        // Reveal it and return the value
-        if (value != 0)
-            return [ reveal(i, j, revealed, board) ];
-
-        // Found a zero...
-        // First item on the newly revealed array is this tile
-        var newrev = [ reveal(i, j, revealed, board) ];
-
-        function stepto(next_i, next_j) {
-            newrev = newrev.concat( zerowalk(next_i, next_j) );
-        }
-
-        stepto(i - 1, j - 1); // TL
-        stepto(i - 1, j - 0); // TC
-        stepto(i - 1, j + 1); // TR
-        stepto(i - 0, j - 1); // CL
-        stepto(i - 0, j + 1); // CR
-        stepto(i + 1, j - 1); // BL
-        stepto(i + 1, j - 0); // BC
-        stepto(i + 1, j + 1); // BR
-
-        return newrev;
-    }
-
     function select(i, j) {
         // Selected coordinates out of bounds
         if (!board.contains(i,j))
@@ -123,7 +77,7 @@ function FlagsGame(N, M, R) {
             if (value === 0) {
                 turn = (turn + 1) % 2;
                 // The first zero must still be not revealed
-                show = zerowalk(i, j);
+                show = zerowalk(i, j, board, revealed);
             }
             else {
                 // Revealed a non-zero value...
