@@ -1,5 +1,5 @@
 const Matrix = require('./matrix.js');
-const forEachNeighbour = require('./for-each-neighbour.js');
+const neighbours = require('./neighbours.js');
 const labels = require('./labels.js');
 
 // Generates a board with randomly placed flags
@@ -40,7 +40,11 @@ function randomBoard(N, M, F) {
     flags.forEach(([i,j]) => board.set(i, j, labels.HIDDEN_FLAG));
 
     // For every flag tile, increment all its number neighbours
-    flags.forEach(([i,j]) => forEachNeighbour(i, j, increment, board));
+    flags.forEach(
+        ([i,j]) => neighbours(i,j).forEach(
+            ([i_,j_]) => increment(i_, j_, board)
+        )
+    );
 
     return board;
 };

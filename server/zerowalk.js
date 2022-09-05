@@ -1,5 +1,5 @@
 const labels = require('./labels.js');
-const forEachNeighbour = require('./for-each-neighbour.js');
+const neighbours = require('./neighbours.js');
 const {reveal} = require('./reveal.js');
 
 module.exports =
@@ -31,7 +31,8 @@ function zerowalk(i, j, board, revealed) {
         newrev = newrev.concat( zerowalk(next_i, next_j, board, revealed) );
     }
 
-    forEachNeighbour(i, j, stepto, null);
+    // Visit every neighbour and start a zerowalk from there
+    neighbours(i,j).forEach(([i,j]) => stepto(i,j));
 
     return newrev;
 }
