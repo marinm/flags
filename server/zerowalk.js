@@ -1,32 +1,34 @@
 module.exports =
 function zerowalk(tile) {
 
-    // Stepped out of bounds
-    // Nothing to do
-    // (This should never happen...)
-    if (!tile) return [];
+    const queue = [];
+    const show = [];
 
-    // Stepped to a tile that's already been revealed
-    // Nothing to do
-    if (tile.isRevealed()) return [];
+    // Begin with this tile in the queue
+    queue.push(tile);
 
-    // Stepped to a flag
-    // Don't reveal it
-    if (tile.isFlag()) return [];
+    while (queue.length > 0) {
+        // Pop the next tile from the queue
+        const current = queue.shift();
 
-    // Stepped to a non-zero numeric tile
-    // Reveal it and return the value
-    if (tile.value() != 0) return [ tile.reveal() ];
+        // Stepped to a tile that's already been revealed
+        // Nothing to do
+        if (current.isRevealed()) continue;
 
-    // Found a zero...
-    // First item on the newly revealed array is this tile
-    let show = [ tile.reveal() ];
+        // Stepped to a flag
+        // Don't reveal it
+        if (current.isFlag()) continue;
 
-    // Visit every neighbour and start a zerowalk from there
-    // Recursive depth-first search
-    // This might be bad for performance?
-    // Can improve by using a queue traversal
-    tile.neighbours().forEach(nb => show = show.concat(zerowalk(nb)));
+        // Stepped to numeric value
+        // Reveal it
+        show.push(current.reveal());
+
+        // If this is a zero
+        // Add all neighbours to the visit queue
+        if (current.value() === 0) queue.push(...current.neighbours());
+
+        // Some tiles will pass through the queue multiple times
+    }
 
     return show;
 }
