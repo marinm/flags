@@ -1,28 +1,9 @@
 const fs = require('fs');
 const https = require('https');
 const ws = require('ws');
+const { fromJSON, toJSON } = require('./json.js');
 
 const PING_INTERVAL = 30 * 1000
-
-function fromJSON(message) {
-    try {
-        return JSON.parse(message);
-    }
-    catch (err) {
-        return null;
-    }
-}
-
-function toJSON(message) {
-    try {
-        // Not only objects like {...} but also standalone numbers, arrays,
-        // functions, etc. will successfully be stringified
-        return JSON.stringify(message);
-    }
-    catch (err) {
-        return null;
-    }
-}
 
 function pingAll(serverWSS) {
     serverWSS.clients.forEach(
