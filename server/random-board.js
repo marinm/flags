@@ -1,6 +1,5 @@
 const Matrix = require('./matrix.js');
-const neighbours = require('./neighbours.js');
-const labels = require('./labels.js');
+const Tile = require('./tile.js');
 
 // Generates a board with randomly placed flags
 //
@@ -13,15 +12,6 @@ const labels = require('./labels.js');
 //     1  2  3  2  1  0
 //     1  *  *  1  0  0
 
-function increment(i, j, board) {
-    // Do nothing for a flag tile
-    if ( board.at(i,j) === labels.HIDDEN_FLAG ) return;
-    
-    // Tiles on the edge don't have neighbours on all sides
-    // This is OK because set() ignores out-of-bounds indices
-    board.set(i, j, board.at(i, j) + 1);
-}
-
 module.exports =
 function randomBoard(N, M, F) {
 
@@ -31,20 +21,17 @@ function randomBoard(N, M, F) {
     const board = new Matrix(N, M);
 
     // By default, every tile is a zero
-    board.fill( (i,j) => 0 );
+    board.fill((i,j) => Tile(board, i, j));
 
-    // Select some tiles randomly
-    const flags = board.random(F);
+    // Pick some tiles randomly
+    const picks = board.random(F);
 
     // Set them as flags
-    flags.forEach(([i,j]) => board.set(i, j, labels.HIDDEN_FLAG));
+    picks.forEach(tile => tile.isFlag(true));
 
     // For every flag tile, increment all its number neighbours
-    flags.forEach(
-        ([i,j]) => neighbours(i,j).forEach(
-            ([i_,j_]) => increment(i_, j_, board)
-        )
-    );
+    // The increment() method ignores flag tiles
+    picks.forEach(tile => tile.neighbours().forEach(nb => nb.increment()));
 
     return board;
 };

@@ -3,14 +3,14 @@ const {revealAll} = require('./reveal.js');
 const labels = require('./labels.js');
 
 module.exports =
-function selectWithTurns(i, j, W, counters, board, revealed) {
+function selectWithTurns(i, j, W, counters, board) {
 
     // The game is already over
     if (!counters.on) return null;
 
     const owner = ['A','B'][counters.turn];
 
-    let show = select(i, j, board, revealed);
+    let show = select(i, j, board);
 
     if (show.length === 0) {
         // Non-selectable i,j provided
@@ -43,11 +43,11 @@ function selectWithTurns(i, j, W, counters, board, revealed) {
     // If so, append all unrevealed values
     // Ownership of the last revealed flag remains assigned
     if (!counters.on) {
-        show = show.concat( revealAll(revealed, board) );
+        show = show.concat( revealAll(board) );
     }
 
     // Add the owner property to each object
-    show.forEach(tile => tile.owner = owner);
+    show.forEach(rev => rev.owner = owner);
 
     return { show, ...counters };
 }

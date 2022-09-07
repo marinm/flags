@@ -1,38 +1,32 @@
-const labels = require('./labels.js');
-const neighbours = require('./neighbours.js');
-const {reveal} = require('./reveal.js');
-
 module.exports =
-function zerowalk(i, j, board, revealed) {
+function zerowalk(tile) {
+
     // Stepped out of bounds
     // Nothing to do
-    if (!board.contains(i,j)) return [];
+    // (This should never happen...)
+    if (!tile) return [];
 
     // Stepped to a tile that's already been revealed
     // Nothing to do
-    if (revealed.at(i,j)) return [];
+    if (tile.isRevealed()) return [];
 
     // Stepped to a flag
     // Don't reveal it
-    if (board.at(i,j) === labels.HIDDEN_FLAG) return [];
+    if (tile.isFlag()) return [];
 
     // Stepped to a non-zero numeric tile
     // Reveal it and return the value
-    if (board.at(i,j) != 0) return [ reveal(i, j, revealed, board) ];
+    if (tile.value() != 0) return [ tile.reveal() ];
 
     // Found a zero...
     // First item on the newly revealed array is this tile
-    let newrev = [ reveal(i, j, revealed, board) ];
+    let show = [ tile.reveal() ];
 
+    // Visit every neighbour and start a zerowalk from there
     // Recursive depth-first search
     // This might be bad for performance?
     // Can improve by using a queue traversal
-    function stepto(next_i, next_j) {
-        newrev = newrev.concat( zerowalk(next_i, next_j, board, revealed) );
-    }
+    tile.neighbours().forEach(nb => show = show.concat(zerowalk(nb)));
 
-    // Visit every neighbour and start a zerowalk from there
-    neighbours(i,j).forEach(([i,j]) => stepto(i,j));
-
-    return newrev;
+    return show;
 }

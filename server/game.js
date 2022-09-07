@@ -18,8 +18,6 @@ const selectWithTurns = require('./select-with-turns.js');
 
 module.exports =
 function FlagsGame(N, M, F, W) {
-    // A randomly generated board
-    const board = randomBoard(N, M, F);
 
     const counters = {
         turn  : 0,
@@ -28,14 +26,11 @@ function FlagsGame(N, M, F, W) {
         on    : true,
     };
 
-    // What has been revealed so far (array of bools)
-    const revealed = new Matrix(N, M);
-
-    // At the start of the game, nothing has been revealed yet
-    revealed.fill( (i,j) => false );
+    // A randomly generated board
+    const board = randomBoard(N, M, F);
 
     return {
         getstate : () => counters,
-        select   : (i,j) => selectWithTurns(i, j, W, counters, board, revealed)
+        select   : (i,j) => selectWithTurns(i, j, W, counters, board)
     };
 }

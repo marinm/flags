@@ -42,37 +42,39 @@ function Matrix(n, m) {
 
         at:
         function(i, j) {
-            return this.contains(i, j)
-                ? nodes[i * m + j]
-                : undefined;
+            return this.contains(i, j) ? nodes[i * m + j] : undefined;
         },
 
         set:
         function(i, j, value) {
-            if ( this.contains(i, j) )
+            if (this.contains(i, j))
                 nodes[i * m + j] = value;
         },
 
         forEach:
         function(callback) {
-            coordinates.forEach(([i,j]) => callback(i, j));
+            coordinates.forEach(([i,j]) => callback(this.at(i,j)));
         },
 
         fill:
         function(factory) {
-            this.forEach( (i, j) => this.set(i, j, factory(i, j)) );
+            coordinates.forEach(([i,j]) => this.set(i, j, factory(i, j)));
         },
 
         filter:
         function(condition) {
-            return coordinates.filter( ([i,j]) => condition(i,j)  );
+            // Returns an array of coordinates
+            const ij = coordinates.filter(([i,j]) => condition(this.at(i,j)));
+            return ij.map(([i,j]) => this.at(i,j));
         },
 
         random:
         function(k) {
-            // Select k indices randomly
-            // Return only the {i,j} indices
-            return random.indices(nodes.length, k).map(k => coordinates[k]);
+            // Select k cells randomly
+            const flat_indices = random.indices(nodes.length, k);
+            const ij_indices = flat_indices.map(flat => coordinates[flat]);
+            const picks = ij_indices.map(([i,j]) => this.at(i,j));
+            return picks;
         },
 
         // For debugging
