@@ -176,13 +176,20 @@ function FlagsBoard(N, M, S, sheet, onclick) {
     board.enable();
   }
 
-  board.setvalue = function(i, j, value) {
+  function mapToTilename(value, owner) {
+    if (value === 'F') console.log('F: ' + owner);
+    return (value === 'F')? (owner || '*') : value;
+  }
+
+  board.setvalue = function(i, j, value, owner) {
 
     board.tile(i,j).hidden = false;
     board.tile(i,j).value = value;
 
     // Assume valid value
-    board.tile(i,j).draw('value', String(value));
+    const tilename = mapToTilename(value, owner);
+    console.log(tilename);
+    board.tile(i,j).draw('value', tilename);
   };
 
   const lastselect = {i: 0, j: 0};

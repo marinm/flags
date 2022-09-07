@@ -1,4 +1,4 @@
 module.exports = {
-    HIDDEN_FLAG : '*',
+    HIDDEN_FLAG : 'F',
     PLAYER_FLAGS : ['A', 'B'],
 };

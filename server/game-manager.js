@@ -73,7 +73,7 @@ function GameManager( {n,m,f} ) {
                     PLAYER_B = null;
                 }
                 // Start a new game
-                game = FlagsGame( {n,m,f} );
+                game = FlagsGame(n, m, f);
             }
             else if (connection === PLAYER_B) {
                 PLAYER_B = null;
@@ -83,7 +83,7 @@ function GameManager( {n,m,f} ) {
                     PLAYER_A = null;
                 }
                 // Start a new game
-                game = FlagsGame( {n,m,f} );
+                game = FlagsGame(n, m, f);
             }
             else {
                 // notify a waiting player

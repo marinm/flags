@@ -1,6 +1,6 @@
-function reveal(i, j, revealed, board) {
+function reveal(owner, i, j, revealed, board) {
     revealed.set(i, j, true);
-    return {i, j, value: board.at(i,j)};
+    return {i, j, value: board.at(i,j), owner};
 }
 
 // Reveal all un-revealed tiles
@@ -10,7 +10,7 @@ function revealAll(revealed, board) {
         // Get [i,j] coordinates of tiles that have not been revealed
         .filter( (i,j) => !revealed.at(i,j) )
         // Reveal those tiles and get an array of their reveal values
-        .map( ([i,j]) => reveal(i, j, revealed, board) );
+        .map( ([i,j]) => reveal(null, i, j, revealed, board) );
 }
 
 module.exports = { reveal, revealAll };

@@ -239,8 +239,7 @@ const handlers = {
     gamestate.turn = revealed.turn;
 
     revealed.show.forEach(function(item) {
-      var value = item.value;
-      board.setvalue(item.i, item.j, value);
+      board.setvalue(item.i, item.j, item.value, item.owner);
       board.tile(item.i, item.j).erase('guide');
     });
 

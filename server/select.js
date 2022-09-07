@@ -19,33 +19,39 @@ function select(i, j, F, counters, board, revealed) {
     // Which tiles to reveal, if any
     var show = [];
 
+    // For improvement:
+    // Decide ownership outside of the game board
+    owner = ['A','B'][counters.turn];
+    console.log('owner ' + owner);
+
     // If the tile is already revealed, do nothing
     if (!revealed.at(i,j)) {
         counters.seq++;
 
         if (value === 0) {
-            counters.turn = (counters.turn + 1) % 2;
             // The first zero must still be not revealed
-            show = zerowalk(i, j, board, revealed);
+            show = zerowalk(owner, i, j, board, revealed);
+
+            // Revealed a number value (0)
+            // Switch to next player's turn
+            counters.turn = (counters.turn + 1) % 2;
         }
         else {
             // Revealed a non-zero value...
             revealed.set(i, j, true);
 
             if (value === labels.HIDDEN_FLAG) {
-                // Change the tile value from HIDDEN_FLAG to PLAYER_FLAG
-                board.set(i, j, labels.PLAYER_FLAGS[counters.turn]);
-                value = board.at(i,j);
-
                 // Still the same player's turn
                 counters.score[counters.turn]++;
 
                 counters.on = (counters.score[counters.turn] < winning_score);
             }
             else {
+                // Revealed a number value
+                // Switch to next player's turn
                 counters.turn = (counters.turn + 1) % 2;
             }
-            show = [{i, j, value}];
+            show = [{i, j, value, owner}];
         }
 
         // The game is over on this move
