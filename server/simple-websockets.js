@@ -4,9 +4,20 @@ const ws = require('ws');
 
 const PING_INTERVAL = 30 * 1000
 
-function parse_json(message) {
+function fromJSON(message) {
     try {
         return JSON.parse(message);
+    }
+    catch (err) {
+        return null;
+    }
+}
+
+function toJSON(message) {
+    try {
+        // Not only objects like {...} but also standalone numbers, arrays,
+        // functions, etc. will successfully be stringified
+        return JSON.stringify(message);
     }
     catch (err) {
         return null;
@@ -36,6 +47,22 @@ function pingAll(serverWSS) {
 //     broadcast({ type: 'online', online });
 // }
 
+// A convenience wrapper
+function SimpleSocket(connection, id) {
+    return {
+        id,
+
+        send:
+        function(message) {
+            const string = toJSON(message);
+
+            // "Rude mode"
+            // Messages that can't be converted to a JSON string are dropped
+            string ? connection.send(string) : null;
+        }
+    }
+}
+
 module.exports =
 function SimpleWebSockets({
     port,
@@ -46,11 +73,10 @@ function SimpleWebSockets({
     onClientDisconnect
 }) {
 
-    // Default handler: do nothing
+    // Default handlers do nothing
     onClientConnect    = onClientConnect    || function noop() {};
     onClietMessage     = onClientMessage    || function noop() {};
     onClientDisconnect = onClientDisconnect || function noop() {};
-
 
     const serverHTTPS = https.createServer({
         cert : fs.readFileSync(cert),
@@ -64,15 +90,18 @@ function SimpleWebSockets({
 
     serverWSS.on('connection', function(connection, request) {
 
-        // Idea: Return a wrapper around the connection object with
-        //      - method sendJSON()
-        //      - property connectionID
+        // Note:
+        // 'connection' and 'socket' used interchangeably here... should
+        // probably disambiguate, or at least pick one and stick to it
 
         connection.isAlive = true;
         connection.id = seq++;
 
+        // The handler will receive a convenient wrapper
+        const simpleSocket = new SimpleSocket(connection, connection.id);
+
         console.log('SimpleWebSocketServer: a new client connected');
-        onClientConnect(connection);
+        onClientConnect(simpleSocket);
 
         connection.on('pong',
             function() {
@@ -82,12 +111,12 @@ function SimpleWebSockets({
 
         connection.on('message',
             function(data, isBinary) {
-                const parsed = parse_json(data);
+                const parsed = fromJSON(data);
                 
                 // "Rude mode"
-                // Ignore all messages that can't be parsed as JSON
+                // Messages that are not valid JSON are dropped
                 // The callback is guaranteed to receive a non-null object
-                parsed ? onClientMessage(connection, parsed) : null;
+                parsed ? onClientMessage(simpleSocket, parsed) : null;
 
                 // It would also be helpful to reply to the client...
             }
@@ -100,7 +129,7 @@ function SimpleWebSockets({
                 // broadcast_online_count();
 
                 // Ignore the code/reason
-                onClientDisconnect(connection);
+                onClientDisconnect(simpleSocket);
             }
         );
     });

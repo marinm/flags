@@ -18,15 +18,15 @@ function GameManager() {
         function(socket, msg) {
             const gamestate = game.getstate();
     
-            const A_selects = (socket === PLAYER_A && gamestate.turn === 0);
-            const B_selects = (socket === PLAYER_B && gamestate.turn === 1);
+            const A_selects = (socket.id === PLAYER_A.id && gamestate.turn === 0);
+            const B_selects = (socket.id === PLAYER_B.id && gamestate.turn === 1);
     
             if (A_selects || B_selects) {
                 var response = game.select(msg.i, msg.j);
                 response.type = 'reveal';
                 response.for = {i: msg.i, j: msg.j};
-                PLAYER_A.send( JSON.stringify(response) );
-                PLAYER_B.send( JSON.stringify(response) );
+                PLAYER_A.send(response);
+                PLAYER_B.send(response);
             }
             else {
                 // Player selects out of turn
@@ -45,19 +45,19 @@ function GameManager() {
         
             if (PLAYER_A === null) {
                 PLAYER_A = connection;
-                connection.send(JSON.stringify({ type: 'join', status: 'OPEN', playing_as: 0 }));
+                connection.send({ type: 'join', status: 'OPEN', playing_as: 0 });
             }
             else if (PLAYER_B === null) {
                 PLAYER_B = connection;
-                connection.send(JSON.stringify({ type: 'join', status: 'OPEN', playing_as: 1 }));
+                connection.send({ type: 'join', status: 'OPEN', playing_as: 1 });
         
                 console.log(`Game starts: ${PLAYER_A} vs ${PLAYER_B}`);
         
-                PLAYER_A.send(JSON.stringify({ type: 'start' }));
-                PLAYER_B.send(JSON.stringify({ type: 'start' }));
+                PLAYER_A.send({ type: 'start' });
+                PLAYER_B.send({ type: 'start' });
             }
             else {
-                connection.send(JSON.stringify({ type: 'join', status: 'BUSY' }));
+                connection.send({ type: 'join', status: 'BUSY' });
             }
         },
 
@@ -72,7 +72,7 @@ function GameManager() {
             if (connection === PLAYER_A) {
                 PLAYER_A = null;
                 if (PLAYER_B != null) {
-                    PLAYER_B.send(JSON.stringify({ type: 'opponent-disconnected' }));
+                    PLAYER_B.send({ type: 'opponent-disconnected' });
                     // Also kick out the other player
                     PLAYER_B = null;
                 }
@@ -82,7 +82,7 @@ function GameManager() {
             else if (connection === PLAYER_B) {
                 PLAYER_B = null;
                 if (PLAYER_A != null) {
-                    PLAYER_A.send(JSON.stringify({ type: 'opponent-disconnected' }));
+                    PLAYER_A.send({ type: 'opponent-disconnected' });
                     // Also kick out the other player
                     PLAYER_A = null;
                 }
