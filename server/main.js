@@ -4,9 +4,20 @@ const GameManager = require('./game-manager.js')
 
 dotenv.config();
 
-const { WSS_PORT, SSL_CERT, SSL_KEY } = process.env;
+const {
+    WSS_PORT,
+    SSL_CERT,
+    SSL_KEY,
+    BOARD_NUM_ROWS,
+    BOARD_NUM_COLUMNS,
+    BOARD_NUM_FLAGS
+} = process.env;
 
-const manager = GameManager();
+const manager = GameManager({
+    n : BOARD_NUM_ROWS,
+    m : BOARD_NUM_COLUMNS,
+    f : BOARD_NUM_FLAGS,
+});
 
 // Open a WebSocket server and start listening...
 SimpleWebSockets({
