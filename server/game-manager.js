@@ -1,9 +1,9 @@
 const FlagsGame = require('./game.js');
 
 module.exports =
-function GameManager( {n,m,f} ) {
+function GameManager( {n,m,f,w} ) {
 
-    var game = FlagsGame(n, m, f);
+    var game = FlagsGame(n, m, f, w);
 
     // WebSocket clients
     var PLAYER_A = null;
@@ -73,7 +73,7 @@ function GameManager( {n,m,f} ) {
                     PLAYER_B = null;
                 }
                 // Start a new game
-                game = FlagsGame(n, m, f);
+                game = FlagsGame(n, m, f, w);
             }
             else if (connection === PLAYER_B) {
                 PLAYER_B = null;
@@ -83,7 +83,7 @@ function GameManager( {n,m,f} ) {
                     PLAYER_A = null;
                 }
                 // Start a new game
-                game = FlagsGame(n, m, f);
+                game = FlagsGame(n, m, f, w);
             }
             else {
                 // notify a waiting player
@@ -101,7 +101,7 @@ function GameManager( {n,m,f} ) {
         
             //console.log(JSON.stringify(msg));
             switch (message.type) {
-                case 'select': console.log('select'); handlers.select(connection, message); break;
+                case 'select': handlers.select(connection, message); break;
                 default: ; // do something...
             }
         }

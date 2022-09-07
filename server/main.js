@@ -10,16 +10,18 @@ const {
     SSL_KEY,
     BOARD_NUM_ROWS,
     BOARD_NUM_COLUMNS,
-    BOARD_NUM_FLAGS
+    BOARD_NUM_FLAGS,
+    WINNING_SCORE
 } = process.env;
 
 const manager = GameManager({
     n : BOARD_NUM_ROWS,
     m : BOARD_NUM_COLUMNS,
     f : BOARD_NUM_FLAGS,
+    w : WINNING_SCORE
 });
 
-// Open a WebSocket server and start listening...
+// Start up a server...
 SimpleWebSockets({
     port               : WSS_PORT,
     cert               : SSL_CERT,

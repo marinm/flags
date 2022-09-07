@@ -14,10 +14,10 @@
 
 const Matrix = require('./matrix.js');
 const randomBoard = require('./random-board.js');
-const select = require('./select.js');
+const selectWithTurns = require('./select-with-turns.js');
 
 module.exports =
-function FlagsGame(N, M, F) {
+function FlagsGame(N, M, F, W) {
     // A randomly generated board
     const board = randomBoard(N, M, F);
 
@@ -36,6 +36,6 @@ function FlagsGame(N, M, F) {
 
     return {
         getstate : () => counters,
-        select   : (i,j) => select(i, j, F, counters, board, revealed)
+        select   : (i,j) => selectWithTurns(i, j, W, counters, board, revealed)
     };
 }
