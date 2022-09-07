@@ -6,7 +6,7 @@ function Tile(board, i, j) {
     const state = {
         value    : 0,
         revealed : false,
-    }
+    };
 
     return {
         value:
@@ -44,6 +44,15 @@ function Tile(board, i, j) {
         isRevealed:
         function() {
             return state.revealed;
+        },
+
+        updateNumber:
+        function() {
+            if (this.isFlag()) return;
+
+            const flags = this.neighbours().filter(tile => tile.isFlag());
+            state.value = flags.length;
+            return null;
         },
 
         neighbours:

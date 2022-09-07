@@ -23,15 +23,12 @@ function randomBoard(N, M, F) {
     // By default, every tile is a zero
     board.fill((i,j) => Tile(board, i, j));
 
-    // Pick some tiles randomly
-    const picks = board.random(F);
+    // Pick some tiles randomly and set them as flags
+    board.random(F).forEach(tile => tile.isFlag(true));
 
-    // Set them as flags
-    picks.forEach(tile => tile.isFlag(true));
-
-    // For every flag tile, increment all its number neighbours
-    // The increment() method ignores flag tiles
-    picks.forEach(tile => tile.neighbours().forEach(nb => nb.increment()));
+    // Have each tile check its own neighbours and update its own number
+    // (This is less than optimal but helps with code readability)
+    board.forEach(tile => tile.updateNumber());
 
     return board;
 };
