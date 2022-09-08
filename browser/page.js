@@ -7,11 +7,20 @@ import $ from './fake-jquery.js';
 import QuickWebSocket from './quick-websocket.js';
 import showStatus from './show-status.js';
 
+const {
+    SERVER_ADDRESS,
+    BOARD_NUM_ROWS,
+    BOARD_NUM_COLUMNS,
+    BOARD_CELL_SIZE,
+    WINNING_SCORE,
+    PLAYER_FLAGS,
+} = config;
+
 //
 // WebSocket Messaging
 
 const socket = QuickWebSocket({
-    url       : config.SERVER_ADDRESS,
+    url       : SERVER_ADDRESS,
     onError   : onError,
     onOpen    : onOpen,
     onMessage : onMessage,
@@ -45,26 +54,21 @@ function onMessage(quicksocket, message) {
 
 //------------------------------------------------------------------------------
 
-const HIDDEN_FLAG = '*';
-const PLAYER_FLAGS = ['A', 'B'];
-const KEYCODES = {'g': 71, 'n': 78};
-
 var gamestate = { player: null, turn: null };
 var autoselect = false;
 
-const N_ROOMS = 8;
 
-const TMP_N = 24;
-const TMP_M = 24;
-const TMP_R = Math.floor((TMP_N + TMP_M) * 2);
-const TMP_CELLSIZE = 24;
-
-const board = new FlagsBoard(TMP_N, TMP_M, TMP_CELLSIZE, TILESHEET, report_click);
+const board = new FlagsBoard(
+    BOARD_NUM_ROWS,
+    BOARD_NUM_COLUMNS,
+    BOARD_CELL_SIZE,
+    TILESHEET,
+    report_click
+);
 
 $('#board-container').append(board.canvas);
 
-const play_until = Math.ceil(TMP_R / 2);
-$('.remaining').text(' / ' + play_until);
+$('.remaining').text(' / ' + WINNING_SCORE);
 
 
 
