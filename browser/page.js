@@ -8,6 +8,7 @@ import QuickWebSocket from './quick-websocket.js';
 import showStatus from './show-status.js';
 import showTurn from './show-turn.js';
 import showScores from './show-scores.js';
+import showWinner from './show-winner.js';
 
 const {
     SERVER_ADDRESS,
@@ -19,8 +20,12 @@ const {
 } = config;
 
 
+const gamestate = {
+    playingAs : null,
+    turn      : null,
+    winner    : null,
+};
 
-const gamestate = { player: null, turn: null };
 
 // Set up the board
 const board = new FlagsBoard(
@@ -105,14 +110,14 @@ const handlers = {
     join:
     function(message) {
         if (message.status === 'OPEN') {
-            gamestate.player = message.playing_as;
+            gamestate.playingAs = message.playing_as;
             gamestate.turn = 0;
             showStatus('waiting', board); // wait for the game-start message
 
-            if (Number(gamestate.player) === 0) {
+            if (Number(gamestate.playingAs) === 0) {
                 $('#player-0-score-box').addClass('playing-as');
             }
-            else if (Number(gamestate.player) === 1) {
+            else if (Number(gamestate.playingAs) === 1) {
                 $('#player-1-score-box').addClass('playing-as');
             }
         }
@@ -163,7 +168,7 @@ const handlers = {
             if (autoselect) {
                 // React even if it's the opponent's turn
                 solverscan();
-                if (gamestate.turn === gamestate.player) {
+                if (gamestate.turn === gamestate.playingAs) {
                     // Select either a known,hidden flag or a random tile
                     select_next_unrevealed_flag();
                 }
@@ -171,37 +176,24 @@ const handlers = {
         }
         // Game is over
         else {
-            showWinner(revealed.turn);
+            gamestate.winner = gamestate.turn;
+            showWinner(gamestate, board);
         }
     },
 };
 
 
 
-// Show that the game is over and highlight who won the game
-function showWinner(player) {
-    // Highlight winner in the score box
-    const player_box = (player === 0)
-        ? $('#player-0-score-box')
-        : $('#player-1-score-box');
-    player_box.toggleClass('active-turn');
-    player_box.toggleClass('score-box-winner');
-
-    $('#whose-turn').text('Winner!');
-
-    showStatus('winner', board);
-}
-
 // Selecting a tile is a network event, though it presents like a GUI event
 // A tile is selected after the server has ACK'ed and approved the select REQ
 function select_tile(i, j) {
-    if (gamestate.turn === gamestate.player) {
+    if (gamestate.turn === gamestate.playingAs) {
         socket.send( messages.select(i, j) );
     }
 }
 
 function report_click(tiles, i, j) {
-  if (gamestate.turn != gamestate.player) {
+  if (gamestate.turn != gamestate.playingAs) {
     // Player out of turn
     // Do nothing ...
   }
@@ -223,7 +215,7 @@ function toggle_autoselect() {
   autoselect = !autoselect;
   $('#autoplay-indicator').css('visibility', (autoselect)? 'visible' : 'hidden');
 
-  if (autoselect && gamestate.turn === gamestate.player) {
+  if (autoselect && gamestate.turn === gamestate.playingAs) {
     select_next_unrevealed_flag();
   }
 
