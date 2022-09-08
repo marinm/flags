@@ -9,6 +9,7 @@ import showStatus from './show-status.js';
 import showTurn from './show-turn.js';
 import showScores from './show-scores.js';
 import showWinner from './show-winner.js';
+import selectTile from './select-tile.js';
 
 const {
     SERVER_ADDRESS,
@@ -94,13 +95,6 @@ document.addEventListener("keyup", function(event) {
 
 // Callbacks
 
-const messages = {
-    select:
-    function(i, j) {
-        return { type: 'select', i, j };
-    },
-};
-
 const handlers = {
     online:
     function(message) {
@@ -184,14 +178,6 @@ const handlers = {
 
 
 
-// Selecting a tile is a network event, though it presents like a GUI event
-// A tile is selected after the server has ACK'ed and approved the select REQ
-function select_tile(i, j) {
-    if (gamestate.turn === gamestate.playingAs) {
-        socket.send( messages.select(i, j) );
-    }
-}
-
 function report_click(tiles, i, j) {
   if (gamestate.turn != gamestate.playingAs) {
     // Player out of turn
@@ -202,7 +188,7 @@ function report_click(tiles, i, j) {
     // Do nothing ...
   }
   else {
-    select_tile(i, j);
+    selectTile(i, j, gamestate, socket);
     // A clicked tile is not displayed as selected until the server confirms the selection
   }
 };
@@ -249,7 +235,7 @@ function select_random_tile() {
     // Repeat if tile is already revealed,
     // or if it's hidden but it's known not to be a flag
   
-    select_tile(i,j);
+    selectTile(i, j, gamestate, socket);
   }
 
 // Scan through the board and reason about where flags must and must not be
@@ -360,7 +346,7 @@ function solverscan() {
       const tile = board.tile(i,j);
       if (!selected && tile.hidden && tile.flaghere) {
         selected = true;
-        select_tile(i,j);
+        selectTile(i, j, gamestate, socket);
       }
     });
   
