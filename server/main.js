@@ -1,6 +1,6 @@
 const dotenv = require('dotenv');
 const SimpleWebSockets = require('./simple-websockets.js');
-const GameManager = require('./game-manager.js')
+const MatchManager = require('./match-manager.js')
 
 dotenv.config();
 
@@ -14,7 +14,7 @@ const {
     WINNING_SCORE
 } = process.env;
 
-const manager = GameManager({
+const manager = MatchManager({
     n : BOARD_NUM_ROWS,
     m : BOARD_NUM_COLUMNS,
     f : BOARD_NUM_FLAGS,

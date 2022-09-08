@@ -1,7 +1,7 @@
 const Match = require('./match.js');
 
 module.exports =
-function GameManager( {n,m,f,w} ) {
+function MatchManager( {n,m,f,w} ) {
 
     let match = Match(n, m, f, w);
 
