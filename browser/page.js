@@ -4,9 +4,45 @@
 import config from './config.js';
 import {FlagsBoard, TILESHEET} from './flags-canvas.js';
 import $ from './fake-jquery.js';
+import QuickWebSocket from './quick-websocket.js';
 
 //
 // WebSocket Messaging
+
+const socket = QuickWebSocket({
+    url       : config.SERVER_ADDRESS,
+    onError   : onError,
+    onOpen    : onOpen,
+    onMessage : onMessage,
+    onClose   : onClose,
+});
+
+// This is not necessary if an error event is also fired on fail
+if (!socket) room.disconnected();
+
+
+function onError() {
+    room.disconnected();
+}
+
+function onOpen() {
+    // Do nothing...?
+}
+
+function onClose() {
+    room.disconnected();
+}
+
+function onMessage(quicksocket, message) {
+    // If the event/message type is not recognized, discard/ignore it
+    if (!Object.keys(handlers).includes(message.type)) return;
+  
+    // call the appropriate handler
+    handlers[message.type](message);
+}
+
+
+//------------------------------------------------------------------------------
 
 const HIDDEN_FLAG = '*';
 const PLAYER_FLAGS = ['A', 'B'];
@@ -40,59 +76,6 @@ document.addEventListener("keyup", function(event) {
   }
 });
 
-
-function wss_connect(address) {
-  try {
-    // The connection may fail for several reasons other than SECURITY_ERR but
-    // will never throw any other error
-    return new WebSocket(address);
-  }
-  catch (err) {
-    // SECURITY_ERR
-    return null;
-  }
-}
-
-const socket = wss_connect(config.SERVER_ADDRESS);
-var heartbeat = null;
-
-if (socket === null) {
-  room.disconnected();
-}
-else {
-  socket.addEventListener('open', connection_opened);
-  socket.addEventListener('message', receive_message);
-  socket.addEventListener('close', connection_closed);
-  socket.addEventListener('error', websocket_error);
-}
-
-function websocket_error(err) {
-  room.disconnected();
-}
-
-function connection_opened() {
-  // Every 30 seconds, 
-  heartbeat = setInterval(function() {
-    socket.send(JSON.stringify({action: 'HEARTBEAT'}));
-  }, 30000);
-}
-
-function receive_message(event) {
-  const msg = JSON.parse(event.data);
-
-  // If the event/message type is not recognized, discard/ignore it
-  if (!Object.keys(handlers).includes(msg.type))
-    return;
-
-  // call the appropriate handler
-  handlers[msg.type](msg);
-}
-
-function connection_closed(event) {
-  clearInterval(heartbeat);
-  console.log('Connection closed');
-  room.disconnected();
-}
 
 
 const notes = {
@@ -177,10 +160,10 @@ const room = {
 // Callbacks
 
 const messages = {
-  select:
-  function(i, j) {
-    return JSON.stringify({ type: 'select', i, j });
-  },
+    select:
+    function(i, j) {
+        return { type: 'select', i, j };
+    },
 };
 
 const handlers = {
@@ -305,32 +288,10 @@ function showwinner(player) {
 // Selecting a tile is a network event, though it presents like a GUI event
 // A tile is selected after the server has ACK'ed and approved the select REQ
 function select_tile(i, j) {
-  if (gamestate.turn === gamestate.player) {
-    socket.send( messages.select(i, j) );
-  }
+    if (gamestate.turn === gamestate.player) {
+        socket.send( messages.select(i, j) );
+    }
 }
-
-function randint(min, max) {
-  // Return a random integer from [min...max-1]
-  return Math.floor(Math.random() * (max - min) ) + min;
-}
-
-function select_random_tile() {
-  var i = 0;
-  var j = 0;
-  var tile = null;
-  do {
-    i = randint(0, board.N);
-    j = randint(0, board.M);
-    tile = board.tile(i,j);
-  }
-  while (!tile.hidden || (tile.hidden && tile.noflag));
-  // Repeat if tile is already revealed,
-  // or if it's hidden but it's known not to be a flag
-
-  select_tile(i,j);
-}
-
 
 function report_click(tiles, i, j) {
   if (gamestate.turn != gamestate.player) {
@@ -346,123 +307,6 @@ function report_click(tiles, i, j) {
     // A clicked tile is not displayed as selected until the server confirms the selection
   }
 };
-
-// Scan through the board and reason about where flags must and must not be
-function solverscan() {
-  var nfound_flag = 1;
-  var nfound_noflag = 1;
-
-  while (nfound_flag > 0 || nfound_noflag > 0) {
-    nfound_flag = solver_flaghere();
-    nfound_noflag = solver_noflag();
-  }
-}
-
-function isnumbertile(tile) {
-  return tile && !tile.hidden && [1,2,3,4,5,6,7,8].includes(tile.value);
-}
-
-// Return 1 if this tile is a revealed flag, 0 otherwise
-function isflag(tile) {
-  return tile && (tile.flaghere || PLAYER_FLAGS.includes(tile.value));
-}
-
-// Return 1 if this tile is hidden, 0 otherwise
-// A flag- or noflag-labelled tile is considered revealed
-function isunknown(tile) {
-  return tile && tile.hidden && !tile.noflag && !tile.flaghere;
-}
-
-
-// Find where there must be a flag
-function solver_flaghere() {
-  // Number of hidden flags found 
-  var nfound = 0;
-
-  board.forEachTile(function(i,j) {
-    // Consider only revealed number tiles
-    if (!isnumbertile(board.tile(i,j)))
-      return;
-
-    // Array of adjacent tiles
-    const adjacent = board.tile(i,j).adjacent();
-
-    function highlight(tile) {
-      if (isunknown(tile)) {
-        nfound++;
-        tile.flaghere = true;
-        tile.draw('guide', 'FLAGHERE');
-      }
-    }
-
-    // A noflag tile never becomes a flaghere tile, and vice versa
-
-    const adjacentflags = adjacent.filter(isflag).length;
-    const remainingflags = board.tile(i,j).value - adjacentflags;
-    const adjacenthidden = adjacent.filter(isunknown).length;
-
-    // Same number of unrevealed + noflag tiles as remaining flags
-    if (remainingflags > 0 && remainingflags === adjacenthidden) {
-      adjacent.forEach(highlight);
-    }
-  });
-
-  return nfound;
-}
-
-
-// Find where there cannot be a flag
-function solver_noflag() {
-  // Number of hidden no-flags found
-  var nfound = 0;
-
-  board.forEachTile(function(i,j) {
-    // Consider only revealed number tiles
-    if (!isnumbertile(board.tile(i,j)))
-      return;
-
-    // Array of adjacent tiles
-    const adjacent = board.tile(i,j).adjacent();
-
-    function crossout(tile) {
-      if (isunknown(tile)) {
-        nfound++;
-        tile.noflag = true;
-        tile.draw('guide', 'NOFLAG');
-      }
-    }
-
-    // A noflag tile never becomes a flaghere tile, and vice versa
-
-    const adjacentflags = adjacent.filter(isflag).length;
-    const remainingflags = board.tile(i,j).value - adjacentflags;
-    const adjacenthidden = adjacent.filter(isunknown).length;
-
-    // Same number of unrevealed + noflag tiles as remaining flags
-    if (remainingflags === 0) {
-      adjacent.forEach(crossout);
-    }
-  });
-
-  return nfound;
-}
-
-
-function select_next_unrevealed_flag() {
-  var selected = false;
-  // Good reason to replace .forEachTile() with .tiles() which returns array
-  board.forEachTile(function(i,j) {
-    const tile = board.tile(i,j);
-    if (!selected && tile.hidden && tile.flaghere) {
-      selected = true;
-      select_tile(i,j);
-    }
-  });
-
-  if (!selected) {
-    select_random_tile();
-  }
-}
 
 function toggle_autoselect() {
   // If the board is not available, do nothing
@@ -483,3 +327,145 @@ function toggle_autoselect() {
     });
   }
 }
+
+
+
+//------------------------------------------------------------------------------
+// Solver
+function randint(min, max) {
+    // Return a random integer from [min...max-1]
+    return Math.floor(Math.random() * (max - min) ) + min;
+}  
+
+function select_random_tile() {
+    var i = 0;
+    var j = 0;
+    var tile = null;
+    do {
+      i = randint(0, board.N);
+      j = randint(0, board.M);
+      tile = board.tile(i,j);
+    }
+    while (!tile.hidden || (tile.hidden && tile.noflag));
+    // Repeat if tile is already revealed,
+    // or if it's hidden but it's known not to be a flag
+  
+    select_tile(i,j);
+  }
+
+// Scan through the board and reason about where flags must and must not be
+function solverscan() {
+    var nfound_flag = 1;
+    var nfound_noflag = 1;
+  
+    while (nfound_flag > 0 || nfound_noflag > 0) {
+      nfound_flag = solver_flaghere();
+      nfound_noflag = solver_noflag();
+    }
+  }
+  
+  function isnumbertile(tile) {
+    return tile && !tile.hidden && [1,2,3,4,5,6,7,8].includes(tile.value);
+  }
+  
+  // Return 1 if this tile is a revealed flag, 0 otherwise
+  function isflag(tile) {
+    return tile && (tile.flaghere || PLAYER_FLAGS.includes(tile.value));
+  }
+  
+  // Return 1 if this tile is hidden, 0 otherwise
+  // A flag- or noflag-labelled tile is considered revealed
+  function isunknown(tile) {
+    return tile && tile.hidden && !tile.noflag && !tile.flaghere;
+  }
+  
+  
+  // Find where there must be a flag
+  function solver_flaghere() {
+    // Number of hidden flags found 
+    var nfound = 0;
+  
+    board.forEachTile(function(i,j) {
+      // Consider only revealed number tiles
+      if (!isnumbertile(board.tile(i,j)))
+        return;
+  
+      // Array of adjacent tiles
+      const adjacent = board.tile(i,j).adjacent();
+  
+      function highlight(tile) {
+        if (isunknown(tile)) {
+          nfound++;
+          tile.flaghere = true;
+          tile.draw('guide', 'FLAGHERE');
+        }
+      }
+  
+      // A noflag tile never becomes a flaghere tile, and vice versa
+  
+      const adjacentflags = adjacent.filter(isflag).length;
+      const remainingflags = board.tile(i,j).value - adjacentflags;
+      const adjacenthidden = adjacent.filter(isunknown).length;
+  
+      // Same number of unrevealed + noflag tiles as remaining flags
+      if (remainingflags > 0 && remainingflags === adjacenthidden) {
+        adjacent.forEach(highlight);
+      }
+    });
+  
+    return nfound;
+  }
+  
+  
+  // Find where there cannot be a flag
+  function solver_noflag() {
+    // Number of hidden no-flags found
+    var nfound = 0;
+  
+    board.forEachTile(function(i,j) {
+      // Consider only revealed number tiles
+      if (!isnumbertile(board.tile(i,j)))
+        return;
+  
+      // Array of adjacent tiles
+      const adjacent = board.tile(i,j).adjacent();
+  
+      function crossout(tile) {
+        if (isunknown(tile)) {
+          nfound++;
+          tile.noflag = true;
+          tile.draw('guide', 'NOFLAG');
+        }
+      }
+  
+      // A noflag tile never becomes a flaghere tile, and vice versa
+  
+      const adjacentflags = adjacent.filter(isflag).length;
+      const remainingflags = board.tile(i,j).value - adjacentflags;
+      const adjacenthidden = adjacent.filter(isunknown).length;
+  
+      // Same number of unrevealed + noflag tiles as remaining flags
+      if (remainingflags === 0) {
+        adjacent.forEach(crossout);
+      }
+    });
+  
+    return nfound;
+  }
+  
+  
+  function select_next_unrevealed_flag() {
+    var selected = false;
+    // Good reason to replace .forEachTile() with .tiles() which returns array
+    board.forEachTile(function(i,j) {
+      const tile = board.tile(i,j);
+      if (!selected && tile.hidden && tile.flaghere) {
+        selected = true;
+        select_tile(i,j);
+      }
+    });
+  
+    if (!selected) {
+      select_random_tile();
+    }
+  }
