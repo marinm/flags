@@ -7,6 +7,7 @@ import $ from './fake-jquery.js';
 import QuickWebSocket from './quick-websocket.js';
 import showStatus from './show-status.js';
 import showTurn from './show-turn.js';
+import showScores from './show-scores.js';
 
 const {
     SERVER_ADDRESS,
@@ -175,10 +176,7 @@ const handlers = {
     },
 };
 
-function showScores(scores) {
-    $('#player-0-score').text(scores[0]);
-    $('#player-1-score').text(scores[1]);
-}
+
 
 // Show that the game is over and highlight who won the game
 function showWinner(player) {
