@@ -5,6 +5,7 @@ import config from './config.js';
 import {FlagsBoard, TILESHEET} from './flags-canvas.js';
 import $ from './fake-jquery.js';
 import QuickWebSocket from './quick-websocket.js';
+import showNote from './show-note.js';
 
 //
 // WebSocket Messaging
@@ -76,84 +77,42 @@ document.addEventListener("keyup", function(event) {
   }
 });
 
-
-
-const notes = {
-  'disconnected': {
-    class: 'disconnected-status',
-    text:  'Disconnected. Try refreshing the page.'
-  },
-  'waiting': {
-    class: 'waiting-status',
-    text:  'Waiting for another player to join...'
-  },
-  'start': {
-    class: 'ready-status',
-    text:  'The game is on!'
-  },
-  'busy': {
-    class: 'busy-status',
-    text:  'Someone else is playing right now...'
-  },
-  'opponent-disconnected': {
-    class: 'opponent-disconnected-status',
-    text:  'Your opponent disconnected.'
-  },
-  'winner': {
-    class: 'winner-status',
-    text:  'Game over!'
-  },
-  'your-turn': {
-    class: 'your-turn-status',
-    text: 'Your turn'
-  },
-  'opponents-turn': {
-    class: 'opponents-turn-status',
-    text: "Opponent's turn"
-  }
-}
-
-function show_note(n) {
-  $('#note-box').attr('class', notes[n].class);
-  $('#note-box').text( notes[n].text );
-}
-
 // Change the view
 const room = {
-  disconnected:
-  function() {
-    show_note('disconnected');
-    board.showdisabled();
-  },
+    disconnected:
+    function() {
+        showNote('disconnected');
+        board.showdisabled();
+    },
 
-  waiting:
-  function() {
-    show_note('waiting');
-    board.showdisabled();
-    // also disable other components...
-  },
+    waiting:
+    function() {
+        showNote('waiting');
+        board.showdisabled();
+        // also disable other components...
+    },
 
-  start:
-  function() {
-    show_note('start');
-    board.restart();
-    // also enable other components...
-  },
+    start:
+    function() {
+        showNote('start');
+        board.restart();
+        // also enable other components...
+    },
 
-  busy:
-  function() {
-    show_note('busy');
-    board.showdisabled();
-    // also disable other components...
-  },
+    busy:
+    function() {
+        showNote('busy');
+        board.showdisabled();
+        // also disable other components...
+    },
 
-  opponent_disconnected:
-  function() {
-    show_note('opponent-disconnected');
-    board.showdisabled();
-    $('#turn-score-container').addClass('not-playing');
-    // also disable other components...
-  },
+    opponent_disconnected:
+    function() {
+        showNote('opponent-disconnected');
+        board.showdisabled();
+        $('#turn-score-container').addClass('not-playing');
+        // also disable other components...
+    },
 };
 
 
@@ -167,88 +126,83 @@ const messages = {
 };
 
 const handlers = {
-  online:
-  function(msg) {
-    // Will need again later...
-    // $('#online-indicator').css('color', (msg.online === 0)? '#cccccc' : '#00ff00');
-    // $('#online-count').text(' ' + msg.online + ' online');
+    online:
+    function(message) {
+        // unused
+    },
 
-    // onreceive:online
-    // console.log(msg.online);
-  },
+    join:
+    function(message) {
+        if (message.status === 'OPEN') {
+            gamestate.player = message.playing_as;
+            gamestate.turn = 0;
+            room.waiting(); // wait for the game-start message
 
-  join:
-  function(msg) {
-    if (msg.status === 'OPEN') {
-      gamestate.player = msg.playing_as;
-      gamestate.turn = 0;
-      room.waiting(); // wait for the game-start message
+            if (Number(gamestate.player) === 0) {
+                $('#player-0-score-box').addClass('playing-as');
+            }
+            else if (Number(gamestate.player) === 1) {
+                $('#player-1-score-box').addClass('playing-as');
+            }
+        }
+        else {
+            room.busy(); // nobody to play with...
+        }
+    },
 
-      if (Number(gamestate.player) === 0) {
-        $('#player-0-score-box').addClass('playing-as');
-      }
-      else if (Number(gamestate.player) === 1) {
-        $('#player-1-score-box').addClass('playing-as');
-      }
-    }
-    else {
-      room.busy(); // nobody to play with...
-    }
-  },
+    start:
+    function(message) {
+        room.start();
 
-  start:
-  function(msg) {
-    room.start();
+        $('#player-0-score-box').addClass('active-turn');
+        $('#turn-score-container').removeClass('not-playing');
 
-    $('#player-0-score-box').addClass('active-turn');
-    $('#turn-score-container').removeClass('not-playing');
-
-    showturn(gamestate.turn);
-  },
+        showturn(gamestate.turn);
+    },
 
   'opponent-disconnected':
-  function(msg) {
-    room.opponent_disconnected();
-  },
+    function(message) {
+        room.opponent_disconnected();
+    },
 
-  reveal:
-  function(msg) {
-    const revealed = msg;
-    if (!revealed) {
-      // ... do something here
-      // out-of-bounds or game already over
-    }
-
-    gamestate.turn = revealed.turn;
-
-    revealed.show.forEach(function(item) {
-      board.setvalue(item.i, item.j, item.value, item.owner);
-      board.tile(item.i, item.j).erase('guide');
-    });
-
-    const selected = msg.for;
-    board.select(selected.i, selected.j);
-
-    showscores(revealed.score);
-
-    // The game is still on
-    if (revealed.on) {
-      showturn(revealed.turn);
-
-      if (autoselect) {
-        // React even if it's the opponent's turn
-        solverscan();
-        if (gamestate.turn === gamestate.player) {
-          // Select either a known,hidden flag or a random tile
-          select_next_unrevealed_flag();
+    reveal:
+    function(message) {
+        const revealed = message;
+        if (!revealed) {
+            // ... do something here
+            // out-of-bounds or game already over
         }
-      }
-    }
-    // Game is over
-    else {
-      showwinner(revealed.turn);
-    }
-  },
+
+        gamestate.turn = revealed.turn;
+
+        revealed.show.forEach(function(item) {
+            board.setvalue(item.i, item.j, item.value, item.owner);
+            board.tile(item.i, item.j).erase('guide');
+        });
+
+        const selected = message.for;
+        board.select(selected.i, selected.j);
+
+        showscores(revealed.score);
+
+        // The game is still on
+        if (revealed.on) {
+            showturn(revealed.turn);
+
+            if (autoselect) {
+                // React even if it's the opponent's turn
+                solverscan();
+                if (gamestate.turn === gamestate.player) {
+                    // Select either a known,hidden flag or a random tile
+                    select_next_unrevealed_flag();
+                }
+            }
+        }
+        // Game is over
+        else {
+            showwinner(revealed.turn);
+        }
+    },
 };
 
 function showscores(scores) {
@@ -267,7 +221,7 @@ function showturn(turn) {
     $('#player-1-score-box').addClass('active-turn');
   }
 
-  show_note((gamestate.player === turn)? 'your-turn' : 'opponents-turn');
+  showNote((gamestate.player === turn)? 'your-turn' : 'opponents-turn');
 }
 
 // Show that the game is over and highlight who won the game
@@ -281,7 +235,7 @@ function showwinner(player) {
 
   $('#whose-turn').text('Winner!');
 
-  show_note('winner');
+  showNote('winner');
   board.showdisabled();
 }
 
