@@ -5,7 +5,7 @@ import config from './config.js';
 import {FlagsBoard, TILESHEET} from './flags-canvas.js';
 import $ from './fake-jquery.js';
 import QuickWebSocket from './quick-websocket.js';
-import showNote from './show-note.js';
+import showStatus from './show-status.js';
 
 //
 // WebSocket Messaging
@@ -19,11 +19,11 @@ const socket = QuickWebSocket({
 });
 
 // This is not necessary if an error event is also fired on fail
-if (!socket) room.disconnected();
+if (!socket) showStatus('disconnected', board);
 
 
 function onError() {
-    room.disconnected();
+    showStatus('disconnected', board);
 }
 
 function onOpen() {
@@ -31,7 +31,7 @@ function onOpen() {
 }
 
 function onClose() {
-    room.disconnected();
+    showStatus('disconnected', board);
 }
 
 function onMessage(quicksocket, message) {
@@ -69,51 +69,12 @@ $('.remaining').text(' / ' + play_until);
 
 
 document.addEventListener("keyup", function(event) {
-  console.log(event.keyCode);
   switch (event.keyCode) {
     case 65: toggle_autoselect();            break;   /* a */
     case 71: solverscan();                   break;   /* g */
     case 78: select_next_unrevealed_flag();  break;   /* n */
   }
 });
-
-// Change the view
-const room = {
-    disconnected:
-    function() {
-        showNote('disconnected');
-        board.showdisabled();
-    },
-
-    waiting:
-    function() {
-        showNote('waiting');
-        board.showdisabled();
-        // also disable other components...
-    },
-
-    start:
-    function() {
-        showNote('start');
-        board.restart();
-        // also enable other components...
-    },
-
-    busy:
-    function() {
-        showNote('busy');
-        board.showdisabled();
-        // also disable other components...
-    },
-
-    opponent_disconnected:
-    function() {
-        showNote('opponent-disconnected');
-        board.showdisabled();
-        $('#turn-score-container').addClass('not-playing');
-        // also disable other components...
-    },
-};
 
 
 // Callbacks
@@ -136,7 +97,7 @@ const handlers = {
         if (message.status === 'OPEN') {
             gamestate.player = message.playing_as;
             gamestate.turn = 0;
-            room.waiting(); // wait for the game-start message
+            showStatus('waiting', board); // wait for the game-start message
 
             if (Number(gamestate.player) === 0) {
                 $('#player-0-score-box').addClass('playing-as');
@@ -146,13 +107,13 @@ const handlers = {
             }
         }
         else {
-            room.busy(); // nobody to play with...
+            showStatus('busy', board); // nobody to play with...
         }
     },
 
     start:
     function(message) {
-        room.start();
+        showStatus('start', board);
 
         $('#player-0-score-box').addClass('active-turn');
         $('#turn-score-container').removeClass('not-playing');
@@ -162,7 +123,7 @@ const handlers = {
 
   'opponent-disconnected':
     function(message) {
-        room.opponent_disconnected();
+        showStatus('opponent-disconnected', board);
     },
 
     reveal:
@@ -221,7 +182,7 @@ function showturn(turn) {
     $('#player-1-score-box').addClass('active-turn');
   }
 
-  showNote((gamestate.player === turn)? 'your-turn' : 'opponents-turn');
+  showStatus((gamestate.player === turn) ? 'your-turn' : 'opponents-turn', board);
 }
 
 // Show that the game is over and highlight who won the game
@@ -235,8 +196,7 @@ function showwinner(player) {
 
   $('#whose-turn').text('Winner!');
 
-  showNote('winner');
-  board.showdisabled();
+  showStatus('winner', board);
 }
 
 // Selecting a tile is a network event, though it presents like a GUI event
