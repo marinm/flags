@@ -6,6 +6,7 @@ import {FlagsBoard, TILESHEET} from './flags-canvas.js';
 import $ from './fake-jquery.js';
 import QuickWebSocket from './quick-websocket.js';
 import showStatus from './show-status.js';
+import showTurn from './show-turn.js';
 
 const {
     SERVER_ADDRESS,
@@ -15,6 +16,20 @@ const {
     WINNING_SCORE,
     PLAYER_FLAGS,
 } = config;
+
+
+
+const gamestate = { player: null, turn: null };
+
+// Set up the board
+const board = new FlagsBoard(
+    BOARD_NUM_ROWS,
+    BOARD_NUM_COLUMNS,
+    BOARD_CELL_SIZE,
+    TILESHEET,
+    report_click
+);
+
 
 //
 // WebSocket Messaging
@@ -48,23 +63,13 @@ function onMessage(quicksocket, message) {
     if (!Object.keys(handlers).includes(message.type)) return;
   
     // call the appropriate handler
-    handlers[message.type](message);
+    handlers[message.type](message, board, gamestate);
 }
 
 
 //------------------------------------------------------------------------------
 
-var gamestate = { player: null, turn: null };
-var autoselect = false;
-
-
-const board = new FlagsBoard(
-    BOARD_NUM_ROWS,
-    BOARD_NUM_COLUMNS,
-    BOARD_CELL_SIZE,
-    TILESHEET,
-    report_click
-);
+let autoselect = false;
 
 $('#board-container').append(board.canvas);
 
@@ -122,7 +127,7 @@ const handlers = {
         $('#player-0-score-box').addClass('active-turn');
         $('#turn-score-container').removeClass('not-playing');
 
-        showturn(gamestate.turn);
+        showTurn(gamestate, board);
     },
 
   'opponent-disconnected':
@@ -148,11 +153,11 @@ const handlers = {
         const selected = message.for;
         board.select(selected.i, selected.j);
 
-        showscores(revealed.score);
+        showScores(revealed.score);
 
         // The game is still on
         if (revealed.on) {
-            showturn(revealed.turn);
+            showTurn(gamestate, board);
 
             if (autoselect) {
                 // React even if it's the opponent's turn
@@ -165,42 +170,28 @@ const handlers = {
         }
         // Game is over
         else {
-            showwinner(revealed.turn);
+            showWinner(revealed.turn);
         }
     },
 };
 
-function showscores(scores) {
-  $('#player-0-score').text(scores[0]);
-  $('#player-1-score').text(scores[1]);
-}
-
-// Show whose turn it is in the score box
-function showturn(turn) {
-  if (turn === 0) {
-    $('#player-0-score-box').addClass('active-turn');
-    $('#player-1-score-box').removeClass('active-turn');
-  }
-  else {
-    $('#player-0-score-box').removeClass('active-turn');
-    $('#player-1-score-box').addClass('active-turn');
-  }
-
-  showStatus((gamestate.player === turn) ? 'your-turn' : 'opponents-turn', board);
+function showScores(scores) {
+    $('#player-0-score').text(scores[0]);
+    $('#player-1-score').text(scores[1]);
 }
 
 // Show that the game is over and highlight who won the game
-function showwinner(player) {
-  // Highlight winner in the score box
-  const player_box = (player === 0)
-      ? $('#player-0-score-box')
-      : $('#player-1-score-box');
-  player_box.toggleClass('active-turn');
-  player_box.toggleClass('score-box-winner');
+function showWinner(player) {
+    // Highlight winner in the score box
+    const player_box = (player === 0)
+        ? $('#player-0-score-box')
+        : $('#player-1-score-box');
+    player_box.toggleClass('active-turn');
+    player_box.toggleClass('score-box-winner');
 
-  $('#whose-turn').text('Winner!');
+    $('#whose-turn').text('Winner!');
 
-  showStatus('winner', board);
+    showStatus('winner', board);
 }
 
 // Selecting a tile is a network event, though it presents like a GUI event

@@ -1,4 +1,5 @@
 import showNote from './show-note.js';
+import $ from './fake-jquery.js';
 
 const map = {
     'disconnected':
@@ -38,11 +39,15 @@ const map = {
 
     'your-turn':
     function(board) {
+        $('#player-0-score-box').addClass('active-turn');
+        $('#player-1-score-box').removeClass('active-turn');
         showNote('your-turn');
     },
 
     'opponents-turn':
     function(board) {
+        $('#player-0-score-box').removeClass('active-turn');
+        $('#player-1-score-box').addClass('active-turn');
         showNote('opponents-turn');
     },
 
