@@ -12,6 +12,7 @@ import showScores from './show-scores.js';
 import showWinner from './show-winner.js';
 import selectTile from './select-tile.js';
 import clickableCells from './clickable-cells.js';
+import cellOnClick from './cell-onclick.js';
 
 const {
     SERVER_ADDRESS,
@@ -55,7 +56,7 @@ const boardClicks = clickableCells({
     element : board.canvas,
     w       : BOARD_CELL_SIZE,
     h       : BOARD_CELL_SIZE,
-    onclick : report_click,
+    onclick : cellOnClick,
     context : { gamestate, board, socket },
 });
 
@@ -191,23 +192,7 @@ const handlers = {
 
 
 
-function report_click(i, j, context) {
-    // context = { gamestate, board, socket }
 
-    if (context.gamestate.turn != context.gamestate.playingAs) {
-        // Player out of turn
-        // Do nothing ...
-    }
-    else if (context.board.tile(i,j).hidden === false) {
-        // Clicked on already revealed tile
-        // Do nothing ...
-    }
-    else {
-        selectTile(i, j, context.gamestate, context.socket);
-        // A clicked tile is not displayed as selected until the server confirms
-        // the selection
-    }
-};
 
 function toggle_autoselect() {
   // If the board is not available, do nothing
