@@ -10,6 +10,7 @@ import showTurn from './show-turn.js';
 import showScores from './show-scores.js';
 import showWinner from './show-winner.js';
 import selectTile from './select-tile.js';
+import clickableCells from './clickable-cells.js';
 
 const {
     SERVER_ADDRESS,
@@ -49,12 +50,21 @@ const socket = QuickWebSocket({
     onClose   : onClose,
 });
 
+// Add on-click event listener to the canvas
+const boardClicks = clickableCells({
+    element : board.canvas,
+    w       : BOARD_CELL_SIZE,
+    h       : BOARD_CELL_SIZE,
+    onclick : report_click,
+    context : { gamestate, board, socket },
+});
+
 // This is not necessary if an error event is also fired on fail
-if (!socket) showStatus('disconnected', board);
+if (!socket) showStatus('disconnected', board, boardClicks);
 
 
 function onError() {
-    showStatus('disconnected', board);
+    showStatus('disconnected', board, boardClicks);
 }
 
 function onOpen() {
@@ -62,7 +72,7 @@ function onOpen() {
 }
 
 function onClose() {
-    showStatus('disconnected', board);
+    showStatus('disconnected', board, boardClicks);
 }
 
 function onMessage(quicksocket, message) {
@@ -106,7 +116,9 @@ const handlers = {
         if (message.status === 'OPEN') {
             gamestate.playingAs = message.playing_as;
             gamestate.turn = 0;
-            showStatus('waiting', board); // wait for the game-start message
+
+            // wait for the game-start message
+            showStatus('waiting', board, boardClicks); 
 
             if (Number(gamestate.playingAs) === 0) {
                 $('#player-0-score-box').addClass('playing-as');
@@ -116,23 +128,24 @@ const handlers = {
             }
         }
         else {
-            showStatus('busy', board); // nobody to play with...
+            // nobody to play with...
+            showStatus('busy', board, boardClicks);
         }
     },
 
     start:
     function(message) {
-        showStatus('start', board);
+        showStatus('start', board, boardClicks);
 
         $('#player-0-score-box').addClass('active-turn');
         $('#turn-score-container').removeClass('not-playing');
 
-        showTurn(gamestate, board);
+        showTurn(gamestate, board, boardClicks);
     },
 
   'opponent-disconnected':
     function(message) {
-        showStatus('opponent-disconnected', board);
+        showStatus('opponent-disconnected', board, boardClicks);
     },
 
     reveal:
@@ -157,7 +170,7 @@ const handlers = {
 
         // The game is still on
         if (revealed.on) {
-            showTurn(gamestate, board);
+            showTurn(gamestate, board, boardClicks);
 
             if (autoselect) {
                 // React even if it's the opponent's turn
@@ -171,26 +184,29 @@ const handlers = {
         // Game is over
         else {
             gamestate.winner = gamestate.turn;
-            showWinner(gamestate, board);
+            showWinner(gamestate, board, boardClicks);
         }
     },
 };
 
 
 
-function report_click(tiles, i, j) {
-  if (gamestate.turn != gamestate.playingAs) {
-    // Player out of turn
-    // Do nothing ...
-  }
-  else if (board.tile(i,j).hidden === false) {
-    // Clicked on already revealed tile
-    // Do nothing ...
-  }
-  else {
-    selectTile(i, j, gamestate, socket);
-    // A clicked tile is not displayed as selected until the server confirms the selection
-  }
+function report_click(i, j, context) {
+    // context = { gamestate, board, socket }
+
+    if (context.gamestate.turn != context.gamestate.playingAs) {
+        // Player out of turn
+        // Do nothing ...
+    }
+    else if (context.board.tile(i,j).hidden === false) {
+        // Clicked on already revealed tile
+        // Do nothing ...
+    }
+    else {
+        selectTile(i, j, context.gamestate, context.socket);
+        // A clicked tile is not displayed as selected until the server confirms
+        // the selection
+    }
 };
 
 function toggle_autoselect() {

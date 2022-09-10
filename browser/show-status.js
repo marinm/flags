@@ -1,66 +1,72 @@
 import showNote from './show-note.js';
 import $ from './fake-jquery.js';
 
+function restart(board, boardClicks) {
+    board.restart();
+    boardClicks.on();
+}
+
+function off(board, boardClicks) {
+    boardClicks.off();
+    board.showdisabled();
+    $('#turn-score-container').addClass('not-playing');
+}
+
+
 const map = {
     'disconnected':
-    function(board) {
+    function(board, boardClicks) {
+        off(board, boardClicks);
         showNote('disconnected');
-        board.showdisabled();
     },
 
     'waiting':
-    function(board) {
+    function(board, boardClicks) {
+        off(board, boardClicks);
         showNote('waiting');
-        board.showdisabled();
-        // also disable other components...
     },
 
     'start':
-    function(board) {
+    function(board, boardClicks) {
+        restart(board, boardClicks);
         showNote('start');
-        board.restart();
-        // also enable other components...
     },
 
     'busy':
-    function(board) {
+    function(board, boardClicks) {
+        off(board, boardClicks);
         showNote('busy');
-        board.showdisabled();
-        // also disable other components...
     },
 
     'opponent-disconnected':
-    function(board) {
+    function(board, boardClicks) {
+        off(board, boardClicks);
         showNote('opponent-disconnected');
-        board.showdisabled();
-        $('#turn-score-container').addClass('not-playing');
-        // also disable other components...
     },
 
     'your-turn':
-    function(board) {
+    function(board, boardClicks) {
         $('#player-0-score-box').addClass('active-turn');
         $('#player-1-score-box').removeClass('active-turn');
         showNote('your-turn');
     },
 
     'opponents-turn':
-    function(board) {
+    function(board, boardClicks) {
         $('#player-0-score-box').removeClass('active-turn');
         $('#player-1-score-box').addClass('active-turn');
         showNote('opponents-turn');
     },
 
     'winner':
-    function(board) {
+    function(board, boardClicks) {
+        off(board, boardClicks);
         showNote('winner');
-        board.showdisabled();
     },
 };
 
-
 export default
-function showStatus(status, board) {
+function showStatus(status, board, boardClicks) {
     // Caller responsible for passing in valid status string
-    map[status](board);
+    map[status](board, boardClicks);
 };

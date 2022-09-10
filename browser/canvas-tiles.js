@@ -15,11 +15,9 @@
 //      +-----+-----+-----+-----+-----+-----+
 //   5  |     |     |     |     |     |     |
 //      +-----+-----+-----+-----+-----+-----+
-//
-// Clicking anywhere inside tile (i,j) triggers a custom callback(i,j).
 
 export default
-function CanvasTiles(N, M, W, H, sheet, onclick) {
+function CanvasTiles(N, M, W, H, sheet) {
     // Assume arguments make sense.
     // No safety checks.
     // W,H are tile width,height
@@ -97,7 +95,7 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
         return !disabled;
     }
   
-    const methods = {
+    return {
         canvas, 
         surface,
         N,
@@ -110,14 +108,4 @@ function CanvasTiles(N, M, W, H, sheet, onclick) {
         enable,
         ready
     };
-
-    canvas.addEventListener('click', function(event) {
-        if (!disabled) {
-            const i = Math.floor(event.offsetY / H);
-            const j = Math.floor(event.offsetX / W);
-            onclick(methods, i, j);
-        }
-    });
-
-    return methods;
 }
