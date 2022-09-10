@@ -177,7 +177,6 @@ function FlagsBoard(N, M, S, sheet, onclick) {
   }
 
   function mapToTilename(value, owner) {
-    if (value === 'F') console.log('F: ' + owner);
     return (value === 'F')? (owner || '*') : value;
   }
 
@@ -188,7 +187,6 @@ function FlagsBoard(N, M, S, sheet, onclick) {
 
     // Assume valid value
     const tilename = mapToTilename(value, owner);
-    console.log(tilename);
     board.tile(i,j).draw('value', tilename);
   };
 
