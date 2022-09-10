@@ -1,44 +1,18 @@
 // Canvas drawing
 // Model-[View]-Controller
 
-// Flag icon made by Freepik from www.flaticon.com
-// https://www.flaticon.com/free-icon/flag_94182
+// FlagsBoard
+// Interface for drawing numbers and flags on the tiled canvas
 
 import CanvasTiles from './canvas-tiles.js';
 
 const DISABLED_HUE = 'rgba(200, 200, 200, 0.5)';
 
-const TILESHEET = {
-  img: new Image(),
-  tiles: {
-    'CHECKER-DARK':   [2,1],
-    'CHECKER-LIGHT':  [2,0],
-    'OUTLINE':        [2,2],
-    'A':              [1,0],
-    'B':              [1,1],
-    '0':              [0,0],
-    '1':              [0,1],
-    '2':              [0,2],
-    '3':              [0,3],
-    '4':              [0,4],
-    '5':              [0,5],
-    '6':              [0,6],
-    '7':              [0,7],
-    '8':              [0,8],
-    'NOFLAG':         [2,3],
-    'FLAGHERE':       [2,4],
-    'NEXTSELECT':     [2,2],
-    '*':              [1,2]
-  }
-};
-
-//
-// FlagsBoard
-// Interface for drawing numbers and flags on the tiled canvas
-function FlagsBoard(N, M, S, sheet, onclick) {
+export default
+function FlagsBoard(N, M, S, sheet) {
 
   // The view
-  const board = new CanvasTiles(N, M, S, S, sheet, onclick);
+  const board = new CanvasTiles(N, M, S, S, sheet);
 
   board.restart = function() {
     // Checkerboard pattern
@@ -110,9 +84,7 @@ function FlagsBoard(N, M, S, sheet, onclick) {
     // Start with a fresh board
     board.restart();
   }
-  sheet.img.src = 'tile-sheet.png'
+  sheet.img.src = sheet.filepath;
 
   return board;
-}
-
-export {FlagsBoard, TILESHEET};
+};

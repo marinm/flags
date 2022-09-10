@@ -2,7 +2,8 @@
 // Model-View-[Controller]
 
 import config from './config.js';
-import {FlagsBoard, TILESHEET} from './flags-canvas.js';
+import FlagsBoard from './flags-canvas.js';
+import tilesheet from './tilesheet.js';
 import $ from './fake-jquery.js';
 import QuickWebSocket from './quick-websocket.js';
 import showStatus from './show-status.js';
@@ -34,8 +35,7 @@ const board = new FlagsBoard(
     BOARD_NUM_ROWS,
     BOARD_NUM_COLUMNS,
     BOARD_CELL_SIZE,
-    TILESHEET,
-    report_click
+    tilesheet,
 );
 
 
