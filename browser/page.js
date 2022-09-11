@@ -160,7 +160,7 @@ const handlers = {
 
         revealed.show.forEach(function(item) {
             gameboardCanvas.setvalue(item.i, item.j, item.value, item.owner);
-            gameboardCanvas.tile(item.i, item.j).erase('guide');
+            gameboardCanvas.at(item.i, item.j).erase('guide');
         });
 
         const selected = message.for;
@@ -207,8 +207,8 @@ function toggle_autoselect() {
 
   if (!autoselect) {
     // Hide select guides
-    gameboardCanvas.forEachTile(function(i,j,tile) {
-      gameboardCanvas.tile(i,j).erase('guide');
+    gameboardCanvas.forEach(function(i,j,tile) {
+      tile.erase('guide');
     });
   }
 }
@@ -227,9 +227,9 @@ function select_random_tile() {
     var j = 0;
     var tile = null;
     do {
-      i = randint(0, gameboardCanvas.N);
-      j = randint(0, gameboardCanvas.M);
-      tile = gameboardCanvas.tile(i,j);
+      i = randint(0, BOARD_NUM_ROWS);
+      j = randint(0, BOARD_NUM_COLUMNS);
+      tile = gameboardCanvas.at(i,j);
     }
     while (!tile.hidden || (tile.hidden && tile.noflag));
     // Repeat if tile is already revealed,
@@ -270,26 +270,26 @@ function solverscan() {
     // Number of hidden flags found 
     var nfound = 0;
   
-    gameboardCanvas.forEachTile(function(i,j,tile) {
+    gameboardCanvas.forEach(function(i,j,tile) {
       // Consider only revealed number tiles
-      if (!isnumbertile(gameboardCanvas.tile(i,j)))
+      if (!isnumbertile(tile))
         return;
   
       // Array of adjacent tiles
-      const adjacent = gameboardCanvas.tile(i,j).adjacent();
+      const adjacent = tile.adjacent();
   
-      function highlight(tile) {
-        if (isunknown(tile)) {
+      function highlight(tile_) {
+        if (isunknown(tile_)) {
           nfound++;
-          tile.flaghere = true;
-          tile.draw('guide', 'FLAGHERE');
+          tile_.flaghere = true;
+          tile_.draw('guide', 'FLAGHERE');
         }
       }
   
       // A noflag tile never becomes a flaghere tile, and vice versa
   
       const adjacentflags = adjacent.filter(isflag).length;
-      const remainingflags = gameboardCanvas.tile(i,j).value - adjacentflags;
+      const remainingflags = tile.value - adjacentflags;
       const adjacenthidden = adjacent.filter(isunknown).length;
   
       // Same number of unrevealed + noflag tiles as remaining flags
@@ -307,26 +307,26 @@ function solverscan() {
     // Number of hidden no-flags found
     var nfound = 0;
   
-    gameboardCanvas.forEachTile(function(i,j,tile) {
+    gameboardCanvas.forEach(function(i,j,tile) {
       // Consider only revealed number tiles
-      if (!isnumbertile(gameboardCanvas.tile(i,j)))
+      if (!isnumbertile(tile))
         return;
   
       // Array of adjacent tiles
-      const adjacent = gameboardCanvas.tile(i,j).adjacent();
+      const adjacent = tile.adjacent();
   
-      function crossout(tile) {
-        if (isunknown(tile)) {
+      function crossout(tile_) {
+        if (isunknown(tile_)) {
           nfound++;
-          tile.noflag = true;
-          tile.draw('guide', 'NOFLAG');
+          tile_.noflag = true;
+          tile_.draw('guide', 'NOFLAG');
         }
       }
   
       // A noflag tile never becomes a flaghere tile, and vice versa
   
       const adjacentflags = adjacent.filter(isflag).length;
-      const remainingflags = gameboardCanvas.tile(i,j).value - adjacentflags;
+      const remainingflags = tile.value - adjacentflags;
       const adjacenthidden = adjacent.filter(isunknown).length;
   
       // Same number of unrevealed + noflag tiles as remaining flags
@@ -341,8 +341,8 @@ function solverscan() {
   
   function select_next_unrevealed_flag() {
     var selected = false;
-    // Good reason to replace .forEachTile() with .tiles() which returns array
-    gameboardCanvas.forEachTile(function(i,j,tile) {
+    // Good reason to replace .forEach() with .tiles() which returns array
+    gameboardCanvas.forEach(function(i,j,tile) {
       if (!selected && tile.hidden && tile.flaghere) {
         selected = true;
         selectTile(i, j, gamestate, socket);

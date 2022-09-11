@@ -75,15 +75,10 @@ function CanvasTiles(N, M, W, H, sheet) {
     // For temporary compatability
     function tile(i,j) { return tiles.at(i,j); }
     function forEachTile(action) { return tiles.forEach(action); }
-  
+
     return {
+        ...tiles,
         canvas, 
-        surface,
-        N,
-        M,
-        W,
-        H,
-        tile,
-        forEachTile
+        surface
     };
 }
