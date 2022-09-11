@@ -2,7 +2,7 @@
 // Model-View-[Controller]
 
 import config from './config.js';
-import FlagsBoard from './flags-canvas.js';
+import GameboardCanvas from './gameboard-canvas.js';
 import tilesheet from './tilesheet.js';
 import $ from './fake-jquery.js';
 import QuickWebSocket from './quick-websocket.js';
@@ -30,9 +30,8 @@ const gamestate = {
     winner    : null,
 };
 
-
 // Set up the board
-const board = new FlagsBoard(
+const gameboardCanvas = new GameboardCanvas(
     BOARD_NUM_ROWS,
     BOARD_NUM_COLUMNS,
     BOARD_CELL_SIZE,
@@ -53,19 +52,19 @@ const socket = QuickWebSocket({
 
 // Add on-click event listener to the canvas
 const boardClicks = clickableCells({
-    element : board.canvas,
+    element : gameboardCanvas.canvas,
     w       : BOARD_CELL_SIZE,
     h       : BOARD_CELL_SIZE,
     onclick : cellOnClick,
-    context : { gamestate, board, socket },
+    context : { gamestate, gameboardCanvas, socket },
 });
 
 // This is not necessary if an error event is also fired on fail
-if (!socket) showStatus('disconnected', board, boardClicks);
+if (!socket) showStatus('disconnected', gameboardCanvas, boardClicks);
 
 
 function onError() {
-    showStatus('disconnected', board, boardClicks);
+    showStatus('disconnected', gameboardCanvas, boardClicks);
 }
 
 function onOpen() {
@@ -73,7 +72,7 @@ function onOpen() {
 }
 
 function onClose() {
-    showStatus('disconnected', board, boardClicks);
+    showStatus('disconnected', gameboardCanvas, boardClicks);
 }
 
 function onMessage(quicksocket, message) {
@@ -81,7 +80,7 @@ function onMessage(quicksocket, message) {
     if (!Object.keys(handlers).includes(message.type)) return;
   
     // call the appropriate handler
-    handlers[message.type](message, board, gamestate);
+    handlers[message.type](message, gameboardCanvas, gamestate);
 }
 
 
@@ -89,7 +88,7 @@ function onMessage(quicksocket, message) {
 
 let autoselect = false;
 
-$('#board-container').append(board.canvas);
+$('#board-container').append(gameboardCanvas.canvas);
 
 $('.remaining').text(' / ' + WINNING_SCORE);
 
@@ -119,7 +118,7 @@ const handlers = {
             gamestate.turn = 0;
 
             // wait for the game-start message
-            showStatus('waiting', board, boardClicks); 
+            showStatus('waiting', gameboardCanvas, boardClicks); 
 
             if (Number(gamestate.playingAs) === 0) {
                 $('#player-0-score-box').addClass('playing-as');
@@ -130,23 +129,23 @@ const handlers = {
         }
         else {
             // nobody to play with...
-            showStatus('busy', board, boardClicks);
+            showStatus('busy', gameboardCanvas, boardClicks);
         }
     },
 
     start:
     function(message) {
-        showStatus('start', board, boardClicks);
+        showStatus('start', gameboardCanvas, boardClicks);
 
         $('#player-0-score-box').addClass('active-turn');
         $('#turn-score-container').removeClass('not-playing');
 
-        showTurn(gamestate, board, boardClicks);
+        showTurn(gamestate, gameboardCanvas, boardClicks);
     },
 
   'opponent-disconnected':
     function(message) {
-        showStatus('opponent-disconnected', board, boardClicks);
+        showStatus('opponent-disconnected', gameboardCanvas, boardClicks);
     },
 
     reveal:
@@ -160,18 +159,18 @@ const handlers = {
         gamestate.turn = revealed.turn;
 
         revealed.show.forEach(function(item) {
-            board.setvalue(item.i, item.j, item.value, item.owner);
-            board.tile(item.i, item.j).erase('guide');
+            gameboardCanvas.setvalue(item.i, item.j, item.value, item.owner);
+            gameboardCanvas.tile(item.i, item.j).erase('guide');
         });
 
         const selected = message.for;
-        board.select(selected.i, selected.j);
+        gameboardCanvas.select(selected.i, selected.j);
 
         showScores(revealed.score);
 
         // The game is still on
         if (revealed.on) {
-            showTurn(gamestate, board, boardClicks);
+            showTurn(gamestate, gameboardCanvas, boardClicks);
 
             if (autoselect) {
                 // React even if it's the opponent's turn
@@ -185,7 +184,7 @@ const handlers = {
         // Game is over
         else {
             gamestate.winner = gamestate.turn;
-            showWinner(gamestate, board, boardClicks);
+            showWinner(gamestate, gameboardCanvas, boardClicks);
         }
     },
 };
@@ -196,7 +195,7 @@ const handlers = {
 
 function toggle_autoselect() {
   // If the board is not available, do nothing
-  if (! board.ready())
+  if (! gameboardCanvas.ready())
     return;
 
   autoselect = !autoselect;
@@ -208,8 +207,8 @@ function toggle_autoselect() {
 
   if (!autoselect) {
     // Hide select guides
-    board.forEachTile(function(i,j,tile) {
-      board.tile(i,j).erase('guide');
+    gameboardCanvas.forEachTile(function(i,j,tile) {
+      gameboardCanvas.tile(i,j).erase('guide');
     });
   }
 }
@@ -228,9 +227,9 @@ function select_random_tile() {
     var j = 0;
     var tile = null;
     do {
-      i = randint(0, board.N);
-      j = randint(0, board.M);
-      tile = board.tile(i,j);
+      i = randint(0, gameboardCanvas.N);
+      j = randint(0, gameboardCanvas.M);
+      tile = gameboardCanvas.tile(i,j);
     }
     while (!tile.hidden || (tile.hidden && tile.noflag));
     // Repeat if tile is already revealed,
@@ -271,13 +270,13 @@ function solverscan() {
     // Number of hidden flags found 
     var nfound = 0;
   
-    board.forEachTile(function(i,j,tile) {
+    gameboardCanvas.forEachTile(function(i,j,tile) {
       // Consider only revealed number tiles
-      if (!isnumbertile(board.tile(i,j)))
+      if (!isnumbertile(gameboardCanvas.tile(i,j)))
         return;
   
       // Array of adjacent tiles
-      const adjacent = board.tile(i,j).adjacent();
+      const adjacent = gameboardCanvas.tile(i,j).adjacent();
   
       function highlight(tile) {
         if (isunknown(tile)) {
@@ -290,7 +289,7 @@ function solverscan() {
       // A noflag tile never becomes a flaghere tile, and vice versa
   
       const adjacentflags = adjacent.filter(isflag).length;
-      const remainingflags = board.tile(i,j).value - adjacentflags;
+      const remainingflags = gameboardCanvas.tile(i,j).value - adjacentflags;
       const adjacenthidden = adjacent.filter(isunknown).length;
   
       // Same number of unrevealed + noflag tiles as remaining flags
@@ -308,13 +307,13 @@ function solverscan() {
     // Number of hidden no-flags found
     var nfound = 0;
   
-    board.forEachTile(function(i,j,tile) {
+    gameboardCanvas.forEachTile(function(i,j,tile) {
       // Consider only revealed number tiles
-      if (!isnumbertile(board.tile(i,j)))
+      if (!isnumbertile(gameboardCanvas.tile(i,j)))
         return;
   
       // Array of adjacent tiles
-      const adjacent = board.tile(i,j).adjacent();
+      const adjacent = gameboardCanvas.tile(i,j).adjacent();
   
       function crossout(tile) {
         if (isunknown(tile)) {
@@ -327,7 +326,7 @@ function solverscan() {
       // A noflag tile never becomes a flaghere tile, and vice versa
   
       const adjacentflags = adjacent.filter(isflag).length;
-      const remainingflags = board.tile(i,j).value - adjacentflags;
+      const remainingflags = gameboardCanvas.tile(i,j).value - adjacentflags;
       const adjacenthidden = adjacent.filter(isunknown).length;
   
       // Same number of unrevealed + noflag tiles as remaining flags
@@ -343,7 +342,7 @@ function solverscan() {
   function select_next_unrevealed_flag() {
     var selected = false;
     // Good reason to replace .forEachTile() with .tiles() which returns array
-    board.forEachTile(function(i,j,tile) {
+    gameboardCanvas.forEachTile(function(i,j,tile) {
       if (!selected && tile.hidden && tile.flaghere) {
         selected = true;
         selectTile(i, j, gamestate, socket);

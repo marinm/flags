@@ -1,72 +1,72 @@
 import showNote from './show-note.js';
 import $ from './fake-jquery.js';
 
-function restart(board, boardClicks) {
-    board.restart();
+function restart(gameboardCanvas, boardClicks) {
+    gameboardCanvas.restart();
     boardClicks.on();
 }
 
-function off(board, boardClicks) {
+function off(gameboardCanvas, boardClicks) {
     boardClicks.off();
-    board.showdisabled();
+    gameboardCanvas.showdisabled();
     $('#turn-score-container').addClass('not-playing');
 }
 
 
 const map = {
     'disconnected':
-    function(board, boardClicks) {
-        off(board, boardClicks);
+    function(gameboardCanvas, boardClicks) {
+        off(gameboardCanvas, boardClicks);
         showNote('disconnected');
     },
 
     'waiting':
-    function(board, boardClicks) {
-        off(board, boardClicks);
+    function(gameboardCanvas, boardClicks) {
+        off(gameboardCanvas, boardClicks);
         showNote('waiting');
     },
 
     'start':
-    function(board, boardClicks) {
-        restart(board, boardClicks);
+    function(gameboardCanvas, boardClicks) {
+        restart(gameboardCanvas, boardClicks);
         showNote('start');
     },
 
     'busy':
-    function(board, boardClicks) {
-        off(board, boardClicks);
+    function(gameboardCanvas, boardClicks) {
+        off(gameboardCanvas, boardClicks);
         showNote('busy');
     },
 
     'opponent-disconnected':
-    function(board, boardClicks) {
-        off(board, boardClicks);
+    function(gameboardCanvas, boardClicks) {
+        off(gameboardCanvas, boardClicks);
         showNote('opponent-disconnected');
     },
 
     'your-turn':
-    function(board, boardClicks) {
+    function(gameboardCanvas, boardClicks) {
         $('#player-0-score-box').addClass('active-turn');
         $('#player-1-score-box').removeClass('active-turn');
         showNote('your-turn');
     },
 
     'opponents-turn':
-    function(board, boardClicks) {
+    function(gameboardCanvas, boardClicks) {
         $('#player-0-score-box').removeClass('active-turn');
         $('#player-1-score-box').addClass('active-turn');
         showNote('opponents-turn');
     },
 
     'winner':
-    function(board, boardClicks) {
-        off(board, boardClicks);
+    function(gameboardCanvas, boardClicks) {
+        off(gameboardCanvas, boardClicks);
         showNote('winner');
     },
 };
 
 export default
-function showStatus(status, board, boardClicks) {
+function showStatus(status, gameboardCanvas, boardClicks) {
     // Caller responsible for passing in valid status string
-    map[status](board, boardClicks);
+    map[status](gameboardCanvas, boardClicks);
 };

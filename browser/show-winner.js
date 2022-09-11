@@ -2,7 +2,7 @@ import showStatus from './show-status.js';
 import $ from './fake-jquery.js';
 
 export default
-function showWinner(gamestate, board, boardClicks) {
+function showWinner(gamestate, gameboardCanvas, boardClicks) {
 
     // Show that the game is over and highlight who won the game
 
@@ -16,5 +16,5 @@ function showWinner(gamestate, board, boardClicks) {
         .toggleClass('active-turn')
         .toggleClass('score-box-winner');
 
-    showStatus('winner', board, boardClicks);
+    showStatus('winner', gameboardCanvas, boardClicks);
 };

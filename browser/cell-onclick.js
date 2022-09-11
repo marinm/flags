@@ -8,7 +8,7 @@ function cellOnClick(i, j, context) {
         // Player out of turn
         // Do nothing ...
     }
-    else if (context.board.tile(i,j).hidden === false) {
+    else if (context.gameboardCanvas.tile(i,j).hidden === false) {
         // Clicked on already revealed tile
         // Do nothing ...
     }
