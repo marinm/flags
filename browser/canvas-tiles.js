@@ -16,6 +16,8 @@
 //   5  |     |     |     |     |     |     |
 //      +-----+-----+-----+-----+-----+-----+
 
+import Matrix from './matrix.js';
+
 export default
 function CanvasTiles(N, M, W, H, sheet) {
     // Assume arguments make sense.
@@ -32,21 +34,9 @@ function CanvasTiles(N, M, W, H, sheet) {
     const surface = canvas.getContext('2d');
     var disabled = false;
   
-    const tiles = new Array(N * M);
+    const tiles = Matrix(N, M);
   
-    function tile(i, j) {
-        return (i >=0 && j >= 0 && i < N && j < M) ? tiles[i * M + j] : null;
-    }
-  
-    function forEachTile(action) {
-        for (var i = 0; i < N; i++) {
-            for (var j = 0; j < M; j++) {
-                action(i, j);
-            }
-        }
-    }
-  
-    forEachTile(function(i, j) {
+    tiles.fill(function(i, j) {
         const x = j * W;
         const y = i * H;
 
@@ -65,7 +55,7 @@ function CanvasTiles(N, M, W, H, sheet) {
             });
         }
 
-        tiles[i * M + j] = {
+        return {
             hidden: true,
             value: null,
 
@@ -94,6 +84,10 @@ function CanvasTiles(N, M, W, H, sheet) {
     function ready() {
         return !disabled;
     }
+
+    // For temporary compatability
+    function tile(i,j) { return tiles.at(i,j); }
+    function forEachTile(action) { return tiles.forEach(action); }
   
     return {
         canvas, 

@@ -16,7 +16,7 @@ function FlagsBoard(N, M, S, sheet) {
 
   board.restart = function() {
     // Checkerboard pattern
-    board.forEachTile(function(i,j) {
+    board.forEachTile(function(i,j,tile) {
       // odd row & odd col  or  even row & even col
       const ee = (i % 2 === 0) && (j % 2 === 0); // even/even
       const oo = (i % 2 === 1) && (j % 2 === 1); // odd/odd
@@ -58,14 +58,14 @@ function FlagsBoard(N, M, S, sheet) {
     board.surface.fillRect(0, 0, board.M * board.W, board.N * board.H);
   };
 
-  board.forEachTile(function(i,j) {
+  board.forEachTile(function(i,j,tile) {
     //  Top/Centre/Bottom - Left/Centre/Right
     //
     //    T      TL TC TR
     //  L C R    CL CC CR
     //    B      BL BC BR
 
-    board.tile(i,j).adjacent = function() {
+    tile.adjacent = function() {
       const TL = board.tile(i - 1, j - 1);
       const TC = board.tile(i - 1, j - 0);
       const TR = board.tile(i - 1, j + 1);

@@ -208,7 +208,7 @@ function toggle_autoselect() {
 
   if (!autoselect) {
     // Hide select guides
-    board.forEachTile(function(i,j) {
+    board.forEachTile(function(i,j,tile) {
       board.tile(i,j).erase('guide');
     });
   }
@@ -271,7 +271,7 @@ function solverscan() {
     // Number of hidden flags found 
     var nfound = 0;
   
-    board.forEachTile(function(i,j) {
+    board.forEachTile(function(i,j,tile) {
       // Consider only revealed number tiles
       if (!isnumbertile(board.tile(i,j)))
         return;
@@ -308,7 +308,7 @@ function solverscan() {
     // Number of hidden no-flags found
     var nfound = 0;
   
-    board.forEachTile(function(i,j) {
+    board.forEachTile(function(i,j,tile) {
       // Consider only revealed number tiles
       if (!isnumbertile(board.tile(i,j)))
         return;
@@ -343,8 +343,7 @@ function solverscan() {
   function select_next_unrevealed_flag() {
     var selected = false;
     // Good reason to replace .forEachTile() with .tiles() which returns array
-    board.forEachTile(function(i,j) {
-      const tile = board.tile(i,j);
+    board.forEachTile(function(i,j,tile) {
       if (!selected && tile.hidden && tile.flaghere) {
         selected = true;
         selectTile(i, j, gamestate, socket);
