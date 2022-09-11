@@ -11,80 +11,97 @@ const DISABLED_HUE = 'rgba(200, 200, 200, 0.5)';
 export default
 function FlagsBoard(N, M, S, sheet) {
 
-  // The view
-  const board = new CanvasTiles(N, M, S, S, sheet);
+    let disabled = false;
 
-  board.restart = function() {
-    // Checkerboard pattern
-    board.forEachTile(function(i,j,tile) {
-      // odd row & odd col  or  even row & even col
-      const ee = (i % 2 === 0) && (j % 2 === 0); // even/even
-      const oo = (i % 2 === 1) && (j % 2 === 1); // odd/odd
-      const tilename = (ee || oo)? 'CHECKER-DARK' : 'CHECKER-LIGHT';
-      board.tile(i, j).draw('checker', tilename);
-    });
-    board.enable();
-  }
+    function disable() {
+        disabled = true;
+    }
 
-  function mapToTilename(value, owner) {
-    return (value === 'F')? (owner || '*') : value;
-  }
+    function enable() {
+        disabled = false;
+    }
 
-  board.setvalue = function(i, j, value, owner) {
+    function ready() {
+        return !disabled;
+    }
 
-    board.tile(i,j).hidden = false;
-    board.tile(i,j).value = value;
+    // The view
+    const board = new CanvasTiles(N, M, S, S, sheet);
 
-    // Assume valid value
-    const tilename = mapToTilename(value, owner);
-    board.tile(i,j).draw('value', tilename);
-  };
+    board.disable = disable;
+    board.enable = enable;
+    board.ready = ready;
 
-  const lastselect = {i: 0, j: 0};
+    board.restart = function() {
+        // Checkerboard pattern
+        board.forEachTile(function(i,j,tile) {
+            // odd row & odd col  or  even row & even col
+            const ee = (i % 2 === 0) && (j % 2 === 0); // even/even
+            const oo = (i % 2 === 1) && (j % 2 === 1); // odd/odd
+            const tilename = (ee || oo)? 'CHECKER-DARK' : 'CHECKER-LIGHT';
+            board.tile(i, j).draw('checker', tilename);
+        });
+        enable();
+    }
 
-  board.select = function(i, j) {
-    board.tile(lastselect.i, lastselect.j).erase('outline');
-    board.tile(i, j).draw('outline', 'OUTLINE');
-    lastselect.i = i;
-    lastselect.j = j;
-  };
+    function mapToTilename(value, owner) {
+        return (value === 'F')? (owner || '*') : value;
+    }
 
-  // Prevent click callback
-  board.showdisabled = function() {
-    board.disable();
+    board.setvalue = function(i, j, value, owner) {
+        board.tile(i,j).hidden = false;
+        board.tile(i,j).value = value;
 
-    // Draw hue layer
-    board.surface.fillStyle = DISABLED_HUE;
-    board.surface.fillRect(0, 0, board.M * board.W, board.N * board.H);
-  };
-
-  board.forEachTile(function(i,j,tile) {
-    //  Top/Centre/Bottom - Left/Centre/Right
-    //
-    //    T      TL TC TR
-    //  L C R    CL CC CR
-    //    B      BL BC BR
-
-    tile.adjacent = function() {
-      const TL = board.tile(i - 1, j - 1);
-      const TC = board.tile(i - 1, j - 0);
-      const TR = board.tile(i - 1, j + 1);
-      const CL = board.tile(i - 0, j - 1);
-      const CR = board.tile(i - 0, j + 1);
-      const BL = board.tile(i + 1, j - 1);
-      const BC = board.tile(i + 1, j - 0);
-      const BR = board.tile(i + 1, j + 1);
-
-      return [TL, TC, TR, CL, CR, BL, BC, BR];
+        // Assume valid value
+        const tilename = mapToTilename(value, owner);
+        board.tile(i,j).draw('value', tilename);
     };
-  });
 
-  // Load the tilesheet...
-  sheet.img.onload = function() {
-    // Start with a fresh board
-    board.restart();
-  }
-  sheet.img.src = sheet.filepath;
+    const lastselect = {i: 0, j: 0};
 
-  return board;
+    board.select = function(i, j) {
+        board.tile(lastselect.i, lastselect.j).erase('outline');
+        board.tile(i, j).draw('outline', 'OUTLINE');
+        lastselect.i = i;
+        lastselect.j = j;
+    };
+
+    // Prevent click callback
+    board.showdisabled = function() {
+        disable();
+
+        // Draw hue layer
+        board.surface.fillStyle = DISABLED_HUE;
+        board.surface.fillRect(0, 0, board.M * board.W, board.N * board.H);
+    };
+
+    board.forEachTile(function(i,j,tile) {
+        //  Top/Centre/Bottom - Left/Centre/Right
+        //
+        //    T      TL TC TR
+        //  L C R    CL CC CR
+        //    B      BL BC BR
+
+        tile.adjacent = function() {
+            const TL = board.tile(i - 1, j - 1);
+            const TC = board.tile(i - 1, j - 0);
+            const TR = board.tile(i - 1, j + 1);
+            const CL = board.tile(i - 0, j - 1);
+            const CR = board.tile(i - 0, j + 1);
+            const BL = board.tile(i + 1, j - 1);
+            const BC = board.tile(i + 1, j - 0);
+            const BR = board.tile(i + 1, j + 1);
+
+            return [TL, TC, TR, CL, CR, BL, BC, BR];
+        };
+    });
+
+    // Load the tilesheet...
+    sheet.img.onload = function() {
+        // Start with a fresh board
+        board.restart();
+    }
+    sheet.img.src = sheet.filepath;
+
+    return board;
 };

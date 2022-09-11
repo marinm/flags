@@ -32,7 +32,6 @@ function CanvasTiles(N, M, W, H, sheet) {
     canvas.setAttribute('height', N * H);
   
     const surface = canvas.getContext('2d');
-    var disabled = false;
   
     const tiles = Matrix(N, M);
   
@@ -73,18 +72,6 @@ function CanvasTiles(N, M, W, H, sheet) {
         };
     });
   
-    function disable() {
-        disabled = true;
-    }
-
-    function enable() {
-        disabled = false;
-    }
-
-    function ready() {
-        return !disabled;
-    }
-
     // For temporary compatability
     function tile(i,j) { return tiles.at(i,j); }
     function forEachTile(action) { return tiles.forEach(action); }
@@ -97,9 +84,6 @@ function CanvasTiles(N, M, W, H, sheet) {
         W,
         H,
         tile,
-        forEachTile,
-        disable,
-        enable,
-        ready
+        forEachTile
     };
 }
