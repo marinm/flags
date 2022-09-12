@@ -14,6 +14,7 @@ import clickableCells from './clickable-cells.js';
 import cellOnClick from './cell-onclick.js';
 import Board from './board.js';
 import autoplay from './autoplay.js';
+import toggleAutoplay from './toggle-autoplay.js';
 
 const {
     SERVER_ADDRESS,
@@ -23,6 +24,10 @@ const {
     WINNING_SCORE,
     PLAYER_FLAGS,
 } = config;
+
+const controls = {
+    autoplay  : false,
+};
 
 const gamestate = {
     playingAs : null,
@@ -171,7 +176,7 @@ const handlers = {
         if (revealed.on) {
             showTurn(gamestate, gameboardCanvas, boardClicks);
 
-            if (autoselect) {
+            if (controls.autoplay) {
                 // React even if it's the opponent's turn
                 autoplay.solverscan(gamestate, gameboardCanvas);
                 if (gamestate.turn === gamestate.playingAs) {
@@ -188,38 +193,10 @@ const handlers = {
     },
 };
 
-
-
-
-let autoselect = false;
-
 document.addEventListener("keyup", function(event) {
     switch (event.keyCode) {
-        case 65: /* a */
-            toggle_autoselect();
-            break;
-        case 71: /* g */
-            autoplay.solverscan(gamestate, gameboardCanvas);
-            break;
-        case 78: /* n */
-            autoplay.select_next_unrevealed_flag(gamestate, socket);
-            break;
+        case 65: toggleAutoplay(controls, autoplay, $, gamestate, gameboardCanvas, socket);  break; /* a */
+        case 71: autoplay.solverscan(gamestate, gameboardCanvas);                 break; /* g */
+        case 78: autoplay.select_next_unrevealed_flag(gamestate, socket);         break; /* n */
     }
 });
-
-function toggle_autoselect() {
-    // If the board is not available, do nothing
-    if (!gameboardCanvas.ready()) return;
-
-    autoselect = !autoselect;
-    $('#autoplay-indicator').css('visibility', (autoselect)? 'visible' : 'hidden');
-
-    if (autoselect && gamestate.turn === gamestate.playingAs) {
-        autoplay.select_next_unrevealed_flag(gamestate, socket);
-    }
-
-    if (!autoselect) {
-        // Hide select guides
-        gameboardCanvas.forEach((i,j,tile) => tile.erase('guide'));
-    }
-}
