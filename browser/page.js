@@ -10,11 +10,10 @@ import showStatus from './show-status.js';
 import showTurn from './show-turn.js';
 import showScores from './show-scores.js';
 import showWinner from './show-winner.js';
-import selectTile from './select-tile.js';
 import clickableCells from './clickable-cells.js';
 import cellOnClick from './cell-onclick.js';
 import Board from './board.js';
-import selectRandomTile from './select-random-tile.js';
+import autoplay from './autoplay.js';
 
 const {
     SERVER_ADDRESS,
@@ -24,7 +23,6 @@ const {
     WINNING_SCORE,
     PLAYER_FLAGS,
 } = config;
-
 
 const gamestate = {
     playingAs : null,
@@ -135,7 +133,7 @@ const handlers = {
         showTurn(gamestate, gameboardCanvas, boardClicks);
     },
 
-  'opponent-disconnected':
+    'opponent-disconnected':
     function(message) {
         showStatus('opponent-disconnected', gameboardCanvas, boardClicks);
     },
@@ -175,10 +173,10 @@ const handlers = {
 
             if (autoselect) {
                 // React even if it's the opponent's turn
-                solverscan();
+                autoplay.solverscan(gamestate, gameboardCanvas);
                 if (gamestate.turn === gamestate.playingAs) {
                     // Select either a known,hidden flag or a random tile
-                    select_next_unrevealed_flag();
+                    autoplay.select_next_unrevealed_flag(gamestate, socket);
                 }
             }
         }
@@ -193,20 +191,19 @@ const handlers = {
 
 
 
-
-
-
-
-//------------------------------------------------------------------------------
-// Solver
-
 let autoselect = false;
 
 document.addEventListener("keyup", function(event) {
     switch (event.keyCode) {
-        case 65: toggle_autoselect();            break;   /* a */
-        case 71: solverscan();                   break;   /* g */
-        case 78: select_next_unrevealed_flag();  break;   /* n */
+        case 65: /* a */
+            toggle_autoselect();
+            break;
+        case 71: /* g */
+            autoplay.solverscan(gamestate, gameboardCanvas);
+            break;
+        case 78: /* n */
+            autoplay.select_next_unrevealed_flag(gamestate, socket);
+            break;
     }
 });
 
@@ -217,143 +214,12 @@ function toggle_autoselect() {
     autoselect = !autoselect;
     $('#autoplay-indicator').css('visibility', (autoselect)? 'visible' : 'hidden');
 
-    console.log('autoselect ' + (autoselect) ? 'on' : 'off');
-
     if (autoselect && gamestate.turn === gamestate.playingAs) {
-        select_next_unrevealed_flag();
+        autoplay.select_next_unrevealed_flag(gamestate, socket);
     }
 
     if (!autoselect) {
         // Hide select guides
         gameboardCanvas.forEach((i,j,tile) => tile.erase('guide'));
-    }
-}
-
-// Scan through the board and reason about where flags must and must not be
-function solverscan() {
-    console.log('solverscan');
-    var nfound_flag = 1;
-    var nfound_noflag = 1;
-  
-    while (nfound_flag > 0 || nfound_noflag > 0) {
-        nfound_flag = solver_flaghere();
-        nfound_noflag = solver_noflag();
-    }
-}
-  
-function isnumbertile(tile) {
-    //console.log(`(${tile.i},${tile.j}) = ${tile ? 'exists' : 'DNE'}/${tile.hidden}/${tile.value}`);
-    return tile && !tile.hidden && [1,2,3,4,5,6,7,8].includes(tile.value);
-}
-  
-// Return 1 if this tile is a revealed flag, 0 otherwise
-function isflag(tile) {
-    return tile && (tile.flaghere || PLAYER_FLAGS.includes(tile.value));
-}
-
-// Return 1 if this tile is hidden, 0 otherwise
-// A flag- or noflag-labelled tile is considered revealed
-function isunknown(tile) {
-    //console.log(`(${tile.i},${tile.j}) = ${tile ? 'exists' : 'DNE'}/${tile.hidden}/${tile.noflag}/${tile.flaghere}`);
-    return tile && tile.hidden && !tile.noflag && !tile.flaghere;
-}
-
-// Find where there must be a flag
-function solver_flaghere() {
-    console.log('solver_flaghere');
-    // Number of hidden flags found 
-    var nfound = 0;
-
-    function highlight(i, j) {
-        const gameTile = gamestate.board.at(i, j);
-        const canvasCell = gameboardCanvas.at(i, j);
-
-        // Ignore tiles with known values
-        if (!isunknown(gameTile)) return;
-
-        nfound++;
-        gameTile.flaghere = true;
-        canvasCell.draw('guide', 'FLAGHERE');
-    }
-
-    gamestate.board.forEach(function(i,j,tile) {
-        // Consider only revealed number tiles
-        if (!isnumbertile(tile)) return;
-
-        //console.log(`Looking for flags around (${tile.i},${tile.j}) = ${tile.value}${tile.hidden? 'h' : ''}`);
-        // A noflag tile never becomes a flaghere tile, and vice versa
-
-        const adjacent = gamestate.board.adjacent(i,j);
-
-        const adjacentflags = adjacent.filter(isflag).length;
-        const remainingflags = tile.value - adjacentflags;
-        const adjacenthidden = adjacent.filter(isunknown).length;
-
-        // Same number of unrevealed + noflag tiles as remaining flags
-        if (remainingflags > 0 && remainingflags === adjacenthidden) {
-            adjacent.forEach(nb => highlight(nb.i, nb.j));
-        }
-    });
-
-    console.log(`Found ${nfound} flags`);
-
-    return nfound;
-}
-
-
-// Find where there cannot be a flag
-function solver_noflag() {
-    console.log('solver_noflag');
-
-    // Number of hidden no-flags found
-    var nfound = 0;
-
-    function crossout(i,j) {
-        const gameTile = gamestate.board.at(i, j);
-        const canvasCell = gameboardCanvas.at(i, j);
-
-        // Ignore tiles with known values
-        if (!isunknown(gameTile)) return;
-
-        nfound++;
-        gameTile.noflag = true;
-        canvasCell.draw('guide', 'NOFLAG');
-    }
-
-    gamestate.board.forEach(function(i,j,tile) {
-        // Consider only revealed number tiles
-        if (!isnumbertile(tile)) return;
-
-        // Array of adjacent tiles
-        const adjacent = gamestate.board.adjacent(i,j);
-
-        // A noflag tile never becomes a flaghere tile, and vice versa
-
-        const num_adjacentflags = adjacent.filter(isflag).length;
-        const num_remainingflags = tile.value - num_adjacentflags;
-
-        // Same number of unrevealed + noflag tiles as remaining flags
-        if (num_remainingflags === 0)
-            adjacent.forEach(nb => crossout(nb.i, nb.j));
-    });
-
-    console.log(`Found ${nfound} non-flags`);
-
-    return nfound;
-}
- 
-function select_next_unrevealed_flag() {
-    console.log('select_next_unrevealed_flag');
-    var selected = false;
-    // Good reason to replace .forEach() with .tiles() which returns array
-    gamestate.board.forEach(function(i,j,tile) {
-        if (!selected && tile.hidden && tile.flaghere) {
-            selected = true;
-            selectTile(i, j, gamestate, socket);
-        }
-    });
-
-    if (!selected) {
-        selectRandomTile(gamestate, socket);
     }
 }
