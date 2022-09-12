@@ -14,6 +14,7 @@ import selectTile from './select-tile.js';
 import clickableCells from './clickable-cells.js';
 import cellOnClick from './cell-onclick.js';
 import Board from './board.js';
+import selectRandomTile from './select-random-tile.js';
 
 const {
     SERVER_ADDRESS,
@@ -228,29 +229,6 @@ function toggle_autoselect() {
     }
 }
 
-
-function randint(min, max) {
-    // Return a random integer from [min...max-1]
-    return Math.floor(Math.random() * (max - min) ) + min;
-}  
-
-function select_random_tile() {
-    console.log('select_random_tile');
-    var i = 0;
-    var j = 0;
-    let tile = null;
-    do {
-        i = randint(0, BOARD_NUM_ROWS);
-        j = randint(0, BOARD_NUM_COLUMNS);
-        tile = gamestate.board.at(i,j);
-    }
-    while (!tile.hidden || (tile.hidden && tile.noflag));
-    // Repeat if tile is already revealed,
-    // or if it's hidden but it's known not to be a flag
-  
-    selectTile(i, j, gamestate, socket);
-}
-
 // Scan through the board and reason about where flags must and must not be
 function solverscan() {
     console.log('solverscan');
@@ -363,7 +341,7 @@ function solver_noflag() {
 
     return nfound;
 }
-  
+ 
 function select_next_unrevealed_flag() {
     console.log('select_next_unrevealed_flag');
     var selected = false;
@@ -376,6 +354,6 @@ function select_next_unrevealed_flag() {
     });
 
     if (!selected) {
-        select_random_tile();
+        selectRandomTile(gamestate, socket);
     }
 }
