@@ -48,9 +48,6 @@ function GameboardCanvas(N, M, S, sheet) {
     }
 
     function setvalue(i, j, value, owner) {
-        gameboardCanvas.at(i,j).hidden = false;
-        gameboardCanvas.at(i,j).value = value;
-
         // Assume valid value
         const tilename = mapToTilename(value, owner);
         gameboardCanvas.at(i,j).draw('value', tilename);
