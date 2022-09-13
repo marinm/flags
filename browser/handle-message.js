@@ -1,5 +1,4 @@
 import showTurn from './show-turn.js';
-import showScores from './show-scores.js';
 import showWinner from './show-winner.js';
 import showStatus from './show-status.js';
 import autoplay from './autoplay.js';
@@ -11,7 +10,7 @@ const handlers = {
     },
 
     join:
-    function(message, $, controls, notebox, canvas, gamestate, socket, boardclicks) {
+    function(message, $, controls, notebox, scorebox, canvas, gamestate, socket, boardclicks) {
         if (message.status === 'OPEN') {
             gamestate.playingAs = message.playing_as;
             gamestate.turn = 0;
@@ -33,7 +32,7 @@ const handlers = {
     },
 
     start:
-    function(message, $, controls, notebox, canvas, gamestate, socket, boardclicks) {
+    function(message, $, controls, notebox, scorebox, canvas, gamestate, socket, boardclicks) {
         showStatus('start', notebox, canvas, boardclicks);
 
         $('#player-0-score-box').addClass('active-turn');
@@ -43,12 +42,12 @@ const handlers = {
     },
 
     'opponent-disconnected':
-    function(message, $, controls, notebox, canvas, gamestate, socket, boardclicks) {
+    function(message, $, controls, notebox, scorebox, canvas, gamestate, socket, boardclicks) {
         showStatus('opponent-disconnected', notebox, canvas, boardclicks);
     },
 
     reveal:
-    function(message, $, controls, notebox, canvas, gamestate, socket, boardclicks) {
+    function(message, $, controls, notebox, scorebox, canvas, gamestate, socket, boardclicks) {
         const revealed = message;
         if (!revealed) {
             // ... do something here
@@ -74,7 +73,7 @@ const handlers = {
         const selected = message.for;
         canvas.select(selected.i, selected.j);
 
-        showScores(revealed.score);
+        scorebox.set(revealed.score);
 
         // The game is still on
         if (revealed.on) {
@@ -103,6 +102,7 @@ function handleMessage(
     $,
     controls,
     notebox,
+    scorebox,
     canvas,
     gamestate,
     socket,
@@ -115,6 +115,7 @@ function handleMessage(
         $,
         controls,
         notebox,
+        scorebox,
         canvas,
         gamestate,
         socket,

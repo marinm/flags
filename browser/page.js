@@ -14,6 +14,7 @@ import autoplay from './autoplay.js';
 import toggleAutoplay from './toggle-autoplay.js';
 import handleMessage from './handle-message.js';
 import NoteBox from './note-box.js';
+import ScoreBox from './score-box.js';
 
 const {
     SERVER_ADDRESS,
@@ -24,7 +25,8 @@ const {
     PLAYER_FLAGS,
 } = config;
 
-const notebox = NoteBox($, '#note-box');
+const notebox  = NoteBox($, '#note-box');
+const scorebox = ScoreBox($, ['#player-0-score', '#player-1-score']);
 
 const controls = {
     autoplay  : false,
@@ -88,6 +90,7 @@ function onMessage(quicksocket, message) {
         $,
         controls,
         notebox,
+        scorebox,
         gameboardCanvas,
         gamestate,
         quicksocket,
