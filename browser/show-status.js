@@ -1,71 +1,71 @@
 import $ from './fake-jquery.js';
 
-function restart(canvasboard, clickboard) {
-    canvasboard.restart();
+function restart(view, clickboard) {
+    view.canvasboard.restart();
     clickboard.on();
 }
 
-function off(canvasboard, clickboard) {
+function off(view, clickboard) {
     clickboard.off();
-    canvasboard.showdisabled();
+    view.canvasboard.showdisabled();
     $('#turn-score-container').addClass('not-playing');
 }
 
 
 const map = {
     'disconnected':
-    function(notebox, canvasboard, clickboard) {
-        off(canvasboard, clickboard);
-        notebox.say('disconnected');
+    function(view, clickboard) {
+        off(view, clickboard);
+        view.notebox.say('disconnected');
     },
 
     'waiting':
-    function(notebox, canvasboard, clickboard) {
-        off(canvasboard, clickboard);
-        notebox.say('waiting');
+    function(view, clickboard) {
+        off(view, clickboard);
+        view.notebox.say('waiting');
     },
 
     'start':
-    function(notebox, canvasboard, clickboard) {
-        restart(canvasboard, clickboard);
-        notebox.say('start');
+    function(view, clickboard) {
+        restart(view, clickboard);
+        view.notebox.say('start');
     },
 
     'busy':
-    function(notebox, canvasboard, clickboard) {
-        off(canvasboard, clickboard);
-        notebox.say('busy');
+    function(view, clickboard) {
+        off(view, clickboard);
+        view.notebox.say('busy');
     },
 
     'opponent-disconnected':
-    function(notebox, canvasboard, clickboard) {
-        off(canvasboard, clickboard);
-        notebox.say('opponent-disconnected');
+    function(view, clickboard) {
+        off(view, clickboard);
+        view.notebox.say('opponent-disconnected');
     },
 
     'your-turn':
-    function(notebox, canvasboard, clickboard) {
+    function(view, clickboard) {
         $('#player-0-score-box').addClass('active-turn');
         $('#player-1-score-box').removeClass('active-turn');
-        notebox.say('your-turn');
+        view.notebox.say('your-turn');
     },
 
     'opponents-turn':
-    function(notebox, canvasboard, clickboard) {
+    function(view, clickboard) {
         $('#player-0-score-box').removeClass('active-turn');
         $('#player-1-score-box').addClass('active-turn');
-        notebox.say('opponents-turn');
+        view.notebox.say('opponents-turn');
     },
 
     'winner':
-    function(notebox, canvasboard, clickboard) {
-        off(canvasboard, clickboard);
-        notebox.say('winner');
+    function(view, clickboard) {
+        off(view, clickboard);
+        view.notebox.say('winner');
     },
 };
 
 export default
-function showStatus(status, notebox, canvasboard, clickboard) {
+function showStatus(status, view, clickboard) {
     // Caller responsible for passing in valid status string
-    map[status](notebox, canvasboard, clickboard);
+    map[status](view, clickboard);
 };

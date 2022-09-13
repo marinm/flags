@@ -9,13 +9,13 @@ const handlers = {
     },
 
     join:
-    function(message, $, controls, notebox, scorebox, canvas, gamestate, socket, boardclicks) {
+    function(message, $, controls, view, gamestate, socket, boardclicks) {
         if (message.status === 'OPEN') {
             gamestate.playingAs = message.playing_as;
             gamestate.turn = 0;
 
             // wait for the game-start message
-            showStatus('waiting', notebox, canvas, boardclicks); 
+            showStatus('waiting', view, boardclicks); 
 
             if (Number(gamestate.playingAs) === 0) {
                 $('#player-0-score-box').addClass('playing-as');
@@ -26,27 +26,27 @@ const handlers = {
         }
         else {
             // nobody to play with...
-            showStatus('busy', notebox, canvas, boardclicks);
+            showStatus('busy', view, boardclicks);
         }
     },
 
     start:
-    function(message, $, controls, notebox, scorebox, canvas, gamestate, socket, boardclicks) {
-        showStatus('start', notebox, canvas, boardclicks);
+    function(message, $, controls, view, gamestate, socket, boardclicks) {
+        showStatus('start', view, boardclicks);
 
         $('#player-0-score-box').addClass('active-turn');
         $('#turn-score-container').removeClass('not-playing');
 
-        showTurn(gamestate, notebox, canvas, boardclicks);
+        showTurn(gamestate, view, boardclicks);
     },
 
     'opponent-disconnected':
-    function(message, $, controls, notebox, scorebox, canvas, gamestate, socket, boardclicks) {
-        showStatus('opponent-disconnected', notebox, canvas, boardclicks);
+    function(message, $, controls, view, gamestate, socket, boardclicks) {
+        showStatus('opponent-disconnected', view, boardclicks);
     },
 
     reveal:
-    function(message, $, controls, notebox, scorebox, canvas, gamestate, socket, boardclicks) {
+    function(message, $, controls, view, gamestate, socket, boardclicks) {
         const revealed = message;
         if (!revealed) {
             // ... do something here
@@ -65,22 +65,22 @@ const handlers = {
                     owner  : item.owner,
                 }
             );
-            canvas.setvalue(item.i, item.j, item.value, item.owner);
-            canvas.at(item.i, item.j).erase('guide');
+            view.canvasboard.setvalue(item.i, item.j, item.value, item.owner);
+            view.canvasboard.at(item.i, item.j).erase('guide');
         });
 
         const selected = message.for;
-        canvas.select(selected.i, selected.j);
+        view.canvasboard.select(selected.i, selected.j);
 
-        scorebox.set(revealed.score);
+        view.scorebox.set(revealed.score);
 
         // The game is still on
         if (revealed.on) {
-            showTurn(gamestate, notebox, canvas, boardclicks);
+            showTurn(gamestate, view, boardclicks);
 
             if (controls.autoplay) {
                 // React even if it's the opponent's turn
-                autoplay.solverscan(gamestate, canvas);
+                autoplay.solverscan(gamestate, view.canvasboard);
                 if (gamestate.turn === gamestate.playingAs) {
                     // Select either a known,hidden flag or a random tile
                     autoplay.select_next_unrevealed_flag(gamestate, socket);
@@ -90,7 +90,7 @@ const handlers = {
         // Game is over
         else {
             gamestate.winner = gamestate.turn;
-            showStatus('winner', notebox, canvas, boardclicks);
+            showStatus('winner', view, boardclicks);
         }
     },
 };
@@ -100,9 +100,7 @@ function handleMessage(
     message,
     $,
     controls,
-    notebox,
-    scorebox,
-    canvas,
+    view,
     gamestate,
     socket,
     boardclicks
@@ -113,9 +111,7 @@ function handleMessage(
         message,
         $,
         controls,
-        notebox,
-        scorebox,
-        canvas,
+        view,
         gamestate,
         socket,
         boardclicks

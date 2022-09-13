@@ -32,7 +32,7 @@ const view = {
     NoteBox($, '#note-box'),
 
     canvasboard:
-    new GameboardCanvas(
+    GameboardCanvas(
         BOARD_NUM_ROWS,
         BOARD_NUM_COLUMNS,
         BOARD_CELL_SIZE,
@@ -79,11 +79,11 @@ const boardClicks = clickableCells({
 });
 
 // This is not necessary if an error event is also fired on fail
-if (!socket) showStatus('disconnected', view.notebox, view.canvasboard, boardClicks);
+if (!socket) showStatus('disconnected', view, boardClicks);
 
 
 function onError() {
-    showStatus('disconnected', view.notebox, view.canvasboard, boardClicks);
+    showStatus('disconnected', view, boardClicks);
 }
 
 function onOpen() {
@@ -91,7 +91,7 @@ function onOpen() {
 }
 
 function onClose() {
-    showStatus('disconnected', view.notebox, view.canvasboard, boardClicks);
+    showStatus('disconnected', view, boardClicks);
 }
 
 function onMessage(quicksocket, message) {
@@ -99,9 +99,7 @@ function onMessage(quicksocket, message) {
         message,
         $,
         controls,
-        view.notebox,
-        view.scorebox,
-        view.canvasboard,
+        view,
         gamestate,
         quicksocket,
         boardClicks
