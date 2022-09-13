@@ -1,5 +1,4 @@
 import showTurn from './show-turn.js';
-import showWinner from './show-winner.js';
 import showStatus from './show-status.js';
 import autoplay from './autoplay.js';
 
@@ -91,7 +90,7 @@ const handlers = {
         // Game is over
         else {
             gamestate.winner = gamestate.turn;
-            showWinner(gamestate, notebox, canvas, boardclicks);
+            showStatus('winner', notebox, canvas, boardclicks);
         }
     },
 };
