@@ -94,8 +94,6 @@ function scan(gamestate, gameboardCanvas) {
         num_inferred += infer_neighbours(tile.i, tile.j, gamestate.board, gameboardCanvas);
     });
 
-    console.log('num_inferred ' + num_inferred);
-
     return num_inferred;
 }
 
@@ -109,8 +107,6 @@ function solverscan(gamestate, gameboardCanvas) {
         num_inferred = scan(gamestate, gameboardCanvas);
         scan_counter++;
     } while (scan_counter <= MAX_SCANS && num_inferred > 0);
-
-    console.log(scan_counter);
     
     return null;
 }
