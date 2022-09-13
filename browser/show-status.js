@@ -1,4 +1,3 @@
-import showNote from './show-note.js';
 import $ from './fake-jquery.js';
 
 function restart(canvasboard, clickboard) {
@@ -15,58 +14,58 @@ function off(canvasboard, clickboard) {
 
 const map = {
     'disconnected':
-    function(canvasboard, clickboard) {
+    function(notebox, canvasboard, clickboard) {
         off(canvasboard, clickboard);
-        showNote('disconnected');
+        notebox.say('disconnected');
     },
 
     'waiting':
-    function(canvasboard, clickboard) {
+    function(notebox, canvasboard, clickboard) {
         off(canvasboard, clickboard);
-        showNote('waiting');
+        notebox.say('waiting');
     },
 
     'start':
-    function(canvasboard, clickboard) {
+    function(notebox, canvasboard, clickboard) {
         restart(canvasboard, clickboard);
-        showNote('start');
+        notebox.say('start');
     },
 
     'busy':
-    function(canvasboard, clickboard) {
+    function(notebox, canvasboard, clickboard) {
         off(canvasboard, clickboard);
-        showNote('busy');
+        notebox.say('busy');
     },
 
     'opponent-disconnected':
-    function(canvasboard, clickboard) {
+    function(notebox, canvasboard, clickboard) {
         off(canvasboard, clickboard);
-        showNote('opponent-disconnected');
+        notebox.say('opponent-disconnected');
     },
 
     'your-turn':
-    function(canvasboard, clickboard) {
+    function(notebox, canvasboard, clickboard) {
         $('#player-0-score-box').addClass('active-turn');
         $('#player-1-score-box').removeClass('active-turn');
-        showNote('your-turn');
+        notebox.say('your-turn');
     },
 
     'opponents-turn':
-    function(canvasboard, clickboard) {
+    function(notebox, canvasboard, clickboard) {
         $('#player-0-score-box').removeClass('active-turn');
         $('#player-1-score-box').addClass('active-turn');
-        showNote('opponents-turn');
+        notebox.say('opponents-turn');
     },
 
     'winner':
-    function(canvasboard, clickboard) {
+    function(notebox, canvasboard, clickboard) {
         off(canvasboard, clickboard);
-        showNote('winner');
+        notebox.say('winner');
     },
 };
 
 export default
-function showStatus(status, canvasboard, clickboard) {
+function showStatus(status, notebox, canvasboard, clickboard) {
     // Caller responsible for passing in valid status string
-    map[status](canvasboard, clickboard);
+    map[status](notebox, canvasboard, clickboard);
 };

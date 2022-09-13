@@ -1,9 +1,9 @@
 import showStatus from './show-status.js';
 
 export default
-function showTurn(gamestate, gameboardCanvas, boardClicks) {
+function showTurn(gamestate, notebox, gameboardCanvas, boardClicks) {
     const status = (gamestate.playingAs === gamestate.turn)
         ? 'your-turn'
         : 'opponents-turn';
-    showStatus(status, gameboardCanvas, boardClicks);
+    showStatus(status, notebox, gameboardCanvas, boardClicks);
 };

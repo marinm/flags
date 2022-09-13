@@ -13,6 +13,7 @@ import Board from './board.js';
 import autoplay from './autoplay.js';
 import toggleAutoplay from './toggle-autoplay.js';
 import handleMessage from './handle-message.js';
+import NoteBox from './note-box.js';
 
 const {
     SERVER_ADDRESS,
@@ -22,6 +23,8 @@ const {
     WINNING_SCORE,
     PLAYER_FLAGS,
 } = config;
+
+const notebox = NoteBox($, '#note-box');
 
 const controls = {
     autoplay  : false,
@@ -64,11 +67,11 @@ const boardClicks = clickableCells({
 });
 
 // This is not necessary if an error event is also fired on fail
-if (!socket) showStatus('disconnected', gameboardCanvas, boardClicks);
+if (!socket) showStatus('disconnected', notebox, gameboardCanvas, boardClicks);
 
 
 function onError() {
-    showStatus('disconnected', gameboardCanvas, boardClicks);
+    showStatus('disconnected', notebox, gameboardCanvas, boardClicks);
 }
 
 function onOpen() {
@@ -76,11 +79,20 @@ function onOpen() {
 }
 
 function onClose() {
-    showStatus('disconnected', gameboardCanvas, boardClicks);
+    showStatus('disconnected', notebox, gameboardCanvas, boardClicks);
 }
 
 function onMessage(quicksocket, message) {
-    handleMessage(message, $, controls, gameboardCanvas, gamestate, socket, boardClicks);
+    handleMessage(
+        message,
+        $,
+        controls,
+        notebox,
+        gameboardCanvas,
+        gamestate,
+        quicksocket,
+        boardClicks
+    );
 }
 
 
