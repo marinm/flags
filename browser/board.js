@@ -3,9 +3,9 @@ import Matrix from './matrix.js';
 export default
 function Board(n, m) {
 
-    const matrix = Matrix(n, m);
+    const board = Matrix(n, m);
 
-    matrix.fill(function(i, j) {
+    board.fill(function(i, j) {
         return {
             i      : i,
             j      : j,
@@ -17,16 +17,16 @@ function Board(n, m) {
 
     function adjacent(i,j) {
         return [
-            matrix.at(i - 1, j - 1),
-            matrix.at(i - 1, j - 0),
-            matrix.at(i - 1, j + 1),
-            matrix.at(i - 0, j - 1),
-            matrix.at(i - 0, j + 1),
-            matrix.at(i + 1, j - 1),
-            matrix.at(i + 1, j - 0),
-            matrix.at(i + 1, j + 1),
+            board.at(i - 1, j - 1),
+            board.at(i - 1, j - 0),
+            board.at(i - 1, j + 1),
+            board.at(i - 0, j - 1),
+            board.at(i - 0, j + 1),
+            board.at(i + 1, j - 1),
+            board.at(i + 1, j - 0),
+            board.at(i + 1, j + 1),
         ].filter(cell => cell != undefined);
     }
 
-    return {...matrix, adjacent};
+    return {...board, adjacent};
 }
