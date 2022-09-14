@@ -15,7 +15,6 @@ const handlers = {
 export default
 function handleMessage(
     message,
-    $,
     controls,
     view,
     gamestate,
@@ -30,7 +29,6 @@ function handleMessage(
 
     handler?.(
         message,
-        $,
         controls,
         view,
         gamestate,

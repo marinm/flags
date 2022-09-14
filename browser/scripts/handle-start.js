@@ -1,7 +1,6 @@
 export default
 function handle_start(
     message,
-    $,
     controls,
     view,
     gamestate,
@@ -14,8 +13,8 @@ function handle_start(
 ) {
     showStatus('start', view, boardclicks);
 
-    $('#player-0-score-box').addClass('active-turn');
-    $('#turn-score-container').removeClass('not-playing');
+    view.$('#player-0-score-box').addClass('active-turn');
+    view.$('#turn-score-container').removeClass('not-playing');
 
     showTurn(gamestate, view, boardclicks);
 };

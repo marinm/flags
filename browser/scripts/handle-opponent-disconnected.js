@@ -1,7 +1,6 @@
 export default
 function handle_opponent_disconnected(
     message,
-    $,
     controls,
     view,
     gamestate,

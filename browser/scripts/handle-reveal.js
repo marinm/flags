@@ -1,7 +1,6 @@
 export default
 function handle_reveal(
     message,
-    $,
     controls,
     view,
     gamestate,

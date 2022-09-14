@@ -28,6 +28,9 @@ const {
 } = config;
 
 const view = {
+    $:
+    $,
+
     notebox:
     NoteBox($, '#note-box'),
 
@@ -100,7 +103,6 @@ function onClose() {
 function onMessage(quicksocket, message) {
     handleMessage(
         message,
-        $,
         controls,
         view,
         gamestate,
@@ -116,6 +118,6 @@ function onMessage(quicksocket, message) {
 
 //------------------------------------------------------------------------------
 
-$('body').onKeyup('a', () => toggleAutoplay(controls, autoplay, $, gamestate, view.canvasboard, socket, selectTile));
-$('body').onKeyup('g', () => autoplay.solverscan(gamestate, view.canvasboard));
-$('body').onKeyup('n', () => autoplay.select_next_unrevealed_flag(gamestate, socket));
+view.$('body').onKeyup('a', () => toggleAutoplay(controls, autoplay, view, gamestate, view.canvasboard, socket, selectTile));
+view.$('body').onKeyup('g', () => autoplay.solverscan(gamestate, view.canvasboard));
+view.$('body').onKeyup('n', () => autoplay.select_next_unrevealed_flag(gamestate, socket));

@@ -1,7 +1,6 @@
 export default
 function handle_online(
     message,
-    $,
     controls,
     view,
     gamestate,

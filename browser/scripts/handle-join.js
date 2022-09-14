@@ -1,7 +1,6 @@
 export default
 function handle_join(
     message,
-    $,
     controls,
     view,
     gamestate,
@@ -20,10 +19,10 @@ function handle_join(
         showStatus('waiting', view, boardclicks); 
 
         if (Number(gamestate.playingAs) === 0) {
-            $('#player-0-score-box').addClass('playing-as');
+            view.$('#player-0-score-box').addClass('playing-as');
         }
         else if (Number(gamestate.playingAs) === 1) {
-            $('#player-1-score-box').addClass('playing-as');
+            view.$('#player-1-score-box').addClass('playing-as');
         }
     }
     else {
