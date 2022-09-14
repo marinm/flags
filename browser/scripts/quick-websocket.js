@@ -45,10 +45,6 @@ function QuickWebSocket({
         }
     };
 
-    socket.onerror   = (event) => onError(wrapper, event);
-    socket.onopen    = (event) => onClose(event);
-    socket.onmessage = (event) => onMessage(wrapper, toJSON(event.data));
-
     socket.addEventListener('error',
         function(event) {
             console.error(event);
@@ -75,7 +71,6 @@ function QuickWebSocket({
         function(event) {
             // There are a lot of close codes to consider
             // Assume the user wants it to always stay open
-            console.log('Connection closed');
             onClose();
 
             // Try to reconnect?

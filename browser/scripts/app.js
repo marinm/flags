@@ -82,22 +82,18 @@ if (!socket) showStatus('disconnected', view, boardClicks);
 
 
 function onError() {
-    console.log('QuickWebSocket onError');
     showStatus('disconnected', view, boardClicks);
 }
 
 function onOpen() {
     // Do nothing...?
-    console.log('QuickWebSocket onOpen');
 }
 
 function onClose() {
-    console.log('QuickWebSocket onClose');
     showStatus('disconnected', view, boardClicks);
 }
 
 function onMessage(quicksocket, message) {
-    console.log('QuickWebSocket onMessage');
     handleMessage(
         message,
         $,
