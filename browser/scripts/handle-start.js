@@ -11,10 +11,12 @@ function handle_start(
     autoplay,
     selectTile
 ) {
+    // This message only appears for a split second before the next message
+    // replaces it.
     showStatus('start', view, boardclicks);
 
-    view.$('#player-0-score-box').addClass('active-turn');
-    view.$('#turn-score-container').removeClass('not-playing');
+    view.scorebox.on();
+    view.scorebox.showTurn(0);
 
     showTurn(gamestate, view, showStatus, boardclicks);
 };

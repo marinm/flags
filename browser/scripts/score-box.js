@@ -13,6 +13,11 @@ function ScoreBox($, selectors) {
             $('#turn-score-container').addClass('not-playing');
         },
 
+        on:
+        function() {
+            $('#turn-score-container').removeClass('not-playing');
+        },
+
         showTurn:
         function(turn) {
             // Do nothing
