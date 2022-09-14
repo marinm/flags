@@ -9,7 +9,7 @@ import CanvasTiles from './canvas-tiles.js';
 const DISABLED_HUE = 'rgba(200, 200, 200, 0.5)';
 
 export default
-function GameboardCanvas(N, M, S, sheet) {
+function GameboardCanvas(canvas, N, M, S, sheet) {
 
     const W = S;
     const H = S;
@@ -17,7 +17,7 @@ function GameboardCanvas(N, M, S, sheet) {
     let disabled = false;
 
     // The view
-    const gameboardCanvas = CanvasTiles(N, M, W, H, sheet);
+    const gameboardCanvas = CanvasTiles(canvas, N, M, W, H, sheet);
 
     function disable() {
         disabled = true;

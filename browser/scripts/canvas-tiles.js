@@ -19,14 +19,7 @@
 import Matrix from './matrix.js';
 
 export default
-function CanvasTiles(N, M, W, H, sheet) {
-    // Assume arguments make sense.
-    // No safety checks.
-    // W,H are tile width,height
-  
-    const canvas = document.createElement('canvas');
-  
-    canvas.innerHTML = "Your browser does not support HTML5 canvas";
+function CanvasTiles(canvas, N, M, W, H, sheet) {
   
     canvas.setAttribute('width', M * W);
     canvas.setAttribute('height', N * H);

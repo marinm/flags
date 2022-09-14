@@ -32,6 +32,7 @@ const view = {
 
     canvasboard:
     GameboardCanvas(
+        document.querySelector('#gameboard-canvas'),
         BOARD_NUM_ROWS,
         BOARD_NUM_COLUMNS,
         BOARD_CELL_SIZE,
@@ -112,11 +113,6 @@ function onMessage(quicksocket, message) {
 
 
 //------------------------------------------------------------------------------
-
-$('#board-container').append(view.canvasboard.canvas);
-
-
-
 
 document.addEventListener("keyup", function(event) {
     switch (event.keyCode) {
