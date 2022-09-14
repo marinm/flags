@@ -6,7 +6,7 @@ function restart(view, clickboard) {
 function off(view, clickboard) {
     clickboard.off();
     view.canvasboard.showdisabled();
-    view.$('#turn-score-container').addClass('not-playing');
+    view.scorebox.off();
 }
 
 
@@ -43,15 +43,13 @@ const map = {
 
     'your-turn':
     function(view, clickboard) {
-        view.$('#player-0-score-box').addClass('active-turn');
-        view.$('#player-1-score-box').removeClass('active-turn');
+        view.scorebox.showTurn();
         view.notebox.say('your-turn');
     },
 
     'opponents-turn':
     function(view, clickboard) {
-        view.$('#player-0-score-box').removeClass('active-turn');
-        view.$('#player-1-score-box').addClass('active-turn');
+        view.scorebox.showTurn();
         view.notebox.say('opponents-turn');
     },
 
