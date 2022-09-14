@@ -7,6 +7,7 @@ import tilesheet from './tilesheet.js';
 import $ from './fake-jquery.js';
 import QuickWebSocket from './quick-websocket.js';
 import showStatus from './show-status.js';
+import showTurn from './show-turn.js';
 import clickableCells from './clickable-cells.js';
 import cellOnClick from './cell-onclick.js';
 import Board from './board.js';
@@ -24,8 +25,6 @@ const {
     WINNING_SCORE,
     PLAYER_FLAGS,
 } = config;
-
-
 
 const view = {
     notebox:
@@ -83,18 +82,22 @@ if (!socket) showStatus('disconnected', view, boardClicks);
 
 
 function onError() {
+    console.log('QuickWebSocket onError');
     showStatus('disconnected', view, boardClicks);
 }
 
 function onOpen() {
     // Do nothing...?
+    console.log('QuickWebSocket onOpen');
 }
 
 function onClose() {
+    console.log('QuickWebSocket onClose');
     showStatus('disconnected', view, boardClicks);
 }
 
 function onMessage(quicksocket, message) {
+    console.log('QuickWebSocket onMessage');
     handleMessage(
         message,
         $,
@@ -102,7 +105,10 @@ function onMessage(quicksocket, message) {
         view,
         gamestate,
         quicksocket,
-        boardClicks
+        boardClicks,
+        showTurn,
+        showStatus,
+        autoplay
     );
 }
 
