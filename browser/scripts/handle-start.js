@@ -16,5 +16,5 @@ function handle_start(
     view.$('#player-0-score-box').addClass('active-turn');
     view.$('#turn-score-container').removeClass('not-playing');
 
-    showTurn(gamestate, view, boardclicks);
+    showTurn(gamestate, view, showStatus, boardclicks);
 };

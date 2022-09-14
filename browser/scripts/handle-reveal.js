@@ -40,7 +40,7 @@ function handle_reveal(
 
     // The game is still on
     if (revealed.on) {
-        showTurn(gamestate, view, boardclicks);
+        showTurn(gamestate, view, showStatus, boardclicks);
 
         if (controls.autoplay) {
             // React even if it's the opponent's turn
