@@ -17,6 +17,4 @@ function handle_start(
     $('#turn-score-container').removeClass('not-playing');
 
     showTurn(gamestate, view, boardclicks);
-
-    console.log('showTurn');
 };
