@@ -2,7 +2,7 @@
 // https://www.flaticon.com/free-icon/flag_94182
 
 export default {
-    filepath: 'tile-sheet.png',
+    filepath: '/images/tile-sheet.png',
     img: new Image(),
     tiles: {
         'CHECKER-DARK':   [2,1],
