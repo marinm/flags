@@ -1,20 +1,13 @@
-import selectTile from './select-tile.js';
-
 export default
-function cellOnClick(i, j, context) {
-    // context = { gamestate, board, socket }
+function cellOnClick(i, j, { gamestate, selectTile, socket }) {
+    // Player out of turn
+    // Do nothing
+    if (gamestate.turn != gamestate.playingAs) return;
 
-    if (context.gamestate.turn != context.gamestate.playingAs) {
-        // Player out of turn
-        // Do nothing ...
-    }
-    else if (context.gamestate.board.at(i,j).hidden === false) {
-        // Clicked on already revealed tile
-        // Do nothing ...
-    }
-    else {
-        selectTile(i, j, context.gamestate, context.socket);
-        // A clicked tile is not displayed as selected until the server confirms
-        // the selection
-    }
+    // Clicked on already revealed tile
+    // Do nothing
+    if (gamestate.board.at(i,j).hidden === false) return;
+
+    // Send select message to server
+    selectTile(i, j, socket);
 };

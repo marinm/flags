@@ -23,7 +23,8 @@ function handleMessage(
     boardclicks,
     showTurn,
     showStatus,
-    autoplay
+    autoplay,
+    selectTile
 ) {
     const handler = handlers[message.type];
 
@@ -37,6 +38,7 @@ function handleMessage(
         boardclicks,
         showTurn,
         showStatus,
-        autoplay
+        autoplay,
+        selectTile
     );
 }

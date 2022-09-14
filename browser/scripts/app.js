@@ -6,6 +6,7 @@ import GameboardCanvas from './gameboard-canvas.js';
 import tilesheet from './tilesheet.js';
 import $ from './fake-jquery.js';
 import QuickWebSocket from './quick-websocket.js';
+import selectTile from './select-tile.js';
 import showStatus from './show-status.js';
 import showTurn from './show-turn.js';
 import clickableCells from './clickable-cells.js';
@@ -77,7 +78,7 @@ const boardClicks = clickableCells({
     w       : BOARD_CELL_SIZE,
     h       : BOARD_CELL_SIZE,
     onclick : cellOnClick,
-    context : { gamestate, canvasboard: view.canvasboard, socket },
+    context : { gamestate, selectTile, socket },
 });
 
 // This is not necessary if an error event is also fired on fail
@@ -107,13 +108,14 @@ function onMessage(quicksocket, message) {
         boardClicks,
         showTurn,
         showStatus,
-        autoplay
+        autoplay,
+        selectTile
     );
 }
 
 
 //------------------------------------------------------------------------------
 
-$('body').onKeyup('a', () => toggleAutoplay(controls, autoplay, $, gamestate, view.canvasboard, socket));
+$('body').onKeyup('a', () => toggleAutoplay(controls, autoplay, $, gamestate, view.canvasboard, socket, selectTile));
 $('body').onKeyup('g', () => autoplay.solverscan(gamestate, view.canvasboard));
 $('body').onKeyup('n', () => autoplay.select_next_unrevealed_flag(gamestate, socket));

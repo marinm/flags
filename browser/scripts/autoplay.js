@@ -1,17 +1,3 @@
-
-import selectRandomTile from './select-random-tile.js';
-import selectTile from './select-tile.js';
-
-// tile
-//   i
-//   j
-//   hidden
-//   value
-//   owner
-//   is_inferred_flag
-//   is_inferred_number
-
-
 function is_nonzero_number(tile) {
     return tile && !tile.hidden && [1,2,3,4,5,6,7,8].includes(tile.value);
 }
@@ -48,6 +34,15 @@ function mark_as_number(i, j, board, canvas) {
 
 
 function infer_neighbours(i, j, board, canvas) {
+
+    // tile
+    //   i
+    //   j
+    //   hidden
+    //   value
+    //   owner
+    //   is_inferred_flag
+    //   is_inferred_number
 
     const tile = board.at(i, j);
     let num_inferred = 0;
@@ -111,24 +106,37 @@ function solverscan(gamestate, gameboardCanvas) {
     return null;
 }
 
-function select_next_unrevealed_flag(gamestate, socket) {
+function select_next_unrevealed_flag( {gamestate, selectTile, socket} ) {
 
     const hidden_tiles = gamestate.board.filter(tile => tile.is_inferred_flag);
 
     // Select the first tile marked as a known flag
     if (hidden_tiles.length > 0) {
         const first_find = hidden_tiles[0];
-        selectTile(first_find.i, first_find.j, gamestate, socket);
+        selectTile(first_find.i, first_find.j, socket);
 
         // Unset the flag flag so it won't get picked again
         first_find.is_inferred_flag = false;
     }
     else {
-        selectRandomTile(gamestate, socket);
+        selectRandomTile( {gamestate, selectTile, socket} );
     }
+}
+
+function selectRandomTile( {gamestate, selectTile, socket} ) {
+    let tile = null;
+    do {
+        [tile] = gamestate.board.random(1);
+    }
+    while (!tile.hidden || (tile.hidden && tile.noflag));
+    // Repeat if tile is already revealed,
+    // or if it's hidden but it's known not to be a flag
+  
+    selectTile(tile.i, tile.j, socket);
 }
 
 export default {
     solverscan,
     select_next_unrevealed_flag,
+    selectRandomTile,
 };

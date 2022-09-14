@@ -9,7 +9,8 @@ function handle_reveal(
     boardclicks,
     showTurn,
     showStatus,
-    autoplay
+    autoplay,
+    selectTile
 ) {
     const revealed = message;
     if (!revealed) {
@@ -47,7 +48,7 @@ function handle_reveal(
             autoplay.solverscan(gamestate, view.canvasboard);
             if (gamestate.turn === gamestate.playingAs) {
                 // Select either a known,hidden flag or a random tile
-                autoplay.select_next_unrevealed_flag(gamestate, socket);
+                autoplay.select_next_unrevealed_flag({gamestate, selectTile, socket});
             }
         }
     }

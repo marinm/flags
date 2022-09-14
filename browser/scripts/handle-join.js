@@ -9,7 +9,8 @@ function handle_join(
     boardclicks,
     showTurn,
     showStatus,
-    autoplay
+    autoplay,
+    selectTile
 ) {
     if (message.status === 'OPEN') {
         gamestate.playingAs = message.playing_as;

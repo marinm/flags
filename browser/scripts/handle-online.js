@@ -9,7 +9,8 @@ function handle_online(
     boardclicks,
     showTurn,
     showStatus,
-    autoplay
+    autoplay,
+    selectTile
 ) {
     // Do nothing
 }

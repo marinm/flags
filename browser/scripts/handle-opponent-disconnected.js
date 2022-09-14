@@ -9,7 +9,8 @@ function handle_opponent_disconnected(
     boardclicks,
     showTurn,
     showStatus,
-    autoplay
+    autoplay,
+    selectTile
 ) {
     showStatus('opponent-disconnected', view, boardclicks);
 };

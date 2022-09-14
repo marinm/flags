@@ -1,5 +1,5 @@
 export default
-function toggleAutoplay(controls, autoplay, $, gamestate, canvas, socket) {
+function toggleAutoplay(controls, autoplay, $, gamestate, canvas, socket, selectTile) {
     // Instead of importing autoplay, pass it in as a dependency
 
     // If the board is not available, do nothing
@@ -9,7 +9,7 @@ function toggleAutoplay(controls, autoplay, $, gamestate, canvas, socket) {
     $('#autoplay-indicator').css('visibility', (controls.autoplay)? 'visible' : 'hidden');
 
     if (controls.autoplay && gamestate.turn === gamestate.playingAs) {
-        autoplay.select_next_unrevealed_flag(gamestate, socket);
+        autoplay.select_next_unrevealed_flag({gamestate, selectTile, socket});
     }
 
     if (!controls.autoplay) {

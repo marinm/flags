@@ -9,7 +9,8 @@ function handle_start(
     boardclicks,
     showTurn,
     showStatus,
-    autoplay
+    autoplay,
+    selectTile
 ) {
     showStatus('start', view, boardclicks);
 
