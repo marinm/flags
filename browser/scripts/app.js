@@ -114,10 +114,6 @@ function onMessage(quicksocket, message) {
 
 //------------------------------------------------------------------------------
 
-document.addEventListener("keyup", function(event) {
-    switch (event.keyCode) {
-        case 65: toggleAutoplay(controls, autoplay, $, gamestate, view.canvasboard, socket);  break; /* a */
-        case 71: autoplay.solverscan(gamestate, view.canvasboard);                 break; /* g */
-        case 78: autoplay.select_next_unrevealed_flag(gamestate, socket);         break; /* n */
-    }
-});
+$('body').onKeyup('a', () => toggleAutoplay(controls, autoplay, $, gamestate, view.canvasboard, socket));
+$('body').onKeyup('g', () => autoplay.solverscan(gamestate, view.canvasboard));
+$('body').onKeyup('n', () => autoplay.select_next_unrevealed_flag(gamestate, socket));
