@@ -146,11 +146,11 @@ img {
     background-color: #bbbbbb;
 }
 
-.not-playing > #player-0-score-box > .remaining {
+.not-playing > #player-0-score-box > .winning-score {
     color: #999999;
 }
 
-.not-playing > #player-1-score-box > .remaining {
+.not-playing > #player-1-score-box > .winning-score {
     color: #999999;
 }
 
@@ -167,7 +167,7 @@ img {
     color: #999999;
 }
 
-.not-playing > .remaining {
+.not-playing > .winning-score {
     color: #999999;
 }
 
@@ -183,15 +183,15 @@ img {
     color: green;
 }
 
-#player-0-score-box > .remaining {
+#player-0-score-box > .winning-score {
     color: #0047b1;/*#1570f9;*/
 }
 
-#player-1-score-box > .remaining {
+#player-1-score-box > .winning-score {
     color: #920604;/*#b10300;*/
 }
 
-.score-box-winner > .remaining {
+.score-box-winner > .winning-score {
     color: green;
 }
 

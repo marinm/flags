@@ -42,6 +42,8 @@ const view = {
     ScoreBox($, ['#player-0-score', '#player-1-score'])
 };
 
+view.scorebox.setWinningScore(WINNING_SCORE);
+
 
 const controls = {
     autoplay  : false,
@@ -113,7 +115,7 @@ function onMessage(quicksocket, message) {
 
 $('#board-container').append(view.canvasboard.canvas);
 
-$('.remaining').text(' / ' + WINNING_SCORE);
+
 
 
 document.addEventListener("keyup", function(event) {
