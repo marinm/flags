@@ -92,8 +92,8 @@ function onError() {
     showStatus('disconnected', view, boardClicks);
 }
 
-function onOpen() {
-    // Do nothing...?
+function onOpen(quicksocket) {
+    quicksocket.send({type: 'join'});
 }
 
 function onClose() {
