@@ -1,5 +1,10 @@
 # Flags
 
-This game is hosted at [marinm.net/flags](https://marinm.net/flags)
+## Play Online
 
-![alt text](gameplay.png "Gameplay demo")
+[marinm.net/flags](https://marinm.net/flags)
+
+
+## Screenshot
+
+![alt text](screenshot.png "Gameplay demo")
