@@ -1,4 +1,4 @@
-# Flags
+# Flags Game Server
 
 ## Play Online
 
@@ -6,5 +6,7 @@
 
 
 ## Screenshot
+
+_Taken from the separate [web client project](https://github.com/marinm/flags-web-client)._
 
 ![alt text](screenshot.png "Gameplay demo")
