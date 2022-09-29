@@ -12,12 +12,29 @@ This is a JSON protocol.
 2. Client waits for server to send first packet
 3. On connection, server sends first packet
 
-### Server messages
+### Overview
 
+#### Client → Server
+
+- `version`
+- `join`
+- `select`
+
+#### Server → Client
+
+- `version`
+- `join`
+- `start`
+- `reveal`
+- `opponent-disconnected`
+
+---
+
+### From the server
 All server messages have a `type`:
 
 ```
-SERVER
+TO CLIENT
 
 {
     "type"      : "type-name",
@@ -28,16 +45,13 @@ SERVER
 
 #### Types
 
-- `join`
-- `start`
-- `reveal`
-- `opponent-disconnected`
+
 
 
 #### Examples
 
 ```
-SERVER
+TO CLIENT
 
 {
     "type"       : "join",
@@ -46,7 +60,7 @@ SERVER
 ```
 
 ```
-SERVER
+TO CLIENT
 
 {
     "type"       : "join",
@@ -56,7 +70,7 @@ SERVER
 ```
 
 ```
-SERVER
+TO CLIENT
 
 {
     "type"       : "start"
@@ -64,7 +78,7 @@ SERVER
 ```
 
 ````
-SERVER
+TO CLIENT
 
 {
     "type"       : "opponent-disconnected"
@@ -72,7 +86,7 @@ SERVER
 ````
 
 ````
-SERVER
+TO CLIENT
 
 {
     "type"  : "reveal",
@@ -98,12 +112,12 @@ SERVER
 }
 ````
 
-### Client messages
+### From the client
 
 All client messages have a `type`:
 
 ```
-CLIENT
+TO SERVER
 
 {
     "type"      : "type-name",
@@ -113,12 +127,12 @@ CLIENT
 
 #### List of all types
 
-- `select`
+
 
 #### Examples
 
 ```
-CLIENT
+TO SERVER
 
 {
     "select"   : "select",
