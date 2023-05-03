@@ -1,0 +1,14 @@
+version: "2"
+services:
+  server:
+    container_name: flags
+    image: "node:18"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./:/home/node/app
+    ports:
+      - "9637:9637"
+    command: "node server/main.js"
