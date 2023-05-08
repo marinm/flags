@@ -1,3 +1,5 @@
+const { randomUUID } = require('node:crypto');
+
 const handle_version = require('./handle-version.js');
 const handle_join = require('./handle-join.js');
 const handle_select = require('./handle-select');
@@ -8,9 +10,10 @@ module.exports =
 function MatchManager( {n,m,f,w} ) {
 
     let match = {
-        playerA : null,
-        playerB : null,
-        match   : Match(n, m, f, w)
+        playerA  : null,
+        playerB  : null,
+        id       : null,
+        match    : null,
     };
 
     const handlers = {
@@ -18,6 +21,17 @@ function MatchManager( {n,m,f,w} ) {
         'join'    : handle_join(match),
         'select'  : handle_select(match),
     };
+
+    function new_game() {
+        match.playerA = null;
+        match.playerB = null;
+        match.id      = randomUUID();
+        match.match   = Match(n, m, f, w);
+
+        return null;
+    }
+
+    new_game();
 
     return {
         onClientConnect:
@@ -43,8 +57,7 @@ function MatchManager( {n,m,f,w} ) {
                     // Also kick out the other player
                     PLAYER_B = null;
                 }
-                // Start a new game
-                match = Match(n, m, f, w);
+                new_game();
                 return null;
 
                 // notify a waiting player?
@@ -57,8 +70,7 @@ function MatchManager( {n,m,f,w} ) {
                     // Also kick out the other player
                     PLAYER_A = null;
                 }
-                // Start a new game
-                match = Match(n, m, f, w);
+                new_game();
                 return null;
 
                 // notify a waiting player?
