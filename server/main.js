@@ -1,8 +1,7 @@
-const dotenv = require('dotenv');
+require('dotenv').config();
+
 const SimpleWebSockets = require('./simple-websockets.js');
 const MatchManager = require('./match-manager.js')
-
-dotenv.config();
 
 const {
     WSS_PORT,
