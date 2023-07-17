@@ -27,6 +27,9 @@ function selectWithTurns(i, j, W, counters, board) {
             // Increment their score
             counters.score[counters.turn]++;
 
+            // Increment their luck
+            counters.luck[counters.turn]++;
+
             // It's still the same player's turn
 
             // Did they just win the game?

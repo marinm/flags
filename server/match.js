@@ -9,6 +9,7 @@ function Match(N, M, F, W) {
         score : [0,0],
         seq   : 0,
         on    : true,
+        luck  : [0,0],
     };
 
     // A randomly generated board
