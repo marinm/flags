@@ -50,12 +50,12 @@ function MatchManager( {n,m,f,w} ) {
             // [2] Client was PLAYING_AS 'B', end game, TELL 'A'
             // [3] Client was not playing, do nothing
         
-            if (connection === PLAYER_A) {
-                PLAYER_A = null;
-                if (PLAYER_B != null) {
-                    PLAYER_B.send({ type: 'opponent-disconnected' });
+            if (connection === match.playerA) {
+                match.playerA = null;
+                if (match.playerB != null) {
+                    match.playerB.send({ type: 'opponent-disconnected' });
                     // Also kick out the other player
-                    PLAYER_B = null;
+                    match.playerB = null;
                 }
                 new_game();
                 return null;
@@ -63,12 +63,12 @@ function MatchManager( {n,m,f,w} ) {
                 // notify a waiting player?
             }
 
-            if (connection === PLAYER_B) {
-                PLAYER_B = null;
-                if (PLAYER_A != null) {
-                    PLAYER_A.send({ type: 'opponent-disconnected' });
+            if (connection === match.playerB) {
+                match.playerB = null;
+                if (match.playerA != null) {
+                    match.playerA.send({ type: 'opponent-disconnected' });
                     // Also kick out the other player
-                    PLAYER_A = null;
+                    match.playerA = null;
                 }
                 new_game();
                 return null;
