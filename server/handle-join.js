@@ -15,7 +15,7 @@ function handle_join(match) {
                 status     : 'OPEN',
                 id         : match.id,
                 playing_as : 0,
-                hmac       : auth.hmac(claim)
+                //hmac       : auth.hmac(claim)
             });
             return null;
         }
@@ -33,7 +33,7 @@ function handle_join(match) {
                 status     : 'OPEN',
                 id         : match.id,
                 playing_as : 1,
-                hmac       : auth.hmac(claim)
+                //hmac       : auth.hmac(claim)
             });  
             match.playerA.send({ type: 'start' });
             match.playerB.send({ type: 'start' });
