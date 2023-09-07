@@ -4,7 +4,6 @@
 
 [marinm.net/flags](https://marinm.net/flags)
 
-
 ## Screenshot
 
 _This repo is the game server only_.
@@ -15,14 +14,7 @@ _The screenshot below is taken from the separate [web client](https://github.com
 
 ## JSON Protocol
 
-
 ### Overview
-
-#### Client → Server
-
-- `version`
-- `join`
-- `select`
 
 #### Server → Client
 
@@ -32,94 +24,70 @@ _The screenshot below is taken from the separate [web client](https://github.com
 - `reveal`
 - `opponent-disconnected`
 
+#### Client → Server
+
+- `version`
+- `join`
+- `select`
+
 ---
 
 ### From the server
 
 #### Joining
 
-1. WebSockets connection successfully established between client and server
+1. Client opens WebSocket with server
 2. Client waits for server to send first packet
-3. On connection, server sends first packet
+3. Client can then send join request
 
 ##### Join request rejected
-```
-TO CLIENT
 
-{
-    "type"       : "join",
-    "status"     : "BUSY"
-}
+```
+TO CLIENT {"type": "join", "status": "BUSY"}
 ```
 
 ##### Join request accepted
-```
-TO CLIENT
 
-{
-    "type"       : "join",
-    "status"     : "OPEN",
-    "playing_as" : 0
-}
+```
+TO CLIENT {"type": "join", "status": "OPEN", "playing_as" : 0}
 ```
 
 ##### Game starts
-```
-TO CLIENT
 
-{
-    "type"       : "start"
-}
+```
+TO CLIENT {"type": "start"}
 ```
 
 ##### Opponent Disconnected
-````
-TO CLIENT
 
-{
-    "type"       : "opponent-disconnected"
-}
-````
+```
+TO CLIENT {"type": "opponent-disconnected"}
+```
 
 ##### Tiles Revealed
-````
-TO CLIENT
 
+```
+TO CLIENT
 {
-    "type"  : "reveal",
-    "for"   : {
-                  "i" : 0,
-                  "j" : 0
-              },
-    "score" : {
-                  "0"   : 0,
-                  "1"   : 0,
-                  "seq" : 0,
-                  "on"  : true
-              },
-    "show"  : [
-                  {
-                      "i"     : 0,
-                      "j"     : 0,
-                      "value" : 0,
-                      "owner" : 0
-                  },
-                  ...
-              ]
+    "type": "reveal",
+    "for": {"i" : 0, "j" : 0},
+    "score": {"0": 0, "1": 0, "seq": 0, "on": true},
+    "show": [{"i": 0, "j": 0, "value": 0, "owner": 0}, ...]
 }
-````
+```
 
 ### From the client
 
 #### Play
 
-##### Select
-```
-TO SERVER
+##### Join
 
-{
-    "select"   : "select",
-    "i"        : 0,
-    "j"        : 0
-}
+```
+TO SERVER {"type": "join"}
+```
+
+##### Select
+
+```
+TO SERVER {"type": "select", "i": 0, "j": 0}
 ```
