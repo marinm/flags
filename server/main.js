@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const WebSocketServer = require('./websocket-server.js');
+const JsonWebSocketServer = require('./json-websocket-server.js');
 const MatchManager = require('./match-manager.js')
 
 const {
@@ -21,11 +21,13 @@ const manager = MatchManager({
 });
 
 // Start up a server...
-WebSocketServer({
-    port               : WSS_PORT,
-    cert               : SSL_CERT,
-    key                : SSL_KEY,
-    onClientConnect    : manager.onClientConnect,
-    onClientMessage    : manager.onClientMessage,
-    onClientDisconnect : manager.onClientDisconnect,
+JsonWebSocketServer({
+    port            : WSS_PORT,
+    cert            : SSL_CERT,
+    key             : SSL_KEY,
+    onServerOpen    : () => {},
+    onServerClose   : () => {},
+    onSocketOpen    : manager.onSocketOpen,
+    onSocketMessage : manager.onSocketMessage,
+    onSocketClose   : manager.onSocketClose,
 });

@@ -34,15 +34,15 @@ function MatchManager( {n,m,f,w} ) {
     new_game();
 
     return {
-        onClientConnect:
+        onSocketOpen:
         function(connection) {
             console.log(`New connection (${connection})`);
 
             // Need a server version scheme...
-            connection.send({type: 'version', version: null});
+            connection.send({type: 'version', version: 'hola'});
         },
 
-        onClientDisconnect:
+        onSocketClose:
         function(connection) {
             // On disconnect, 
             // [0] Client was PLAYING_AS 'A' and waiting for 'B', end game
@@ -80,7 +80,7 @@ function MatchManager( {n,m,f,w} ) {
             return null;
         },
 
-        onClientMessage:
+        onSocketMessage:
         function(connection, message) {
             // If the message type does not map to a function in the handlers
             // dict, then drop this message.
