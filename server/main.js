@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const PlayerSocketLayer = require('./player-socket-layer.js');
 const JsonWebSocketServer = require('./json-websocket-server.js');
 const MatchManager = require('./match-manager.js')
 
@@ -13,21 +14,23 @@ const {
     WINNING_SCORE
 } = process.env;
 
-const manager = MatchManager({
+const matchManager = MatchManager({
     n : BOARD_NUM_ROWS,
     m : BOARD_NUM_COLUMNS,
     f : BOARD_NUM_FLAGS,
     w : WINNING_SCORE
 });
 
+const playerSockets = PlayerSocketLayer(matchManager);
+
 // Start up a server...
 JsonWebSocketServer({
     port            : WSS_PORT,
     cert            : SSL_CERT,
     key             : SSL_KEY,
-    onServerOpen    : () => {},
-    onServerClose   : () => {},
-    onSocketOpen    : manager.onSocketOpen,
-    onSocketMessage : manager.onSocketMessage,
-    onSocketClose   : manager.onSocketClose,
+    onServerOpen    : playerSockets.webSocketHandlers.onServerOpen,
+    onServerClose   : playerSockets.webSocketHandlers.onServerClose,
+    onSocketOpen    : playerSockets.webSocketHandlers.onSocketOpen,
+    onSocketMessage : playerSockets.webSocketHandlers.onSocketMessage,
+    onSocketClose   : playerSockets.webSocketHandlers.onSocketClose,
 });

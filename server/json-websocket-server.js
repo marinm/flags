@@ -65,7 +65,14 @@ function JsonWebSocketServer({
     // Ping all clients at a regular interval
     const ping_interval = setInterval(() => pingAll(serverWSS), PING_INTERVAL);
 
-    serverWSS.on('close', () => clearInterval(ping_interval));
+    serverWSS.on('listening', function() {
+        // onServerOpen();
+    });
+
+    serverWSS.on('close', function() {
+        clearInterval(ping_interval);
+        // onServerClose();
+    });
 
     // Start listening...
     serverHTTPS.listen(port);
