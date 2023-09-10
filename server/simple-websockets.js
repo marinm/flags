@@ -55,9 +55,9 @@ function SimpleWebSockets({
 }) {
 
     // Default handlers do nothing
-    onClientConnect    = onClientConnect    || function noop() {};
-    onClietMessage     = onClientMessage    || function noop() {};
-    onClientDisconnect = onClientDisconnect || function noop() {};
+    onClientConnect    = onClientConnect    || (() => {});
+    onClientMessage    = onClientMessage    || (() => {});
+    onClientDisconnect = onClientDisconnect || (() => {});
 
     const serverHTTPS = https.createServer({
         cert : fs.readFileSync(cert),
@@ -106,8 +106,6 @@ function SimpleWebSockets({
         connection.on('close',
             function(code, reason) {
                 console.log('SimpleWebSocketServer: a client disconnected');
-                // Will need again later...
-                // broadcast_online_count();
 
                 // Ignore the code/reason
                 onClientDisconnect(simpleSocket);
@@ -115,18 +113,13 @@ function SimpleWebSockets({
         );
     });
 
+    // Ping all clients at a regular interval
+    const ping_interval = setInterval(() => pingAll(serverWSS), PING_INTERVAL);
 
-    serverWSS.on('close',
-        function() {
-            clear_interval(ping_interval);
-        }
-    );
+    serverWSS.on('close', () => clearInterval(ping_interval));
 
     // Start listening...
     serverHTTPS.listen(port);
     console.log('Secure WebSocket Server started');
     console.log(`Listening for clients on ${port}...`);
-
-    // Every 30 seconds, ping all clients
-    const ping_interval = setInterval(() => pingAll(serverWSS), PING_INTERVAL);
 }
