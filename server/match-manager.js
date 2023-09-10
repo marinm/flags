@@ -1,6 +1,5 @@
 const { randomUUID } = require('node:crypto');
 
-const handle_version = require('./handle-version.js');
 const handle_join = require('./handle-join.js');
 const handle_select = require('./handle-select');
 
@@ -17,7 +16,6 @@ function MatchManager( {n,m,f,w} ) {
     };
 
     const handlers = {
-        'version' : handle_version(),
         'join'    : handle_join(match),
         'select'  : handle_select(match),
     };
