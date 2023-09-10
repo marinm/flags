@@ -23,11 +23,6 @@ function pingAll(serverWSS) {
 // 	    });
 // }
 
-// function broadcast_online_count() {
-//     const online = wss.clients.size;
-//     broadcast({ type: 'online', online });
-// }
-
 // A convenience wrapper
 function SimpleSocket(connection, id) {
     return {
@@ -45,7 +40,7 @@ function SimpleSocket(connection, id) {
 }
 
 module.exports =
-function SimpleWebSockets({
+function WebSocketServer({
     port,
     cert,
     key,
@@ -81,7 +76,7 @@ function SimpleWebSockets({
         // The handler will receive a convenient wrapper
         const simpleSocket = new SimpleSocket(connection, connection.id);
 
-        console.log('SimpleWebSocketServer: a new client connected');
+        console.log('WebSocketServer: a new client connected');
         onClientConnect(simpleSocket);
 
         connection.on('pong',
@@ -105,7 +100,7 @@ function SimpleWebSockets({
 
         connection.on('close',
             function(code, reason) {
-                console.log('SimpleWebSocketServer: a client disconnected');
+                console.log('WebSocketServer: a client disconnected');
 
                 // Ignore the code/reason
                 onClientDisconnect(simpleSocket);

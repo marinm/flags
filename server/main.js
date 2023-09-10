@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const SimpleWebSockets = require('./simple-websockets.js');
+const WebSocketServer = require('./websocket-server.js');
 const MatchManager = require('./match-manager.js')
 
 const {
@@ -21,7 +21,7 @@ const manager = MatchManager({
 });
 
 // Start up a server...
-SimpleWebSockets({
+WebSocketServer({
     port               : WSS_PORT,
     cert               : SSL_CERT,
     key                : SSL_KEY,
