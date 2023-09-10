@@ -35,22 +35,34 @@ function MatchManager( {n,m,f,w} ) {
 
     return {
         onSocketOpen:
-        function(connection) {
-            console.log(`New connection (${connection})`);
+        function(simpleSocket) {
+            console.log(`New connection (${simpleSocket})`);
+
+            const now = new Date(Date.now());
+
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            const ss = String(now.getSeconds()).padStart(2, '0');
+
+            const nowString = `${hh}:${mm}:${ss}`;
 
             // Need a server version scheme...
-            connection.send({type: 'version', version: 'hola'});
+            simpleSocket.send({
+                type: 'version',
+                version: null,
+                timestamp: nowString,
+            });
         },
 
         onSocketClose:
-        function(connection) {
+        function(simpleSocket) {
             // On disconnect, 
             // [0] Client was PLAYING_AS 'A' and waiting for 'B', end game
             // [1] Client was PLAYING_AS 'A', end game, TELL 'B'
             // [2] Client was PLAYING_AS 'B', end game, TELL 'A'
             // [3] Client was not playing, do nothing
         
-            if (connection === match.playerA) {
+            if (simpleSocket === match.playerA) {
                 match.playerA = null;
                 if (match.playerB != null) {
                     match.playerB.send({ type: 'opponent-disconnected' });
@@ -63,7 +75,7 @@ function MatchManager( {n,m,f,w} ) {
                 // notify a waiting player?
             }
 
-            if (connection === match.playerB) {
+            if (simpleSocket === match.playerB) {
                 match.playerB = null;
                 if (match.playerA != null) {
                     match.playerA.send({ type: 'opponent-disconnected' });
@@ -81,10 +93,10 @@ function MatchManager( {n,m,f,w} ) {
         },
 
         onSocketMessage:
-        function(connection, message) {
+        function(simpleSocket, message) {
             // If the message type does not map to a function in the handlers
             // dict, then drop this message.
-            handlers[message.type]?.(connection, message);
+            handlers[message.type]?.(simpleSocket, message);
         }
     }
 }
