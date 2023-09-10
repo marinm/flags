@@ -4,21 +4,21 @@
     "description": "",
     "main": "main.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/marinm/flags.git"
+        "type": "git",
+        "url": "git+https://github.com/marinm/flags.git"
     },
     "author": "",
     "license": "ISC",
     "bugs": {
-      "url": "https://github.com/marinm/flags/issues"
+        "url": "https://github.com/marinm/flags/issues"
     },
     "homepage": "https://github.com/marinm/flags",
     "dependencies": {
-      "dotenv": "^8.2.0",
-      "ws": "^7.3.0"
+        "dotenv": "^8.2.0",
+        "uuid": "^9.0.0",
+        "ws": "^7.3.0"
     }
-  }
-  
+}
