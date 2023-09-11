@@ -34,21 +34,8 @@ function MatchManager( {n,m,f,w} ) {
     return {
         onPlayerSocketOpen:
         function(playerSocket) {
-            console.log(`New connection (${playerSocket.playerId})`);
-
-            const now = new Date(Date.now());
-
-            const hh = String(now.getHours()).padStart(2, '0');
-            const mm = String(now.getMinutes()).padStart(2, '0');
-            const ss = String(now.getSeconds()).padStart(2, '0');
-
-            const nowString = `${hh}:${mm}:${ss}`;
-
-            // Need a server version scheme...
             playerSocket.send({
                 type: 'version',
-                version: null,
-                timestamp: nowString,
                 playerId: playerSocket.playerId,
             });
         },
