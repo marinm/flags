@@ -53,8 +53,8 @@ function JsonWebSocketServer({
         socket.on('pong', () => socket.isAlive = true);
 
         socket.on('message',
-            function(data, isBinary) {
-                if (fromJSON(data)) onSocketMessage(simpleSocket, fromJSON(data));
+            function(message, isBinary) {
+                if (fromJSON(message)) onSocketMessage(simpleSocket, fromJSON(message));
             }
         );
 

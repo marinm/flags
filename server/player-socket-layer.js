@@ -1,34 +1,36 @@
 
-function PlayerSocket() {
+function PlayerSocket(simpleSocket) {
     return {
-        socketId: null,
-        playerId: null,
+        playerId: simpleSocket.id,
+        send: simpleSocket.send,
     }
 }
 
 module.exports =
 function PlayerSocketLayer(matchManager) {
-
     return {
         webSocketHandlers: {
             onServerOpen() {
                 //
             },
-    
+
             onServerClose() {
                 //
             },
-    
+
             onSocketOpen(simpleSocket) {
-                matchManager.onSocketOpen(simpleSocket);
+                const playerSocket = PlayerSocket(simpleSocket);
+                matchManager.onPlayerSocketOpen(playerSocket);
             },
-    
+
             onSocketMessage(simpleSocket, message) {
-                matchManager.onSocketMessage(simpleSocket, message);
+                const playerSocket = PlayerSocket(simpleSocket);
+                matchManager.onPlayerSocketMessage(playerSocket, message);
             },
-    
+
             onSocketClose(simpleSocket) {
-                matchManager.onSocketClose();
+                const playerSocket = PlayerSocket(simpleSocket);
+                matchManager.onPlayerSocketClose(playerSocket);
             },
         }
     }

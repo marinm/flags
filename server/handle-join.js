@@ -1,16 +1,16 @@
 const auth = require('./auth.js');
 module.exports =
 function handle_join(match) {
-    return function(socket, message) {
-        if (match.playerA === null) {
-            match.playerA = socket;
+    return function(playerSocket, message) {
+        if (match.playerSocketA === null) {
+            match.playerSocketA = playerSocket;
 
             const claim = JSON.stringify({
                 match_id   : match.id,
                 playing_as : 0
             });
 
-            socket.send({
+            playerSocket.send({
                 type       : 'join',
                 status     : 'OPEN',
                 id         : match.id,
@@ -20,27 +20,27 @@ function handle_join(match) {
             return null;
         }
     
-        if (match.playerB === null) {
-            match.playerB = socket;
+        if (match.playerSocketB === null) {
+            match.playerSocketB = playerSocket;
 
             const claim = JSON.stringify({
                 match_id   : match.id,
                 playing_as : 1
             });
 
-            socket.send({
+            playerSocket.send({
                 type       : 'join',
                 status     : 'OPEN',
                 id         : match.id,
                 playing_as : 1,
                 //hmac       : auth.hmac(claim)
             });  
-            match.playerA.send({ type: 'start' });
-            match.playerB.send({ type: 'start' });
+            match.playerSocketA.send({ type: 'start' });
+            match.playerSocketB.send({ type: 'start' });
             return null;
         }
     
-        socket.send({ type: 'join', status: 'BUSY' });
+        playerSocket.send({ type: 'join', status: 'BUSY' });
         return null;
     }
 };

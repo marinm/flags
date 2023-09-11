@@ -9,10 +9,10 @@ module.exports =
 function MatchManager( {n,m,f,w} ) {
 
     let match = {
-        playerA  : null,
-        playerB  : null,
-        id       : null,
-        match    : null,
+        playerSocketA  : null,
+        playerSocketB  : null,
+        id             : null,
+        match          : null,
     };
 
     const handlers = {
@@ -21,10 +21,10 @@ function MatchManager( {n,m,f,w} ) {
     };
 
     function new_game() {
-        match.playerA = null;
-        match.playerB = null;
-        match.id      = randomUUID();
-        match.match   = Match(n, m, f, w);
+        match.playerSocketA = null;
+        match.playerSocketB = null;
+        match.id            = randomUUID();
+        match.match         = Match(n, m, f, w);
 
         return null;
     }
@@ -32,9 +32,9 @@ function MatchManager( {n,m,f,w} ) {
     new_game();
 
     return {
-        onSocketOpen:
-        function(simpleSocket) {
-            console.log(`New connection (${simpleSocket})`);
+        onPlayerSocketOpen:
+        function(playerSocket) {
+            console.log(`New connection (${playerSocket.playerId})`);
 
             const now = new Date(Date.now());
 
@@ -45,27 +45,28 @@ function MatchManager( {n,m,f,w} ) {
             const nowString = `${hh}:${mm}:${ss}`;
 
             // Need a server version scheme...
-            simpleSocket.send({
+            playerSocket.send({
                 type: 'version',
                 version: null,
                 timestamp: nowString,
+                playerId: playerSocket.playerId,
             });
         },
 
-        onSocketClose:
-        function(simpleSocket) {
+        onPlayerSocketClose:
+        function(playerSocket) {
             // On disconnect, 
             // [0] Client was PLAYING_AS 'A' and waiting for 'B', end game
             // [1] Client was PLAYING_AS 'A', end game, TELL 'B'
             // [2] Client was PLAYING_AS 'B', end game, TELL 'A'
             // [3] Client was not playing, do nothing
         
-            if (simpleSocket === match.playerA) {
-                match.playerA = null;
-                if (match.playerB != null) {
-                    match.playerB.send({ type: 'opponent-disconnected' });
+            if (playerSocket === match.playerSocketA) {
+                match.playerSocketA = null;
+                if (match.playerSocketB != null) {
+                    match.playerSocketB.send({ type: 'opponent-disconnected' });
                     // Also kick out the other player
-                    match.playerB = null;
+                    match.playerSocketB = null;
                 }
                 new_game();
                 return null;
@@ -73,12 +74,12 @@ function MatchManager( {n,m,f,w} ) {
                 // notify a waiting player?
             }
 
-            if (simpleSocket === match.playerB) {
-                match.playerB = null;
-                if (match.playerA != null) {
-                    match.playerA.send({ type: 'opponent-disconnected' });
+            if (playerSocket === match.playerSocketB) {
+                match.playerSocketB = null;
+                if (match.playerSocketA != null) {
+                    match.playerSocketA.send({ type: 'opponent-disconnected' });
                     // Also kick out the other player
-                    match.playerA = null;
+                    match.playerSocketA = null;
                 }
                 new_game();
                 return null;
@@ -90,11 +91,11 @@ function MatchManager( {n,m,f,w} ) {
             return null;
         },
 
-        onSocketMessage:
-        function(simpleSocket, message) {
+        onPlayerSocketMessage:
+        function(playerSocket, message) {
             // If the message type does not map to a function in the handlers
             // dict, then drop this message.
-            handlers[message.type]?.(simpleSocket, message);
+            handlers[message.type]?.(playerSocket, message);
         }
     }
 }
