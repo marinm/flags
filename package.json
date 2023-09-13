@@ -1,27 +1,30 @@
 {
-    "name": "flags",
-    "version": "1.0.0",
-    "description": "",
-    "main": "main.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/marinm/flags.git"
-    },
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/marinm/flags/issues"
-    },
-    "homepage": "https://github.com/marinm/flags",
-    "dependencies": {
-        "dotenv": "^8.2.0",
-        "uuid": "^9.0.0",
-        "ws": "^7.3.0"
-    },
-    "devDependencies": {
-        "typescript": "^5.2.2"
-    }
+	"name": "flags",
+	"version": "1.0.0",
+	"description": "",
+	"main": "main.js",
+	"type": "module",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/marinm/flags.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/marinm/flags/issues"
+	},
+	"homepage": "https://github.com/marinm/flags",
+	"dependencies": {
+		"dotenv": "^8.2.0",
+		"ts-node": "^10.9.1",
+		"uuid": "^9.0.0",
+		"ws": "^7.3.0"
+	},
+	"devDependencies": {
+		"@types/node": "^20.6.0",
+		"typescript": "^5.2.2"
+	}
 }

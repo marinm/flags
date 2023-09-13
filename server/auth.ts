@@ -1,10 +1,10 @@
-const { createHmac } = require('node:crypto');
+import { createHmac } from 'node:crypto';
 
 const {
     APP_KEY
 } = process.env;
 
-module.exports = {
+export default {
     hmac:
     function(message) {
         const algorithm = 'sha256';

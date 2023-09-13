@@ -1,14 +1,15 @@
 version: "2"
 services:
-  server:
-    container_name: flags
-    image: "node:18"
-    user: "node"
-    working_dir: /home/node/app
-    environment:
-      - NODE_ENV=production
-    volumes:
-      - ./:/home/node/app
-    ports:
-      - "9637:9637"
-    command: "node server/main.js"
+    server:
+        container_name: flags
+        image: "node:18"
+        user: "node"
+        working_dir: /home/node/app
+        environment:
+            - NODE_ENV=production
+        volumes:
+            - ./:/home/node/app
+            - ./docker-logs:/var/log
+        ports:
+            - "9637:9637"
+        command: sh -c "./node_modules/.bin/tsc && node build/main.js"

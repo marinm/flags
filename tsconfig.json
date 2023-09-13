@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"module": "NodeNext",
+		"outDir": "build",
+		"baseUrl": "."
+		//   "noImplicitAny": true,
+		//   "removeComments": true,
+		//   "preserveConstEnums": true,
+		//   "sourceMap": true
+	},
+	"include": ["server"]
+}
