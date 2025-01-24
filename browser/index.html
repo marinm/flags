@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Flags</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Flags">
+    <meta name="keywords" content="Flags, Game">
+    <meta name="author" content="Marin Mema">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="styles/style.css">
+  </head>
+  <body>
+    <div id="container">
+      <noscript><div id="noscript">This game uses JavaScript.</div></noscript>
+
+      <div id="note-box">Welcome to Flags</div>
+
+      <div id="board-container">
+        <canvas id="gameboard-canvas">Your browser does not support HTML5 canvas</canvas>
+      </div>
+
+      </div>
+
+      <div id="turn-score-container" class="not-playing">
+        <div class="score-box" id="player-0-score-box">
+          <div id="player-0-score">0</div> <span class="winning-score"></span>
+        </div>
+        <div class="score-box" id="player-1-score-box">
+          <div id="player-1-score">0</div> <span class="winning-score"></span>
+        </div>
+      </div>
+      <div id="autoplay-indicator">AUTOPLAY ON</div>
+    </div>
+
+    <script type="module" src="scripts/app.js"></script>
+  </body>
+</html>

@@ -13,3 +13,9 @@ services:
         ports:
             - "9637:9637"
         command: sh -c "./node_modules/.bin/tsc && node build/main.js"
+    client:
+      image: nginx
+      volumes:
+        - ./browser:/usr/share/nginx/html
+      ports:
+        - "8080:80"

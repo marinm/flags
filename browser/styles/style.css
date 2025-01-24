@@ -1,0 +1,267 @@
+body {
+    background-color: #feecd6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+#container {
+    max-width: 100vw;
+    margin: 20px auto 0 auto;
+    font-family: arial;
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+#noscript {
+    display: block;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    background-color: pink;
+    border: 1px solid tomato;
+}
+
+#credits {
+    position: fixed;
+    bottom: 1%;
+    left: 1%;
+    width: 20em;
+    padding: 0.5em;
+    background-color: black;
+    color: white;
+    border-radius: 4px;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+#credits a {
+    color: white;
+}
+
+#note-box {
+    display: block;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    width: 80%;
+    margin: 1em auto;
+    border-radius: 8px;
+}
+
+.disconnected-status {
+    background-color: pink;
+    border: 2px solid tomato;
+}
+
+.waiting-status {
+    background-color: aliceblue;
+    border: 2px solid cornflowerblue;
+}
+
+.ready-status {
+    background-color: yellowgreen;
+    border: 2px solid seagreen;
+}
+
+.your-turn-status {
+    background-color: aliceblue;
+    border: 2px solid cornflowerblue;
+}
+
+.opponents-turn-status {
+    background-color: aliceblue;
+    border: 2px solid cornflowerblue;
+}
+
+.busy-status {
+    background-color: lightgray;
+    border: 2px solid silver;
+}
+
+.opponent-disconnected-status {
+    background-color: cornsilk;
+    border: 2px solid chocolate;
+}
+
+.winner-status {
+    background-color: yellowgreen;
+    border: 2px solid seagreen;
+}
+
+#board-container {
+    display: block;
+    margin: 10px auto 0 auto;
+}
+
+canvas {
+    border: 3px solid #f6d084;
+    box-shadow: 0 0 0 3px #964d0c;
+    border-radius: 0.4em;
+    max-width: 100%;
+}
+
+#turn-score-container {
+    width: 10em;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: stretch;
+    align-content: stretch;
+    text-align: center;
+    margin: 10px auto 0 auto;
+    overflow: hidden;
+    border: 3px solid orange;
+    border-radius: 8px;
+    /*box-shadow: 3px 3px 0 0 #666666;*/
+}
+
+.not-playing > .score-box {
+    background-color: #dddddd;
+    color: #cccccc;
+}
+
+.score-box {
+    flex: 1;
+    box-sizing: border-box;
+    padding: 8px 0 5px 0;
+    font-family: arial;
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: center;
+    color: #ffffff;
+}
+
+.active-turn {
+    background-color: yellow;
+}
+
+img {
+    display: inline;
+}
+
+#player-0-score-box {
+    border-bottom: 5px solid #1570f9;
+    background-color: #379ad1;
+}
+
+#player-1-score-box {
+    border-bottom: 5px solid #b10300;
+    background-color: #db594f;
+}
+
+.not-playing > #player-0-score-box {
+    border-bottom: 5px solid #999999;
+    background-color: #bbbbbb;
+}
+
+.not-playing > #player-0-score-box > .winning-score {
+    color: #999999;
+}
+
+.not-playing > #player-1-score-box > .winning-score {
+    color: #999999;
+}
+
+.not-playing > #player-1-score-box {
+    border-bottom: 5px solid #999999;
+    background-color: #bbbbbb;
+}
+
+.not-playing > #player-0-score-box > #player-0-score {
+    color: #999999;
+}
+
+.not-playing > #player-1-score-box > #player-1-score {
+    color: #999999;
+}
+
+.not-playing > .winning-score {
+    color: #999999;
+}
+
+#player-0-score, #player-1-score {
+    display: inline-block;
+    text-align: right;
+    color: #ffffff;
+}
+
+.score-box-winner {
+    background-color: #aed581;
+    border-bottom: 3px solid green;
+    color: green;
+}
+
+#player-0-score-box > .winning-score {
+    color: #0047b1;/*#1570f9;*/
+}
+
+#player-1-score-box > .winning-score {
+    color: #920604;/*#b10300;*/
+}
+
+.score-box-winner > .winning-score {
+    color: green;
+}
+
+#whose-turn {
+    color: black;
+    font-size: 80%;
+    display: block;
+    background-color: #cccccc;
+    padding: 5px;
+    display: none;
+}
+
+#autoplay-indicator {
+    display: block;
+    visibility: hidden;
+    color: green;
+    margin-top: 10px;
+    font-size: 50%;
+    font-weight: bold;
+}
+
+
+
+
+.progress-bar-container {
+    margin: 1em auto;
+    border: 0.2em solid #FFC73E;
+    box-shadow: 0 0 0 0.2em #9B4D12;
+    background-color: #8E480F;
+    width: 100%;
+    height: 2em;
+    border-radius: 0.4em;
+    padding: 0.3em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    box-sizing: border-box;
+}
+
+.progress-bar {
+    background-color: #FF9D2C;
+    height: 100%;
+    width: 20%;
+    display: block;
+    box-sizing: border-box;
+}
+
+
+.join-game-btn {
+    background-color: #E9A158;
+    border: 0.2em solid #995015;
+    color: #FFFFFF;
+    display: inline-block;
+    padding: 0.4em 0.5em;
+    border-radius: 0.4em;
+    font-size: 90%;
+    font-weight: bold;
+    cursor: pointer;
+}
