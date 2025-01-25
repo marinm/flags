@@ -1,4 +1,3 @@
-version: "2"
 services:
     server:
         container_name: flags
