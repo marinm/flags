@@ -1,6 +1,3 @@
-// Event handlers for canvas clicks and server messages
-// Model-View-[Controller]
-
 import config from "./config.js";
 import GameboardCanvas from "./gameboard-canvas.js";
 import tilesheet from "./tilesheet.js";
@@ -24,7 +21,6 @@ const {
 	BOARD_NUM_COLUMNS,
 	BOARD_CELL_SIZE,
 	WINNING_SCORE,
-	PLAYER_FLAGS,
 } = config;
 
 const view = {
@@ -107,6 +103,7 @@ function onMessage(quicksocket, message) {
 }
 
 //------------------------------------------------------------------------------
+// Keyboard controls for autoplay
 
 view.$("body").onKeyup("a", () =>
 	toggleAutoplay(
