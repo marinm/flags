@@ -10,7 +10,7 @@
 // i : row index
 // j : column index
 
-import { random } from "./random.js";
+import { random } from "../../server/random.js";
 
 export function Matrix(n, m) {
 	const nodes = new Array(n * m);

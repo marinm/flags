@@ -1,5 +1,5 @@
-import { Matrix } from "./matrix.js";
-import { Tile } from "./tile.js";
+import { Matrix } from "./server-matrix.js";
+import { Tile } from "../../server/tile.js";
 
 // Generates a board with randomly placed flags
 //

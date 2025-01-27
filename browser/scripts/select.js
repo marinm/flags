@@ -1,4 +1,4 @@
-import { zerowalk } from "./zerowalk.js";
+import { zerowalk } from "../../server/zerowalk.js";
 
 export function select(i, j, board) {
 	const tile = board.at(i, j);

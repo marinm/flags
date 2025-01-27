@@ -1,4 +1,4 @@
-import { select } from "./select.js";
+import { select } from "../../server/select.js";
 import { revealAll } from "./reveal-all.js";
 
 export function selectWithTurns(i, j, W, counters, board) {

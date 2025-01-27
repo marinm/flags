@@ -1,5 +1,5 @@
-import { randomBoard } from "./random-board.js";
-import { selectWithTurns } from "./select-with-turns.js";
+import { randomBoard } from "../../server/random-board.js";
+import { selectWithTurns } from "../../server/select-with-turns.js";
 
 export function Match(N, M, F, W) {
 	const counters = {

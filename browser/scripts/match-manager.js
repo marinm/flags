@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { handle_join } from "./handle-join.js";
+import { handle_join } from "./handle-join-server.js";
 import { handle_select } from "./handle-select.js";
-import { Match } from "./match.js";
+import { Match } from "../../server/match.js";
 
 export function MatchManager({ n, m, f, w }) {
 	let match = {
