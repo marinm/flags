@@ -1,12 +1,7 @@
 {
-	"compilerOptions": {
-		"module": "NodeNext",
-		"outDir": "build",
-		"baseUrl": "."
-		//   "noImplicitAny": true,
-		//   "removeComments": true,
-		//   "preserveConstEnums": true,
-		//   "sourceMap": true
-	},
-	"include": []
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
 }
