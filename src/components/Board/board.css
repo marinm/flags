@@ -1,0 +1,24 @@
+.board {
+	display: block;
+	border: 1px solid black;
+	padding: 1mm;
+}
+
+.row {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid fuchsia;
+	padding: 1mm;
+}
+
+.cell {
+	border: 1px solid black;
+	width: 10mm;
+	height: 10mm;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
