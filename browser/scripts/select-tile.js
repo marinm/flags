@@ -1,4 +1,3 @@
-export default
-function selectTile(i, j, socket) {
-    socket.send({type: 'select', i, j});
-};
+export default function selectTile(i, j, socket) {
+	socket.send({ type: "select", i, j });
+}

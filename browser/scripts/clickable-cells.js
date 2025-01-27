@@ -16,24 +16,23 @@
 //   5  |     |     |     |     |     |     |
 //      +-----+-----+-----+-----+-----+-----+
 
-export default
-function clickableCells({element, w, h, onclick, context}) {
-    // No sanity checks on arguments
-    // Caller responsible for providing arguments that work
+export default function clickableCells({ element, w, h, onclick, context }) {
+	// No sanity checks on arguments
+	// Caller responsible for providing arguments that work
 
-    // Simple switch for the click handler
-    let on = true;
+	// Simple switch for the click handler
+	let on = true;
 
-    element.addEventListener('click', function(event) {
-        if (!on) return;
+	element.addEventListener("click", function (event) {
+		if (!on) return;
 
-        const i = Math.floor(event.offsetY / h);
-        const j = Math.floor(event.offsetX / w);
-        onclick(i, j, context);
-    });
+		const i = Math.floor(event.offsetY / h);
+		const j = Math.floor(event.offsetX / w);
+		onclick(i, j, context);
+	});
 
-    return {
-        on  : () => on = true,
-        off : () => on = false
-    };
-};
+	return {
+		on: () => (on = true),
+		off: () => (on = false),
+	};
+}

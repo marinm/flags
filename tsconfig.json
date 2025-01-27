@@ -8,5 +8,5 @@
 		//   "preserveConstEnums": true,
 		//   "sourceMap": true
 	},
-	"include": ["server", "browser/scripts/server-handle-join.js", "browser/scripts/handle-select.js", "browser/scripts/match-manager.js", "browser/scripts/match.js", "browser/scripts/server-matrix.js", "browser/scripts/random-board.js", "browser/scripts/reveal-all.js", "browser/scripts/server-random.js", "browser/scripts/select-with-turns.js", "browser/scripts/select.js", "browser/scripts/zerowalk.js", "browser/scripts/tile.js"]
+	"include": []
 }

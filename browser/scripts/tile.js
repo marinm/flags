@@ -1,7 +1,7 @@
 export function Tile(board, i, j) {
 	// The default tile has value 0 and is not revealed
 	// This is convenient for setting up a new board
-	const state: { value: any; revealed: boolean } = {
+	const state = {
 		value: 0,
 		revealed: false,
 	};
