@@ -1,23 +1,23 @@
-import './board.css';
+import { Cell } from "./subcomponents/Cell";
+import "./board.css";
 
 export default function Board() {
+	const N_ROWS = 50;
+	const N_COLS = 50;
+
+	const coordinates = [];
+
+	for (let i = 0; i < N_ROWS; i++) {
+		for (let j = 0; j < N_COLS; j++) {
+			coordinates.push({ i, j });
+		}
+	}
+
 	return (
 		<div className="board">
-			<div className="row">
-				<div className="cell">1</div>
-				<div className="cell">2</div>
-				<div className="cell">3</div>
-			</div>
-			<div className="row">
-				<div className="cell">4</div>
-				<div className="cell">5</div>
-				<div className="cell">6</div>
-			</div>
-			<div className="row">
-				<div className="cell">7</div>
-				<div className="cell">8</div>
-				<div className="cell">9</div>
-			</div>
+			{coordinates.map(({ i, j }) => (
+				<Cell i={i} j={j} />
+			))}
 		</div>
 	);
 }

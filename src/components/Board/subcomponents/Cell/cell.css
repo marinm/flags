@@ -1,0 +1,9 @@
+.cell {
+	border: 1px solid black;
+	width: 5mm;
+	height: 5mm;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
