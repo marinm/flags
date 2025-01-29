@@ -16,7 +16,7 @@ export default function Board() {
 	return (
 		<div className="board">
 			{coordinates.map(({ i, j }) => (
-				<Cell i={i} j={j} />
+				<Cell i={i} j={j} key={(i * N_ROWS) + j} />
 			))}
 		</div>
 	);
