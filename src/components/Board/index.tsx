@@ -1,8 +1,8 @@
 import { Cell } from "./subcomponents/Cell";
 import "./board.css";
 
-const N_ROWS = 50;
-const N_COLS = 50;
+const N_ROWS = 25;
+const N_COLS = 25;
 
 type Location = {
 	i: number;
