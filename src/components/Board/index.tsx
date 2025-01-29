@@ -1,13 +1,9 @@
 import { Cell } from "./subcomponents/Cell";
+import { Location } from "../../types/Location";
 import "./board.css";
 
 const N_ROWS = 25;
 const N_COLS = 25;
-
-type Location = {
-	i: number;
-	j: number;
-};
 
 function locations(n: number, m: number): Array<Location> {
 	const a = [];
