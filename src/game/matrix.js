@@ -26,39 +26,39 @@ export default function Matrix(n, m) {
 	}
 
 	return {
-		all: function () {
+		all() {
 			// Should probably return a copy?
 			// This returns a reference to the original array
 			return nodes;
 		},
 
-		contains: function (i, j) {
+		contains(i, j) {
 			return i >= 0 && i < n && j >= 0 && j < m;
 		},
 
-		at: function (i, j) {
+		at(i, j) {
 			return this.contains(i, j) ? nodes[i * m + j] : undefined;
 		},
 
-		set: function (i, j, value) {
+		set(i, j, value) {
 			if (this.contains(i, j)) nodes[i * m + j] = value;
 		},
 
-		forEach: function (callback) {
+		forEach(callback) {
 			coordinates.forEach(([i, j]) => callback(i, j, this.at(i, j)));
 		},
 
-		fill: function (factory) {
+		fill(factory) {
 			coordinates.forEach(([i, j]) => this.set(i, j, factory(i, j)));
 		},
 
-		filter: function (condition) {
+		filter(condition) {
 			// Returns an array of coordinates
 			const ij = coordinates.filter(([i, j]) => condition(this.at(i, j)));
 			return ij.map(([i, j]) => this.at(i, j));
 		},
 
-		random: function (k) {
+		random(k) {
 			// Select k cells randomly
 			const flat_indices = random.indices(nodes.length, k);
 			const ij_indices = flat_indices.map((flat) => coordinates[flat]);
@@ -67,7 +67,7 @@ export default function Matrix(n, m) {
 		},
 
 		// For debugging
-		print: function () {
+		print() {
 			for (let i = 0; i < n; i++) {
 				// All nodes on this row
 				const row = this.filter((i_, j_) => i === i_).map(([i_, j_]) =>
