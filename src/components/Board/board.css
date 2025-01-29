@@ -1,6 +1,5 @@
 .board {
 	display: grid;
-	grid-template-columns: repeat(50, 1fr);
 	border: 1px solid black;
 	padding: 1mm;
 }

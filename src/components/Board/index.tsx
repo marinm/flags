@@ -5,8 +5,8 @@ const N_ROWS = 50;
 const N_COLS = 50;
 
 type Location = {
-	i: number,
-	j: number
+	i: number;
+	j: number;
 };
 
 function locations(n: number, m: number): Array<Location> {
@@ -23,7 +23,10 @@ function locations(n: number, m: number): Array<Location> {
 
 export default function Board() {
 	return (
-		<div className="board">
+		<div
+			className="board"
+			style={{ gridTemplateColumns: `repeat(${N_COLS}, 1fr)` }}
+		>
 			{locations(N_ROWS, N_COLS).map(({ i, j }) => (
 				<Cell i={i} j={j} key={i * N_ROWS + j} />
 			))}
