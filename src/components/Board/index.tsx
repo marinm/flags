@@ -1,22 +1,31 @@
 import { Cell } from "./subcomponents/Cell";
 import "./board.css";
 
-export default function Board() {
-	const N_ROWS = 50;
-	const N_COLS = 50;
+const N_ROWS = 50;
+const N_COLS = 50;
 
-	const coordinates = [];
+type Location = {
+	i: number,
+	j: number
+};
 
-	for (let i = 0; i < N_ROWS; i++) {
-		for (let j = 0; j < N_COLS; j++) {
-			coordinates.push({ i, j });
+function locations(n: number, m: number): Array<Location> {
+	const a = [];
+
+	for (let i = 0; i < n; i++) {
+		for (let j = 0; j < m; j++) {
+			a.push({ i, j });
 		}
 	}
 
+	return a;
+}
+
+export default function Board() {
 	return (
 		<div className="board">
-			{coordinates.map(({ i, j }) => (
-				<Cell i={i} j={j} key={(i * N_ROWS) + j} />
+			{locations(N_ROWS, N_COLS).map(({ i, j }) => (
+				<Cell i={i} j={j} key={i * N_ROWS + j} />
 			))}
 		</div>
 	);
