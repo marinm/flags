@@ -44,18 +44,82 @@ export default class BoardState {
 		this.matrix.forEach((l: Location) => this.updateNumberAt(l));
 	}
 
-	updateNumberAt(l: Location): void
-	{
+	updateNumberAt(l: Location): void {
 		const count = this.matrix
 			.around(l)
-			.map(l => this.matrix.at(l))
-			.filter((s: CellState) => s.flag)
-			.length;
+			.map((l) => this.matrix.at(l))
+			.filter((s: CellState) => s.flag).length;
 
 		this.at(l).number = count;
 	}
 
 	at(l: Location): CellState {
 		return this.matrix.at(l);
+	}
+
+	reveal(l: Location): CellState {
+		const cell = this.at(l);
+		cell.revealed = true;
+		return cell;
+	}
+
+	select(l: Location): CellState[] {
+		const cell = this.at(l);
+
+		// Selected coordinates out of bounds, or
+		// Selected tile that was already revealed
+		// Return empty array
+		if (!this.matrix.contains(l) || cell.revealed) {
+			return [];
+		}
+
+		// Special case: selecting a zero results in a "zero walk"
+		// All other tiles only result in a one-tile reveal
+		return cell.number === 0 ? this.zeroWalk(l) : [this.reveal(l)];
+	}
+
+	zeroWalk(l: Location): CellState[] {
+		const queue: Location[] = [];
+		const show: CellState[] = [];
+
+		// Begin with this tile in the queue
+		queue.push(l);
+
+		while (queue.length > 0) {
+			// Pop the next tile from the queue
+			const current = queue.shift();
+
+			if (!current) {
+				continue;
+			}
+
+			const cell = this.at(current);
+
+			// Stepped to a tile that's already been revealed
+			// Nothing to do
+			if (cell.revealed) {
+				continue;
+			}
+
+			// Stepped to a flag
+			// Don't reveal it
+			if (cell.flag) {
+				continue;
+			}
+
+			// Stepped to numeric value
+			// Reveal it
+			show.push(this.reveal(l));
+
+			// If this is a zero
+			// Add all neighbours to the visit queue
+			if (cell.number === 0) {
+				queue.push(...this.matrix.around(current));
+			}
+
+			// Some tiles will pass through the queue multiple times
+		}
+
+		return show;
 	}
 }
