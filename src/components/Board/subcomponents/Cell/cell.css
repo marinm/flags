@@ -1,9 +1,15 @@
 .cell {
-	border: 1px solid black;
-	width: 5mm;
-	height: 5mm;
+	width: 6mm;
+	height: 6mm;
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
+	background-color: #eeeeee;
+	cursor: default;
+	font-size: 3mm;
+}
+
+.cell:hover {
+	background-color: #cccccc;
 }

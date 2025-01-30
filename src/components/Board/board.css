@@ -1,5 +1,4 @@
 .board {
 	display: grid;
-	border: 1px solid black;
-	padding: 1mm;
+	gap: 1mm;
 }
