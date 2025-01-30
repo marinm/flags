@@ -70,6 +70,26 @@ export default class Matrix<Type> {
 			.map((ij) => this.locations[ij]);
 	}
 
+	around(l: Location): Location[]
+	{
+		//  TL TC TR
+		//  CL    CR
+		//  BL BC BR
+
+		return [
+				[l.i - 1, l.j - 1], // TL
+				[l.i - 1, l.j - 0], // TC
+				[l.i - 1, l.j + 1], // TR
+				[l.i - 0, l.j - 1], // CL
+				[l.i - 0, l.j + 1], // CR
+				[l.i + 1, l.j - 1], // BL
+				[l.i + 1, l.j - 0], // BC
+				[l.i + 1, l.j + 1], // BR
+			]
+			.map(([i, j]) => ({i, j}))
+			.filter(l => this.contains(l));
+	}
+
 	// For debugging
 	print() {
 		for (let i = 0; i < this.n; i++) {
