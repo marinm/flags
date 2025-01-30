@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Cell } from "./subcomponents/Cell";
+import { Cell } from "./subcomponents/Cell/Cell";
 import { Location } from "../../types/Location";
 import "./board.css";
 import Matrix from "../../game/matrix";
