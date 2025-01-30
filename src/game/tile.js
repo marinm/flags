@@ -7,11 +7,11 @@ export function Tile(board, i, j) {
 	};
 
 	return {
-		value: function () {
+		value() {
 			return state.value;
 		},
 
-		increment: function () {
+		increment() {
 			// Do nothing for a flag tile
 			if (this.isFlag()) return null;
 
@@ -20,25 +20,25 @@ export function Tile(board, i, j) {
 			return null;
 		},
 
-		isFlag: function (set) {
+		isFlag(set) {
 			if (set === true) state.value = "F";
 			return state.value === "F";
 		},
 
-		isNumber: function () {
+		isNumber() {
 			return state.value != "F";
 		},
 
-		reveal: function () {
+		reveal() {
 			state.revealed = true;
 			return { i, j, value: state.value };
 		},
 
-		isRevealed: function () {
+		isRevealed() {
 			return state.revealed;
 		},
 
-		updateNumber: function () {
+		updateNumber() {
 			if (this.isFlag()) return;
 
 			const flags = this.neighbours().filter((tile) => tile.isFlag());
@@ -46,7 +46,7 @@ export function Tile(board, i, j) {
 			return null;
 		},
 
-		neighbours: function () {
+		neighbours() {
 			//  TL TC TR
 			//  CL    CR
 			//  BL BC BR
