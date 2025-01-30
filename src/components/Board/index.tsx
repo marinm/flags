@@ -3,34 +3,31 @@ import { Cell } from "./subcomponents/Cell";
 import { Location } from "../../types/Location";
 import "./board.css";
 import Matrix from "../../game/matrix";
+import { CellState } from "../../types/CellState";
 
 const N_ROWS = 25;
 const N_COLS = 25;
 
-function locations(n: number, m: number): Array<Location> {
-	const a = [];
-
-	for (let i = 0; i < n; i++) {
-		for (let j = 0; j < m; j++) {
-			a.push({ i, j });
-		}
-	}
-
-	return a;
-}
-
 export default function Board() {
-	const [board] = useState(new Matrix<number>(N_ROWS, N_COLS, 0));
+	const defaultCellState: CellState = {
+		revealed: false,
+		flag: false,
+		number: 0,
+	};
 
-	board.print();
+	const [matrix] = useState(
+		new Matrix<CellState>(N_ROWS, N_COLS, () => ({...defaultCellState}))
+	);
+
+	matrix.random(5).forEach((l) => {console.log(l); matrix.at(l).flag = true});
 
 	return (
 		<div
 			className="board"
 			style={{ gridTemplateColumns: `repeat(${N_COLS}, 1fr)` }}
 		>
-			{locations(N_ROWS, N_COLS).map(({ i, j }) => (
-				<Cell i={i} j={j} key={i * N_ROWS + j} />
+			{matrix.locations.map((l) => (
+				<Cell location={l} state={matrix.at(l)} key={`${l.i}-${l.j}`} />
 			))}
 		</div>
 	);

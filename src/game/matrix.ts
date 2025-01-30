@@ -19,16 +19,16 @@ export default class Matrix<Type> {
 	nodes: Type[] = [];
 	locations: Location[] = [];
 
-	constructor(n: number, m: number, initialValue: Type) {
+	constructor(n: number, m: number, initialValue: () => Type) {
 		this.n = n;
 		this.m = m;
 		this.nodes = new Array<Type>(n * m);
-		this.nodes.fill(initialValue);
 
 		this.locations = [];
 		for (let i = 0; i < n; i++) {
 			for (let j = 0; j < m; j++) {
 				this.locations.push({ i, j });
+				this.nodes[i * this.m + j] = initialValue();
 			}
 		}
 	}
