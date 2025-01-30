@@ -22,6 +22,8 @@ export default class BoardState {
 		this.matrix = new Matrix<CellState>(this.n, this.m, () => ({
 			...defaultCellState,
 		}));
+
+		this.fresh();
 	}
 
 	// Generates a board with randomly placed flags
