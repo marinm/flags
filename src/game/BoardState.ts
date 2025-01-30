@@ -81,6 +81,8 @@ export default class BoardState {
 	}
 
 	zeroWalk(l: Location): CellState[] {
+		return this.matrix.around(l).map(l => this.at(l));
+
 		const queue: Location[] = [];
 		const show: CellState[] = [];
 
