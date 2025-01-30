@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Cell } from "./subcomponents/Cell";
 import { Location } from "../../types/Location";
 import "./board.css";
+import Matrix from "../../game/matrix";
 
 const N_ROWS = 25;
 const N_COLS = 25;
@@ -18,6 +20,10 @@ function locations(n: number, m: number): Array<Location> {
 }
 
 export default function Board() {
+	const [board] = useState(new Matrix<number>(N_ROWS, N_COLS, 0));
+
+	board.print();
+
 	return (
 		<div
 			className="board"

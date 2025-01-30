@@ -13,60 +13,70 @@
 import random from "./random.js";
 import { Location } from "../types/Location.js";
 
-export default function Matrix<Type>(n: number, m: number) {
-	const nodes = new Array<Type>(n * m);
+export default class Matrix<Type> {
+	n: number = 0;
+	m: number = 0;
+	nodes: Type[] = [];
+	locations: Location[] = [];
 
-	const locations: Location[] = [];
-	for (let i = 0; i < n; i++) {
-		for (let j = 0; j < m; j++) {
-			locations.push({ i, j });
+	constructor(n: number, m: number, initialValue: Type) {
+		this.n = n;
+		this.m = m;
+		this.nodes = new Array<Type>(n * m);
+		this.nodes.fill(initialValue);
+
+		this.locations = [];
+		for (let i = 0; i < n; i++) {
+			for (let j = 0; j < m; j++) {
+				this.locations.push({ i, j });
+			}
 		}
 	}
 
-	return {
-		all() {
-			// Should probably return a copy?
-			// This returns a reference to the original array
-			return nodes;
-		},
+	all() {
+		// Should probably return a copy?
+		// This returns a reference to the original array
+		return this.nodes;
+	}
 
-		contains(l: Location): boolean {
-			return l.i >= 0 && l.i < n && l.j >= 0 && l.j < m;
-		},
+	contains(l: Location): boolean {
+		return l.i >= 0 && l.i < this.n && l.j >= 0 && l.j < this.m;
+	}
 
-		at(l: Location): Type | undefined {
-			return this.contains(l) ? nodes[l.i * m + l.j] : undefined;
-		},
+	at(l: Location): Type | undefined {
+		return this.contains(l) ? this.nodes[l.i * this.m + l.j] : undefined;
+	}
 
-		set(l: Location, value: Type): void {
-			if (this.contains(l)) {
-				nodes[l.i * m + l.j] = value;
-			}
-		},
+	set(l: Location, value: Type): void {
+		if (this.contains(l)) {
+			this.nodes[l.i * this.m + l.j] = value;
+		}
+	}
 
-		forEach(callback: (l: Location) => void): void {
-			locations.forEach(callback);
-		},
+	forEach(callback: (l: Location) => void): void {
+		this.locations.forEach(callback);
+	}
 
-		fill(callback: (l: Location) => Type): void {
-			locations.forEach((l) => this.set(l, callback(l)));
-		},
+	fill(callback: (l: Location) => Type): void {
+		this.locations.forEach((l) => this.set(l, callback(l)));
+	}
 
-		filter(callback: (l: Location) => boolean): any[] {
-			return locations.filter(callback).map(this.at);
-		},
+	filter(callback: (l: Location) => boolean): any[] {
+		return this.locations.filter(callback).map(this.at);
+	}
 
-		random(k: number) {
-			// Select k cells randomly
-			return random.indices(nodes.length, k).map((ij) => locations[ij]);
-		},
+	random(k: number) {
+		// Select k cells randomly
+		return random
+			.indices(this.nodes.length, k)
+			.map((ij) => this.locations[ij]);
+	}
 
-		// For debugging
-		print() {
-			for (let i = 0; i < n; i++) {
-				// All nodes on this row
-				console.log(...this.filter((l: Location) => i === l.i));
-			}
-		},
-	};
+	// For debugging
+	print() {
+		for (let i = 0; i < this.n; i++) {
+			// All nodes on this row
+			console.log(...this.filter((l: Location) => i === l.i));
+		}
+	}
 }
