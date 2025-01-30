@@ -18,7 +18,9 @@ export default function Board() {
 			style={{ gridTemplateColumns: `repeat(${N_COLS}, 1fr)` }}
 		>
 			{boardState.matrix.locations.map((l: Location) => (
-				<Cell location={l} state={boardState.at(l)} key={`${l.i}-${l.j}`} />
+				<div onClick={() => boardState.select(l)} key={`${l.i}-${l.j}`}>
+					<Cell location={l} state={boardState.at(l)} />
+				</div>
 			))}
 		</div>
 	);
