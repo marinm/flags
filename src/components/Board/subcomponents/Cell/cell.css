@@ -18,3 +18,7 @@
 	width: 4mm;
 	height: 4mm;
 }
+
+.hidden {
+	opacity: 0.1;
+}
