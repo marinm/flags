@@ -16,10 +16,12 @@ export default function Board() {
 	};
 
 	const [matrix] = useState(
-		new Matrix<CellState>(N_ROWS, N_COLS, () => ({...defaultCellState}))
+		new Matrix<CellState>(N_ROWS, N_COLS, () => ({ ...defaultCellState }))
 	);
 
-	matrix.random(5).forEach((l) => {console.log(l); matrix.at(l).flag = true});
+	matrix
+		.random(N_ROWS + N_COLS)
+		.forEach((l: Location) => (matrix.at(l).flag = true));
 
 	return (
 		<div

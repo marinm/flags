@@ -13,3 +13,8 @@
 .cell:hover {
 	background-color: #cccccc;
 }
+
+.flag {
+	width: 4mm;
+	height: 4mm;
+}

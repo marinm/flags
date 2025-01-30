@@ -11,7 +11,11 @@ export function Cell({
 }) {
 	return (
 		<div className="cell" onClick={() => console.log(location, state)}>
-			{state.flag ? 'F' : state.number}
+			{state.flag ? (
+				<img src="flag.svg" className="flag" />
+			) : (
+				state.number
+			)}
 		</div>
 	);
 }
