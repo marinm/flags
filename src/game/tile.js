@@ -1,66 +1,72 @@
-export function Tile(board, i, j) {
-	// The default tile has value 0 and is not revealed
-	// This is convenient for setting up a new board
-	const state = {
-		value: 0,
-		revealed: false,
-	};
+export default class Tile {
+	state;
+	board;
+	i;
+	j;
 
-	return {
-		value() {
-			return state.value;
-		},
+	constructor(board, i, j) {
+		this.board = board;
+		this.i = i;
+		this.j = j;
 
-		increment() {
-			// Do nothing for a flag tile
-			if (this.isFlag()) return null;
+		// The default tile has value 0 and is not revealed
+		// This is convenient for setting up a new board
+		this.state = {value: 0, revealed: false};
+	}
 
-			// The number must be in the range [0...8]
-			state.value = Math.min(state.value + 1, 8);
-			return null;
-		},
+	value() {
+		return this.state.value;
+	}
 
-		isFlag(set) {
-			if (set === true) state.value = "F";
-			return state.value === "F";
-		},
+	increment() {
+		// Do nothing for a flag tile
+		if (this.isFlag()) return null;
 
-		isNumber() {
-			return state.value != "F";
-		},
+		// The number must be in the range [0...8]
+		this.state.value = Math.min(this.state.value + 1, 8);
+		return null;
+	}
 
-		reveal() {
-			state.revealed = true;
-			return { i, j, value: state.value };
-		},
+	isFlag(set) {
+		if (set === true) this.state.value = "F";
+		return this.state.value === "F";
+	}
 
-		isRevealed() {
-			return state.revealed;
-		},
+	isNumber() {
+		return this.state.value != "F";
+	}
 
-		updateNumber() {
-			if (this.isFlag()) return;
+	reveal() {
+		this.state.revealed = true;
+		return { i, j, value: this.state.value };
+	}
 
-			const flags = this.neighbours().filter((tile) => tile.isFlag());
-			state.value = flags.length;
-			return null;
-		},
+	isRevealed() {
+		return this.state.revealed;
+	}
 
-		neighbours() {
-			//  TL TC TR
-			//  CL    CR
-			//  BL BC BR
+	updateNumber() {
+		if (this.isFlag()) return;
 
-			return [
-				board.at(i - 1, j - 1), // TL
-				board.at(i - 1, j - 0), // TC
-				board.at(i - 1, j + 1), // TR
-				board.at(i - 0, j - 1), // CL
-				board.at(i - 0, j + 1), // CR
-				board.at(i + 1, j - 1), // BL
-				board.at(i + 1, j - 0), // BC
-				board.at(i + 1, j + 1), // BR
-			].filter((tile) => tile != undefined);
-		},
-	};
+		const flags = this.neighbours().filter((tile) => tile.isFlag());
+		this.state.value = flags.length;
+		return null;
+	}
+
+	neighbours() {
+		//  TL TC TR
+		//  CL    CR
+		//  BL BC BR
+
+		return [
+			this.board.at(i - 1, j - 1), // TL
+			this.board.at(i - 1, j - 0), // TC
+			this.board.at(i - 1, j + 1), // TR
+			this.board.at(i - 0, j - 1), // CL
+			this.board.at(i - 0, j + 1), // CR
+			this.board.at(i + 1, j - 1), // BL
+			this.board.at(i + 1, j - 0), // BC
+			this.board.at(i + 1, j + 1), // BR
+		].filter((tile) => tile != undefined);
+	}
 }
