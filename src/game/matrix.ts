@@ -13,8 +13,8 @@
 import random from "./random.js";
 import { Location } from "../types/Location.js";
 
-export default function Matrix(n: number, m: number) {
-	const nodes = new Array(n * m);
+export default function Matrix<Type>(n: number, m: number) {
+	const nodes = new Array<Type>(n * m);
 
 	const locations: Location[] = [];
 	for (let i = 0; i < n; i++) {
@@ -34,23 +34,25 @@ export default function Matrix(n: number, m: number) {
 			return l.i >= 0 && l.i < n && l.j >= 0 && l.j < m;
 		},
 
-		at(l: Location): any {
+		at(l: Location): Type | undefined {
 			return this.contains(l) ? nodes[l.i * m + l.j] : undefined;
 		},
 
-		set(l: Location, value: any): void {
-			if (this.contains(l)) nodes[l.i * m + l.j] = value;
+		set(l: Location, value: Type): void {
+			if (this.contains(l)) {
+				nodes[l.i * m + l.j] = value;
+			}
 		},
 
-		forEach(callback: (l: Location) => any): void {
+		forEach(callback: (l: Location) => void): void {
 			locations.forEach(callback);
 		},
 
-		fill(callback: (l: Location) => any): void {
+		fill(callback: (l: Location) => Type): void {
 			locations.forEach((l) => this.set(l, callback(l)));
 		},
 
-		filter(callback: (l: Location) => any): any[] {
+		filter(callback: (l: Location) => boolean): any[] {
 			return locations.filter(callback).map(this.at);
 		},
 
