@@ -43,14 +43,12 @@ export default class Matrix<Type> {
 		return l.i >= 0 && l.i < this.n && l.j >= 0 && l.j < this.m;
 	}
 
-	at(l: Location): Type | undefined {
-		return this.contains(l) ? this.nodes[l.i * this.m + l.j] : undefined;
+	at(l: Location): Type {
+		return this.nodes[l.i * this.m + l.j];
 	}
 
 	set(l: Location, value: Type): void {
-		if (this.contains(l)) {
-			this.nodes[l.i * this.m + l.j] = value;
-		}
+		this.nodes[l.i * this.m + l.j] = value;
 	}
 
 	forEach(callback: (l: Location) => void): void {
