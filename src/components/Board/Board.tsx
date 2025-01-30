@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Cell } from "./subcomponents/Cell/Cell";
 import { Location } from "../../types/Location";
 import "./board.css";
-import Matrix from "../../game/matrix";
+import Matrix from "../../game/Matrix";
 import { CellState } from "../../types/CellState";
 
 const N_ROWS = 25;

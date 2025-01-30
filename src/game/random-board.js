@@ -1,4 +1,4 @@
-import { Matrix } from "./matrix.js";
+import { Matrix } from "./Matrix.js";
 import { Tile } from "./tile.js";
 
 // Generates a board with randomly placed flags
