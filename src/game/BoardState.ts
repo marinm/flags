@@ -13,15 +13,14 @@ export default class BoardState {
 		this.m = Math.max(m, 2);
 		this.numFlags = this.n + this.m;
 
-		const defaultCellState: CellState = {
+		const defaultCellState = (l: Location) => ({
+			location: l,
 			revealed: false,
 			flag: false,
 			number: 0,
-		};
+		});
 
-		this.matrix = new Matrix<CellState>(this.n, this.m, () => ({
-			...defaultCellState,
-		}));
+		this.matrix = new Matrix<CellState>(this.n, this.m, defaultCellState);
 
 		this.fresh();
 	}
