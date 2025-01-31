@@ -88,8 +88,6 @@ export default class BoardState {
 	}
 
 	zeroWalk(l: Location): CellState[] {
-		return this.matrix.around(l).map(l => this.at(l));
-
 		const queue: Location[] = [];
 		const show: CellState[] = [];
 
@@ -120,7 +118,7 @@ export default class BoardState {
 
 			// Stepped to numeric value
 			// Reveal it
-			show.push(this.reveal(l));
+			show.push(this.reveal(current));
 
 			// If this is a zero
 			// Add all neighbours to the visit queue
