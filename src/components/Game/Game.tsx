@@ -1,12 +1,16 @@
 import { useRef } from "react";
 import Board from "./subcomponents/Board/Board";
-import BoardState from "../../game/BoardState";
+import GameState from "../../game/GameState";
 
 const N_ROWS = 25;
 const N_COLS = 25;
 
 export default function Game() {
-	const boardState = useRef(new BoardState(N_ROWS, N_COLS));
+	const gameState = useRef(new GameState(N_ROWS, N_COLS));
 
-	return <Board boardState={boardState.current} />;
+	return (
+		<div>
+			<Board boardState={gameState.current} />
+		</div>
+	);
 }
