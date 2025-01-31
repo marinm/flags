@@ -79,7 +79,7 @@ export default class BoardState {
 		}
 
 		if (cell.flag || cell.number != 0) {
-			return [this.reveal(l)]
+			return [this.reveal(l)];
 		}
 
 		// Special case: selecting a zero results in a "zero walk"
