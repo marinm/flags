@@ -11,7 +11,7 @@ export default class BoardState {
 	constructor(n: number, m: number) {
 		this.n = Math.max(n, 2);
 		this.m = Math.max(m, 2);
-		this.numFlags = this.n + this.m;
+		this.numFlags = (this.n + this.m) * 2;
 
 		const defaultCellState = (l: Location) => ({
 			location: l,
