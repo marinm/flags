@@ -1,24 +1,17 @@
-import { Location } from "../../../../types/Location";
 import { CellState } from "../../../../types/CellState";
 import { classes } from "../../../../utils/classes";
 import "./cell.css";
 
-export function Cell({
-	location,
-	state,
-}: {
-	location: Location;
-	state: CellState;
-}) {
+export function Cell({ state }: { state: CellState }) {
 	const className = classes({
-		flag: true,
+		cell: true,
 		hidden: !state.revealed,
 	});
 
 	return (
-		<div className="cell" onClick={() => console.log(location, state)}>
+		<div className={className}>
 			{state.flag ? (
-				<img src="flag.svg" className={className} />
+				<img src="flag.svg" className="flag" />
 			) : (
 				state.number
 			)}
