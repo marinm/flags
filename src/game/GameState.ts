@@ -18,6 +18,6 @@ export default class GameState extends BoardState {
 		this.select(l);
 
 		this.turn++;
-		this.playerTurn = (this.turn % 2);
+		this.playerTurn = this.turn % 2;
 	}
 }
