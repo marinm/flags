@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { CellState } from "../../types/CellState";
+import { CellState } from "../../../../types/CellState";
 import { Cell } from "./subcomponents/Cell/Cell";
-import { Location } from "../../types/Location";
+import { Location } from "../../../../types/Location";
 import "./board.css";
-import BoardState from "../../game/BoardState";
+import BoardState from "../../../../game/BoardState";
 
 const N_ROWS = 25;
 const N_COLS = 25;

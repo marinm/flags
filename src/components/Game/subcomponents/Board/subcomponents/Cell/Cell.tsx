@@ -1,5 +1,5 @@
-import { CellState } from "../../../../types/CellState";
-import { classes } from "../../../../utils/classes";
+import { CellState } from "../../../../../../types/CellState";
+import { classes } from "../../../../../../utils/classes";
 import "./cell.css";
 
 export function Cell({ state }: { state: CellState }) {
