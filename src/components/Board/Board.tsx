@@ -12,11 +12,11 @@ export default function Board() {
 	const boardState = useRef(new BoardState(N_ROWS, N_COLS));
 	const [cells, setCells] = useState<CellState[]>(boardState.current.all());
 
-	useEffect(() => setCells([...boardState.current.matrix.all()]), []);
+	useEffect(() => setCells([...boardState.current.all()]), []);
 
 	function onClick(l: Location): void {
 		boardState.current.select(l);
-		setCells(boardState.current.all());
+		setCells([...boardState.current.all()]);
 	}
 
 	return (

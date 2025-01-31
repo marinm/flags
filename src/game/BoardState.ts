@@ -1,26 +1,19 @@
-import Matrix from "./matrix";
+import Matrix from "./Matrix";
 import { Location } from "../types/Location";
 import { CellState } from "../types/CellState";
 
-export default class BoardState {
-	n: number = 0;
-	m: number = 0;
+export default class BoardState extends Matrix<CellState> {
 	numFlags: number = 0;
-	matrix;
 
 	constructor(n: number, m: number) {
-		this.n = Math.max(n, 2);
-		this.m = Math.max(m, 2);
-		this.numFlags = (this.n + this.m) * 2;
-
-		const defaultCellState = (l: Location) => ({
+		super(n, m, (l: Location) => ({
 			location: l,
 			revealed: false,
 			flag: false,
 			number: 0,
-		});
+		}));
 
-		this.matrix = new Matrix<CellState>(this.n, this.m, defaultCellState);
+		this.numFlags = (this.n + this.m) * 2;
 
 		this.fresh();
 	}
@@ -37,29 +30,20 @@ export default class BoardState {
 	//     1  *  *  1  0  0
 	fresh() {
 		// Pick some tiles randomly and set them as flags
-		this.matrix
-			.random(this.numFlags)
-			.forEach((l: Location) => (this.matrix.at(l).flag = true));
+		this.random(this.numFlags).forEach(
+			(l: Location) => (this.at(l).flag = true)
+		);
 
 		// For each tile, count the flags around it
-		this.matrix.forEach((l: Location) => this.updateNumberAt(l));
+		this.forEach((l: Location) => this.updateNumberAt(l));
 	}
 
 	updateNumberAt(l: Location): void {
-		const count = this.matrix
-			.around(l)
-			.map((l) => this.matrix.at(l))
+		const count = this.around(l)
+			.map((l) => this.at(l))
 			.filter((s: CellState) => s.flag).length;
 
 		this.at(l).number = count;
-	}
-
-	at(l: Location): CellState {
-		return this.matrix.at(l);
-	}
-
-	all(): CellState[] {
-		return [...this.matrix.all()];
 	}
 
 	reveal(l: Location): CellState {
@@ -69,9 +53,7 @@ export default class BoardState {
 	}
 
 	revealAll(): CellState[] {
-		return this.matrix
-			.filter((l) => !this.at(l).revealed)
-			.map((t) => t.reveal());
+		return this.filter((l) => !this.at(l).revealed).map((t) => t.reveal());
 	}
 
 	select(l: Location): CellState[] {
@@ -80,7 +62,7 @@ export default class BoardState {
 		// Selected coordinates out of bounds, or
 		// Selected tile that was already revealed
 		// Return empty array
-		if (!this.matrix.contains(l) || cell.revealed) {
+		if (!this.contains(l) || cell.revealed) {
 			return [];
 		}
 
@@ -129,7 +111,7 @@ export default class BoardState {
 			// If this is a zero
 			// Add all neighbours to the visit queue
 			if (cell.number === 0) {
-				queue.push(...this.matrix.around(current));
+				queue.push(...this.around(current));
 			}
 
 			// Some tiles will pass through the queue multiple times
