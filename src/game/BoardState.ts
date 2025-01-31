@@ -78,9 +78,13 @@ export default class BoardState {
 			return [];
 		}
 
+		if (cell.flag || cell.number != 0) {
+			return [this.reveal(l)]
+		}
+
 		// Special case: selecting a zero results in a "zero walk"
 		// All other tiles only result in a one-tile reveal
-		return cell.number === 0 ? this.zeroWalk(l) : [this.reveal(l)];
+		return this.zeroWalk(l);
 	}
 
 	zeroWalk(l: Location): CellState[] {
