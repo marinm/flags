@@ -58,6 +58,10 @@ export default class BoardState {
 		return this.matrix.at(l);
 	}
 
+	all(): CellState[] {
+		return [...this.matrix.all()];
+	}
+
 	reveal(l: Location): CellState {
 		const cell = this.at(l);
 		cell.revealed = true;
